@@ -1,0 +1,17 @@
+FROM node:latest
+
+# Tạo thư mục làm việc
+WORKDIR /usr/src/app
+
+# Cài đặt các package dependencies
+#RUN npm install
+
+# Cài đặt PM2 global
+#RUN npm install pm2 -g
+
+# Sao chép ứng dụng vào container
+COPY . .
+
+# Chạy ứng dụng bằng PM2
+#CMD ["pm2-runtime", "FC_JS/index.js"]
+CMD ["node", "FC_JS/index.js"]
