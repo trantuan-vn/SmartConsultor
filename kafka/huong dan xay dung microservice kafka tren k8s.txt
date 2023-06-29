@@ -1,0 +1,173 @@
+Để xây dựng và triển khai một microservice trên Kubernetes, bạn có thể làm theo các bước sau:
+
+Tạo cấu trúc thư mục để dự án microservice:
+
+Copy code
+my-microservice/
+ ├── src/
+ │   ├── main/
+ │   │   ├── java/              (Thư mục chứa mã nguồn Java)
+ │   │   ├── resources/         (Thư mục chứa các tệp tài nguyên như file cấu hình, file properties, ...)
+ │   │   └── Dockerfile         (Tệp Dockerfile để xây dựng image Docker)
+ │   └── test/
+ │       └── java/              (Thư mục chứa mã kiểm thử Java)
+ ├── kubernetes/
+ │   ├── deployment.yaml        (Tệp YAML để triển khai ứng dụng trên Kubernetes)
+ │   └── service.yaml           (Tệp YAML để tạo dịch vụ trong Kubernetes)
+ ├── pom.xml                    (Tệp POM để quản lý các phụ thuộc và cấu hình xây dựng Maven)
+ └── README.md                  (Tệp README chứa hướng dẫn và các thông tin khác về dự án)
+Đây là một cấu trúc thư mục phổ biến cho một dự án microservice trên Java. Bạn có thể điều chỉnh cấu trúc thư mục theo yêu cầu của bạn và công nghệ mà bạn đang sử dụng.
+
+Xây dựng ứng dụng microservice: Chắc chắn rằng ứng dụng microservice của bạn hoạt động đúng trên môi trường cục bộ của bạn trước khi triển khai lên Kubernetes. Đảm bảo rằng mã nguồn của bạn đã được kiểm tra và đã vượt qua các bài kiểm tra chất lượng phù hợp.
+
+Xây dựng image Docker cho ứng dụng: Trên thư mục gốc của dự án microservice, tạo một tệp Dockerfile để xây dựng image Docker cho ứng dụng của bạn. Dưới đây là một ví dụ cho Dockerfile:
+
+Dockerfile
+
+Copy code
+# Sử dụng hình ảnh cơ sở (base image) của Java
+FROM openjdk:11
+
+# Sao chép mã nguồn và tệp tài nguyên vào image
+COPY ./src /app/src
+COPY ./pom.xml /app/pom.xml
+
+# Xác định thư mục làm việc
+WORKDIR /app
+
+# Xây dựng ứng dụng với Maven
+RUN mvn clean package -DskipTests
+
+# Xác định lệnh nền để chạy ứng dụng
+CMD ["java", "-jar", "target/my-microservice.jar"]
+Hãy nhớ thay thế `my-microservice.jar` bằng tên tệp JAR sản xuất từ quá trình xây dựng Maven.
+
+Xây dựng image Docker: Mở cửa sổ dòng lệnh trong thư mục chứa Dockerfile và sử dụng lệnh sau để xây dựng image Docker:
+
+Copy code
+$ docker build -t my-microservice:1.0 .
+Đảm bảo rằng tên image và tag phù hợp với dự án microservice của bạn.
+
+Đăng ký image Docker: Trước khi triển khai ứng dụng trên Kubernetes, bạn cần đăng ký image Docker của mình với một registry như Docker Hub, Google Container Registry, AWS ECR, vv.
+
+Triển khai microservice trên Kubernetes: Sử dụng các tệp YAML như `deployment.yaml` và `service.yaml` trong thư mục `kubernetes` của dự án để triển khai microservice của bạn trên Kubernetes. Điều này sẽ tạo ra một Pod trong cluster và expose microservice như một dịch vụ.
+
+`deployment.yaml`: Xác định các thông số như số phiên bản, image, số replicas, các biến môi trường, vv.
+
+`service.yaml`: Xác định cách truy cập đến microservice, ví dụ: cổng và phương thức truy cập.
+
+Sử dụng lệnh sau để triển khai trên Kubernetes:
+
+Copy code
+$ kubectl apply -f kubernetes/deployment.yaml
+$ kubectl apply -f kubernetes/service.yaml
+Đảm bảo rằng các tệp YAML đã được điều chỉnh phù hợp với dự án micro
+
+VIDU:
+
+package myapps;
+
+import org.apache.kafka.common.serialization.Serdes;
+import org.apache.kafka.common.utils.Bytes;
+import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.StreamsBuilder;
+import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.streams.Topology;
+import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.Materialized;
+import org.apache.kafka.streams.kstream.Produced;
+import org.apache.kafka.streams.state.KeyValueStore;
+
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+
+public class WordCount {
+
+    public static void main(String[] args) throws Exception {
+        Properties props = new Properties();
+        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "streams-wordcount");
+        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+        props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+
+        final StreamsBuilder builder = new StreamsBuilder();
+
+        KStream<String, String> source = builder.stream("streams-plaintext-input");
+        source.flatMapValues(value -> Arrays.asList(value.toLowerCase(Locale.getDefault()).split("\\W+")))
+              .groupBy((key, value) -> value)
+              .count(Materialized.<String, Long, KeyValueStore<Bytes, byte[]>>as("counts-store"))
+              .toStream()
+              .to("streams-wordcount-output", Produced.with(Serdes.String(), Serdes.Long()));
+
+        final Topology topology = builder.build();
+        final KafkaStreams streams = new KafkaStreams(topology, props);
+		streams.setUncaughtExceptionHandler((Thread thread, Throwable throwable) -> {
+			Logger logger = LogManager.getLogger("stream-exception");
+			logger.error("Uncaught exception in Kafka Streams. Error message: " + throwable.getMessage(), throwable);
+		});		
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        // ... same as Pipe.java above
+        // attach shutdown handler to catch control-c
+        Runtime.getRuntime().addShutdownHook(new Thread("streams-shutdown-hook") {
+            @Override
+            public void run() {
+                streams.close();
+                latch.countDown();
+            }
+        });
+
+        try {
+            streams.start();
+            latch.await();
+        } catch (Throwable e) {
+            System.exit(1);
+        }
+        System.exit(0);		
+    }
+}
+
+Tạo file `log4j2.xml` trong thư mục `resources`, với nội dung sau:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Flume name="FlumeAppender" compress="false" type="Flume" hostname="${fluentd_host}" port="${fluentd_port}">
+            <Agent options="multiplexing=true" type="avro" />
+        </Flume>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="FlumeAppender" />
+        </Root>
+    </Loggers>
+</Configuration>
+
+Thêm các dependencies vào `pom.xml` (nếu bạn đang sử dụng Maven):
+
+<dependencies>
+    <!-- Other dependencies -->
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-api</artifactId>
+        <version>2.14.1</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId>
+        <version>2.14.1</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-flume-ng</artifactId>
+        <version>2.14.1</version>
+    </dependency>
+</dependencies>
+
+
