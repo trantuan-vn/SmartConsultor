@@ -1,0 +1,85 @@
+cách cấu hình để từ client tôi mở socket qua nginx-ingress rồi trỏ vào service của deployment replicas=8 với container chứa dịch vụ websocket, tôi cần cấu hính như thế nào trong k8s để client có thể gửi và nhận qua socket:
+
+
+để cấu hình Kubernetes để client có thể gửi và nhận qua WebSocket thông qua Nginx Ingress và trỏ vào service của deployment với 8 replicas chứa dịch vụ WebSocket, bạn có thể thực hiện các bước sau:
+
+1. Tạo một Deployment với 8 replicas và container chứa dịch vụ WebSocket: 
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: websocket-deployment
+spec:
+  replicas: 8
+  selector:
+    matchLabels:
+      app: websocket
+  template:
+    metadata:
+      labels:
+        app: websocket
+    spec:
+      containers:
+        - name: websocket-container
+          image: your-websocket-image
+          ports:
+            - containerPort: 8080
+
+
+2.Tạo một Service để tiếp cận deployment WebSocket:
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: websocket-service
+spec:
+  selector:
+    app: websocket
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+
+3. Tạo một Ingress để chuyển hướng yêu cầu WebSocket từ Nginx Ingress đến service WebSocket:
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: websocket-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/websocket-services: websocket-service
+spec:
+  rules:
+    - host: your.domain.com
+      http:
+        paths:
+          - path: /websocket
+            pathType: Prefix
+            backend:
+              service:
+                name: websocket-service
+                port:
+                  number: 80
+
+4. Cấu hình Nginx Ingress để hỗ trợ WebSocket. Với Nginx Ingress, cần cấu hình giữa controller và service để cho phép WebSocket thông qua `ingress-class` và `enable-ssl-passthrough`.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-ingress-controller
+data:
+  enable-ssl-passthrough: "true"
+  ingress-class: "nginx"
+
+5. Áp dụng file cấu hình để triển khai Deployment, Service, Ingress và cấu hình Nginx Ingress vào Kubernetes:
+
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+kubectl apply -f ingress.yaml
+kubectl apply -f nginx-ingress-controller.yaml
+
+Sau đó, bạn có thể sử dụng địa chỉ IP hoặc tên miền của Nginx Ingress để kết nối từ client qua WebSocket, sử dụng URL có giao thức `ws://` hoặc `wss://` tùy thuộc vào việc có sử dụng SSL hay không.
+
+Vui lòng lưu ý rằng các bước trên giả sử bạn đã cài đặt và cấu hình Nginx Ingress Controller trên Kubernetes cluster của bạn. Nếu bạn đã sử dụng một ingress controller khác, bạn nên thay đổi các tệp cấu hình và cú pháp tương ứng với ingress controller đó.
