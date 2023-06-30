@@ -1,0 +1,154 @@
+1. Thêm Debezium Connector và các phụ thuộc vào dự án Maven của bạn. Đảm bảo rằng bạn đã thêm dependency để kết nối với cơ sở dữ liệu Oracle:
+xml
+
+Copy code
+<dependency>
+    <groupId>io.debezium</groupId>
+    <artifactId>debezium-connector-oracle</artifactId>
+    <version>1.6.0.Final</version>
+</dependency>
+
+
+2. Tạo và cấu hình file `application.properties` để chỉ định cấu hình Debezium Connector cho Oracle. Dưới đây là một ví dụ cấu hình cơ bản:
+properties
+
+connector.class=io.debezium.connector.oracle.OracleConnector
+database.server.name=my-oracle-database
+database.hostname=localhost
+database.port=1521
+database.user=your-username
+database.password=your-password
+database.dbname=my-oracle-dbname
+database.log.mining.archiveLogOnly=true
+database.history.kafka.bootstrap.servers=localhost:9092
+database.history.kafka.topic=oracle_database_history
+table.whitelist=your-schema.iamast
+Hãy đảm bảo rằng bạn đã thay thế các giá trị `your-username`, `your-password`, và `your-schema` bằng thông tin cụ thể cho cơ sở dữ liệu Oracle của bạn.
+
+3. vidu
+
+import io.debezium.embedded.EmbeddedEngine;
+import org.apache.kafka.clients.producer.*;
+import org.apache.kafka.connect.json.JsonDeserializer;
+import org.apache.kafka.connect.json.JsonSerializer;
+import org.apache.kafka.connect.storage.MemoryOffsetBackingStore;
+import org.apache.kafka.connect.storage.OffsetBackingStore;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+public class DebeziumService {
+
+    private static ConcurrentMap<String, Map<String, String>> iamastData = new ConcurrentHashMap<>();
+
+    public static void main(String[] args) {
+        Properties props = new Properties();
+        props.put("name", "my-debezium-service");
+        props.put("connector.class", "io.debezium.connector.oracle.OracleConnector");
+        // Đọc cấu hình từ file 'application.properties'
+        props.put("config.storage.file.filename", "application.properties");
+        // Sử dụng MemoryOffsetBackingStore để lưu trữ vị trí offset
+        OffsetBackingStore offsetBackingStore = new MemoryOffsetBackingStore();
+        EmbeddedEngine engine = EmbeddedEngine.create()
+                .using(DebeziumService.class.getClassLoader())
+                .using(props)
+                .using(offsetBackingStore)
+                .notifying(record -> {
+                    // Xử lý record nhận được từ Debezium Connector
+                    String key = record.key();
+                    String value = record.value();
+                    String operation = record.operation();
+
+                    // Tách thông tin về các trường từ value
+                    String[] fields = value.split(",");
+
+                    // Xử lý các trường hợp theo toán tử
+                    if (operation.equals("c")) {
+                        // Thêm mới
+                        String id = fields[0];
+                        String value1 = fields[1];
+                        String value2 = fields[2];
+                        
+                        Map<String, String> newRow = new HashMap<>();
+                        newRow.put("value1", value1);
+                        newRow.put("value2", value2);
+                        iamastData.put(id, newRow);
+                        
+                    } else if (operation.equals("u")) {
+                        // Sửa đổi
+                        String id = fields[0];
+                        String value1 = fields[1];
+                        String value2 = fields[2];
+                        
+                        Map<String, String> row = iamastData.get(id);
+                        if (row != null) {
+                            row.put("value1", value1);
+                            row.put("value2", value2);
+                        }
+                        
+                    } else if (operation.equals("d")) {
+                        // Xóa
+                        String id = fields[0];
+                        iamastData.remove(id);
+                    }
+
+                    // Tạo kết nối đến Kafka
+                    Properties kafkaProps = new Properties();
+                    kafkaProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+                    kafkaProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, JsonSerializer.class.getName());
+                    kafkaProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class.getName());
+                    Producer<String, String> kafkaProducer = new KafkaProducer<>(kafkaProps);
+
+			  // Tạo Producer Record và gửi nó vào Kafka topic "imast"
+                    ProducerRecord<String, String> kafkaRecord = new ProducerRecord<>("imast", key, value);
+                    kafkaProducer.send(kafkaRecord, new Callback() {
+                        @Override
+                        public void onCompletion(RecordMetadata metadata, Exception exception) {
+                            if (exception != null) {
+                                // Xử lý lỗi khi gửi dữ liệu vào Kafka
+                                exception.printStackTrace();
+                            } else {
+                                // Xử lý khi gửi dữ liệu thành công vào Kafka
+                                System.out.println("Sent record to Kafka topic: imast");
+                            }
+                        }
+                    });
+
+                    // Đóng kết nối Kafka Producer
+                    kafkaProducer.close();
+					
+					// Tạo kết nối đến KSQL
+					KsqlClientOptions options = KsqlClientOptions.create().setHost("localhost").setPort(8088);
+					KsqlClient ksqlClient = KsqlClient.create(options);
+
+					// Chuẩn bị truy vấn cho KSQL
+					String queryStatement = "SELECT * FROM iamast EMIT CHANGES;";
+					StreamedQueryResult queryResult = ksqlClient.streamQuery(queryStatement);
+
+					// Xử lý kết quả truy vấn KSQL
+					queryResult.subscribe(queryRow -> {
+						// Xử lý mỗi bản ghi nhận được từ truy vấn KSQL
+						String key = queryRow.getColumnValue("KEY").orElse(null);
+						String value = queryRow.getColumnValue("VALUE").orElse(null);
+						String operation = queryRow.getColumnValue("OPERATION").orElse(null);
+						
+						// Tiếp tục xử lý tương tự như trong phần notifying(record -> {})
+						// ...
+
+					}, error -> {
+						// Xử lý khi có lỗi xảy ra trong truy vấn KSQL
+						error.printStackTrace();
+					});
+
+					// Đóng kết nối KSQL Client
+					ksqlClient.close();
+
+                })
+                .build();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(engine::stop));
+
+        engine.run();
+    }
+}
