@@ -29,4 +29,4 @@ WORKDIR /opt/kafka_2.13-3.5.0
 COPY zookeeper.properties ./config/
 
 # Khởi động ZooKeeper
-CMD ["bin/zookeeper-server-start.sh", "config/zookeeper.properties"]
+CMD ["./bin/zookeeper-server-start.sh", "./config/zookeeper.properties"]
