@@ -1,0 +1,63 @@
+version: '3'
+services:
+  controller1:
+    image: kraft:latest
+    container_name: controller1
+    restart: always
+    environment:
+      KAFKA_CLUSTER_ID: Yclv5fzOT8K3UuIfPP31xg
+      KAFKA_ID: 1
+      KAFKA_CONTROLLER_FIRST: controller1
+      KAFKA_CONTROLLER_SECOND: controller2
+      KAFKA_CONTROLLER_THIRD: controller3
+    networks:
+      - my-network  
+
+  controller2:
+    image: kraft:latest
+    container_name: controller2
+    restart: always
+    environment:
+      KAFKA_CLUSTER_ID: Yclv5fzOT8K3UuIfPP31xg
+      KAFKA_ID: 2
+      KAFKA_CONTROLLER_FIRST: controller1
+      KAFKA_CONTROLLER_SECOND: controller2
+      KAFKA_CONTROLLER_THIRD: controller3
+    networks:
+      - my-network  
+
+  controller3:
+    image: kraft:latest
+    container_name: controller3
+    restart: always
+    environment:
+      KAFKA_CLUSTER_ID: Yclv5fzOT8K3UuIfPP31xg
+      KAFKA_ID: 3
+      KAFKA_CONTROLLER_FIRST: controller1
+      KAFKA_CONTROLLER_SECOND: controller2
+      KAFKA_CONTROLLER_THIRD: controller3
+    networks:
+      - my-network  
+
+  broker:
+    image: kraft:latest
+    container_name: broker
+    restart: always
+    depends_on:
+      - controller1
+      - controller2
+      - controller3
+    environment:
+      KAFKA_CLUSTER_ID: Yclv5fzOT8K3UuIfPP31xg
+      KAFKA_CONTROLLER_FIRST: controller1
+      KAFKA_CONTROLLER_SECOND: controller2
+      KAFKA_CONTROLLER_THIRD: controller3    
+      
+      KAFKA_ID: 4
+      KAFKA_AVERTISED_BROKER_HOST: broker
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge

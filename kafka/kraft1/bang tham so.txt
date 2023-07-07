@@ -1,0 +1,24 @@
+uuid sinh ra từ lệnh KAFKA_CLUSTER_ID="$(bin/kafka-storage.sh random-uuid)"
+
+Controller: 9093
+$KAFKA_ROLE: controller
+$KAFKA_CLUSTER_ID: Yclv5fzOT8K3UuIfPP31xg
+${KAFKA_ID}: m , đảm bảo các server không trùng nhau
+${KAFKA_CONTROLLER_FIRST}: tên máy chủ của Controller 1 cần triển khai
+${KAFKA_CONTROLLER_SECOND}: tên máy chủ của Controller 2 cần triển khai
+${KAFKA_CONTROLLER_THIRD}: tên máy chủ của Controller 3 cần triển khai
+
+CMD: 
+docker run -d --name controller1 --network my-network -e KAFKA_CLUSTER_ID=Yclv5fzOT8K3UuIfPP31xg -e KAFKA_ID=1 -e KAFKA_CONTROLLER_FIRST=controller1 -e KAFKA_CONTROLLER_SECOND=controller2 -e KAFKA_CONTROLLER_THIRD=controller3 -e KAFKA_ROLE=controller kraft
+docker run -d --name controller2 --network my-network -e KAFKA_CLUSTER_ID=Yclv5fzOT8K3UuIfPP31xg -e KAFKA_ID=2 -e KAFKA_CONTROLLER_FIRST=controller1 -e KAFKA_CONTROLLER_SECOND=controller2 -e KAFKA_CONTROLLER_THIRD=controller3 -e KAFKA_ROLE=controller kraft
+docker run -d --name controller3 --network my-network -e KAFKA_CLUSTER_ID=Yclv5fzOT8K3UuIfPP31xg -e KAFKA_ID=3 -e KAFKA_CONTROLLER_FIRST=controller1 -e KAFKA_CONTROLLER_SECOND=controller2 -e KAFKA_CONTROLLER_THIRD=controller3 -e KAFKA_ROLE=controller kraft
+
+Broker: 9092
+$KAFKA_ROLE: broker
+$KAFKA_CLUSTER_ID: Yclv5fzOT8K3UuIfPP31xg
+${KAFKA_ID}: n , đảm bảo các server không trùng nhau
+${KAFKA_CONTROLLER_FIRST}: tên máy chủ của Controller 1 cần triển khai
+${KAFKA_CONTROLLER_SECOND}: tên máy chủ của Controller 2 cần triển khai
+${KAFKA_CONTROLLER_THIRD}: tên máy chủ của Controller 3 cần triển khai
+${KAFKA_AVERTISED_BROKER_HOST}: tên máy chủ của Broker triển khai 
+CMD: docker run -d --name broker1 --network my-network -e KAFKA_CLUSTER_ID=Yclv5fzOT8K3UuIfPP31xg -e KAFKA_ID=4 -e KAFKA_CONTROLLER_FIRST=controller1 -e KAFKA_CONTROLLER_SECOND=controller2 -e KAFKA_CONTROLLER_THIRD=controller3 -e KAFKA_ROLE=controller kraft
