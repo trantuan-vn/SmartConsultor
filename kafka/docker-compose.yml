@@ -1,1 +1,70 @@
-"" 
+version: '3'
+services:
+  zookeeper1:
+    image: zookeeper
+    container_name: zookeeper1
+    restart: always
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+    environment:
+      ZOO_MY_ID: 1
+      # Cấu hình server.1 để nhìn thấy chính mình và các node khác
+      ZOO_SERVERS: server.1=zookeeper1:2888:3888 server.2=zookeeper2:2889:3888 server.3=zookeeper3:2890:3888
+    networks:
+      - my-network  
+      
+  zookeeper2:
+    image: zookeeper
+    container_name: zookeeper2
+    restart: always
+    ports:
+      - 2182:2181
+      - 2889:2888
+      - 3889:3888
+    environment:
+      ZOO_MY_ID: 2
+      # Cấu hình server.2 để nhìn thấy chính mình và các node khác
+      ZOO_SERVERS: server.1=zookeeper1:2888:3888 server.2=zookeeper2:2889:3888 server.3=zookeeper3:2890:3888
+    networks:
+      - my-network
+
+  zookeeper3:
+    image: zookeeper
+    container_name: zookeeper3
+    restart: always
+    ports:
+      - 2183:2181
+      - 2890:2888
+      - 3890:3888
+    environment:
+      ZOO_MY_ID: 3
+      # Cấu hình server.3 để nhìn thấy chính mình và các node khác
+      ZOO_SERVERS: server.1=zookeeper1:2888:3888 server.2=zookeeper2:2889:3888 server.3=zookeeper3:2890:3888
+    networks:
+      - my-network
+
+  kafka:
+    image: confluentinc/cp-kafka
+    container_name: kafka
+    restart: always
+    depends_on:
+      - zookeeper1
+      - zookeeper2
+      - zookeeper3
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      # Cấu hình định danh của ZooKeeper để Kafka nhìn thấy ZooKeeper cluster
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper1:2181,zookeeper2:2182,zookeeper3:2183
+      # Cấu hình Kafka nhìn thấy ZooKeeper cluster
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://:9092
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge

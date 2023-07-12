@@ -21,4 +21,29 @@ ${KAFKA_CONTROLLER_FIRST}: tên máy chủ của Controller 1 cần triển khai
 ${KAFKA_CONTROLLER_SECOND}: tên máy chủ của Controller 2 cần triển khai
 ${KAFKA_CONTROLLER_THIRD}: tên máy chủ của Controller 3 cần triển khai
 ${KAFKA_AVERTISED_BROKER_HOST}: tên máy chủ của Broker triển khai 
-CMD: docker run -d --name broker1 --network my-network -e KAFKA_CLUSTER_ID=Yclv5fzOT8K3UuIfPP31xg -e KAFKA_ID=4 -e KAFKA_CONTROLLER_FIRST=controller1 -e KAFKA_CONTROLLER_SECOND=controller2 -e KAFKA_CONTROLLER_THIRD=controller3 -e KAFKA_ROLE=controller kraft
+
+sed -i "s/\${KAFKA_AVERTISED_BROKER_HOST}/$KAFKA_AVERTISED_BROKER_HOST/g" config/kraft/broker.properties;        		\		
+		
+CMD: 
+
+docker run -d --name broker1 --network my-network -e KAFKA_CLUSTER_ID=Yclv5fzOT8K3UuIfPP31xg -e KAFKA_ID=4 -e KAFKA_CONTROLLER_FIRST=controller1 -e KAFKA_CONTROLLER_SECOND=controller2 -e KAFKA_CONTROLLER_THIRD=controller3 -e KAFKA_ROLE=broker -e KAFKA_AVERTISED_BROKER_HOST=broker1 kraft
+docker run -d --name broker2 --network my-network -e KAFKA_CLUSTER_ID=Yclv5fzOT8K3UuIfPP31xg -e KAFKA_ID=5 -e KAFKA_CONTROLLER_FIRST=controller1 -e KAFKA_CONTROLLER_SECOND=controller2 -e KAFKA_CONTROLLER_THIRD=controller3 -e KAFKA_ROLE=broker -e KAFKA_AVERTISED_BROKER_HOST=broker2 kraft
+docker run -d --name broker3 --network my-network -e KAFKA_CLUSTER_ID=Yclv5fzOT8K3UuIfPP31xg -e KAFKA_ID=6 -e KAFKA_CONTROLLER_FIRST=controller1 -e KAFKA_CONTROLLER_SECOND=controller2 -e KAFKA_CONTROLLER_THIRD=controller3 -e KAFKA_ROLE=broker -e KAFKA_AVERTISED_BROKER_HOST=broker3 kraft
+
+
+Su dung
+
+docker run -it --name producer1 --network my-network kraft bash
+
+bin/kafka-topics.sh --create --topic quickstart-events --bootstrap-server broker1:9092
+
+bin/kafka-topics.sh --describe --topic quickstart-events --bootstrap-server broker1:9092
+
+bin/kafka-console-producer.sh --topic quickstart-events --bootstrap-server broker1:9092
+
+
+docker run -it --name consumer1 --network my-network kraft bash
+
+bin/kafka-console-consumer.sh --topic quickstart-events --from-beginning --bootstrap-server broker1:9092
+
+

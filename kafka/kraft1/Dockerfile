@@ -2,7 +2,8 @@
 FROM debian:latest
 
 # Cài đặt các gói phụ thuộc cần thiết
-RUN apt-get update 
+RUN apt-get update && \
+	apt-get install sed
 
 COPY openjdk-20_linux-x64_bin.tar.gz /opt/java/openjdk.tar.gz
 RUN mkdir -p /opt/java/openjdk-20 && \
@@ -32,9 +33,17 @@ COPY broker.properties config/kraft/broker.properties
 
 
 CMD if [ "$KAFKA_ROLE" = "controller" ]; then \
-        bin/kafka-storage.sh format -t $KAFKA_CLUSTER_ID -c config/kraft/controller.properties; \
+		sed -i "s/\${KAFKA_ID}/$KAFKA_ID/g" config/kraft/controller.properties;        \
+		sed -i "s/\${KAFKA_CONTROLLER_FIRST}/$KAFKA_CONTROLLER_FIRST/g" config/kraft/controller.properties;        		\
+		sed -i "s/\${KAFKA_CONTROLLER_SECOND}/$KAFKA_CONTROLLER_SECOND/g" config/kraft/controller.properties ;       	\	
+		sed -i "s/\${KAFKA_CONTROLLER_THIRD}/$KAFKA_CONTROLLER_THIRD/g" config/kraft/controller.properties ;       		\
+		bin/kafka-storage.sh format -t $KAFKA_CLUSTER_ID -c config/kraft/controller.properties; \
         bin/kafka-server-start.sh config/kraft/controller.properties; \
-    elif [ "$ENV_VARIABLE" = "broker" ]; then \
+    elif [ "$KAFKA_ROLE" = "broker" ]; then \
+		sed -i "s/\${KAFKA_ID}/$KAFKA_ID/g" config/kraft/broker.properties;        \
+		sed -i "s/\${KAFKA_CONTROLLER_FIRST}/$KAFKA_CONTROLLER_FIRST/g" config/kraft/broker.properties;        		\
+		sed -i "s/\${KAFKA_CONTROLLER_SECOND}/$KAFKA_CONTROLLER_SECOND/g" config/kraft/broker.properties;        	\	
+		sed -i "s/\${KAFKA_CONTROLLER_THIRD}/$KAFKA_CONTROLLER_THIRD/g" config/kraft/broker.properties;        		\
         bin/kafka-storage.sh format -t $KAFKA_CLUSTER_ID -c config/kraft/broker.properties; \
         bin/kafka-server-start.sh config/kraft/broker.properties; \
     else \

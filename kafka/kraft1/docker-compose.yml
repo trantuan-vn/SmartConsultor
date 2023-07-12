@@ -6,6 +6,7 @@ services:
     restart: always
     environment:
       KAFKA_CLUSTER_ID: Yclv5fzOT8K3UuIfPP31xg
+      KAFKA_ROLE: controller
       KAFKA_ID: 1
       KAFKA_CONTROLLER_FIRST: controller1
       KAFKA_CONTROLLER_SECOND: controller2
@@ -19,6 +20,7 @@ services:
     restart: always
     environment:
       KAFKA_CLUSTER_ID: Yclv5fzOT8K3UuIfPP31xg
+      KAFKA_ROLE: controller
       KAFKA_ID: 2
       KAFKA_CONTROLLER_FIRST: controller1
       KAFKA_CONTROLLER_SECOND: controller2
@@ -32,6 +34,7 @@ services:
     restart: always
     environment:
       KAFKA_CLUSTER_ID: Yclv5fzOT8K3UuIfPP31xg
+      KAFKA_ROLE: controller
       KAFKA_ID: 3
       KAFKA_CONTROLLER_FIRST: controller1
       KAFKA_CONTROLLER_SECOND: controller2
@@ -39,9 +42,9 @@ services:
     networks:
       - my-network  
 
-  broker:
+  broker1:
     image: kraft:latest
-    container_name: broker
+    container_name: broker1
     restart: always
     depends_on:
       - controller1
@@ -49,12 +52,47 @@ services:
       - controller3
     environment:
       KAFKA_CLUSTER_ID: Yclv5fzOT8K3UuIfPP31xg
+      KAFKA_ROLE: broker
+      KAFKA_ID: 4
       KAFKA_CONTROLLER_FIRST: controller1
       KAFKA_CONTROLLER_SECOND: controller2
       KAFKA_CONTROLLER_THIRD: controller3    
+    networks:
+      - my-network
+
+  broker2:
+    image: kraft:latest
+    container_name: broker2
+    restart: always
+    depends_on:
+      - controller1
+      - controller2
+      - controller3
+    environment:
+      KAFKA_CLUSTER_ID: Yclv5fzOT8K3UuIfPP31xg
+      KAFKA_ROLE: broker
+      KAFKA_ID: 5
+      KAFKA_CONTROLLER_FIRST: controller1
+      KAFKA_CONTROLLER_SECOND: controller2
+      KAFKA_CONTROLLER_THIRD: controller3    
+    networks:
+      - my-network
       
-      KAFKA_ID: 4
-      KAFKA_AVERTISED_BROKER_HOST: broker
+  broker3:
+    image: kraft:latest
+    container_name: broker3
+    restart: always
+    depends_on:
+      - controller1
+      - controller2
+      - controller3
+    environment:
+      KAFKA_CLUSTER_ID: Yclv5fzOT8K3UuIfPP31xg
+      KAFKA_ROLE: broker
+      KAFKA_ID: 6
+      KAFKA_CONTROLLER_FIRST: controller1
+      KAFKA_CONTROLLER_SECOND: controller2
+      KAFKA_CONTROLLER_THIRD: controller3    
     networks:
       - my-network
 
