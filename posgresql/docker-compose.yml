@@ -1,0 +1,28 @@
+version: "3"
+services:
+  postgres1:
+    image: postgres
+    volumes:
+      - ./postgres1:/var/lib/postgresql/data
+    ports:
+      - "5432"
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_DB=mydatabase
+      - PGDATA=/var/lib/postgresql/data/pgdata
+  postgres2:
+    image: postgres
+    volumes:
+      - ./postgres2:/var/lib/postgresql/data
+    ports:
+      - "5433"
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_DB=mydatabase
+      - PGDATA=/var/lib/postgresql/data/pgdata
+  pgpool:
+    image: edoburu/pgpool
+    volumes:
+      - ./pgpool:/etc/pgpool2
+    ports:
+      - "5432:5432"

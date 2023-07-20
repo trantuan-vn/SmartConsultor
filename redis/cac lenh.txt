@@ -1,0 +1,17 @@
+redis-cli -c -h localhost -p 7001
+
+Khi truy cập vào Redis Cluster, bạn cần chọn một node Redis để thực hiện truy vấn. Cơ chế của Redis Cluster sẽ tự động chuyển hướng các truy vấn đến node Redis chính và replica. Để thực hiện việc này, Redis Cluster sử dụng một cơ chế gọi là "Hash Slot".
+
+Cơ chế Hash Slot chia dữ liệu thành 16384 khe (từ 0 đến 16383) và ánh xạ các key Redis vào các khe này bằng cách sử dụng hàm hash của key. Mỗi node Redis trong Redis Cluster sẽ được giao quản lý một hoặc nhiều khe, và sẽ trở thành "chủ" (master) cho các khe đó.
+
+Khi một client truy vấn một key Redis, Redis Cluster sẽ sử dụng hàm hash của key để xác định khe tương ứng và node Redis chủ của khe đó. Client sẽ gửi truy vấn đến node Redis chủ để thực hiện. Nếu node Redis chủ không khả dụng, Redis Cluster sẽ tự động chuyển hướng truy vấn đến replica của node đó.
+
+Cơ chế load balancing trong Redis Cluster được thực hiện bằng cách phân chia đồng đều các khe hash vào các node Redis. Mỗi node Redis được giao quản lý một số khe, và công việc phân chia các khe cũng được tự động hoặc có thể được cấu hình.
+
+Khi một node Redis trong Redis Cluster bị lỗi hoặc không khả dụng, Redis Cluster sẽ tự động chuyển các khe của node đó đến các node Redis khác trong cluster. Các replica của các khe bị ảnh hưởng cũng sẽ trở thành master cho khe tương ứng.
+
+Việc load balancing và khả năng chịu lỗi được điều chỉnh tự động trong Redis Cluster để đảm bảo tính sẵn sàng và hiệu suất cao. Khi một node Redis mới được thêm vào Redis Cluster, các khe cũng được phân chia lại một cách tự động để cân bằng tải.
+
+Khi triển khai ứng dụng truy cập vào Redis Cluster, client các Redis như Redisson, Jedis hoặc Spring Data Redis sẽ tự động xử lý việc chọn node Redis và gửi truy vấn đến đúng node mục tiêu. Điều này giúp đơn giản hóa quá trình truy cập vào Redis Cluster và tận dụng lợi ích của cơ chế load balancing tự động trong Redis Cluster.
+
+./create_redis_cluster.sh 6

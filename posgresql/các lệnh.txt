@@ -1,0 +1,20 @@
+psql -h localhost -p 5432 -U postgres
+
+Trong ngữ cảnh của PostgreSQL Cluster và Pgpool, trong kiến trúc client-server, "frontend" đề cập đến các kết nối đến Pgpool từ các ứng dụng client, tức là các ứng dụng muốn truy cập đến cơ sở dữ liệu PostgreSQL. Pgpool hoạt động như một proxy trung gian giữa client và các node PostgreSQL.
+
+Do đó, trong tệp cấu hình `pgpool.conf`, tùy chọn `max_pool` định nghĩa số lượng kết nối tối đa từ backend đến frontend. Điều này có nghĩa là `max_pool` quy định số lượng kết nối tối đa mà Pgpool có thể chấp nhận từ các ứng dụng client (frontend) và kết nối tới các node PostgreSQL (backend). Nếu số lượng kết nối vượt quá giới hạn này, Pgpool sẽ từ chối các kết nối mới cho đến khi một kết nối hiện tại được giải phóng.
+
+Ví dụ: Nếu bạn đặt `max_pool` thành 4, có nghĩa là Pgpool sẽ cho phép tối đa 4 kết nối từ frontend tới các backend PostgreSQL đồng thời. Nếu có nhiều hơn 4 kết nối cố gắng kết nối đến Pgpool, những kết nối thứ 5 trở đi sẽ bị từ chối cho đến khi một kết nối hiện tại được giải phóng.
+
+Lưu ý rằng việc xác định giá trị tối ưu cho `max_pool` phụ thuộc vào yêu cầu cụ thể của ứng dụng của bạn và tài nguyên có sẵn trên hệ thống của bạn. Bạn nên kiểm tra và điều chỉnh giá trị này để đảm bảo hiệu suất và sử dụng tài nguyên tốt nhất cho ứng dụng của mình.
+
+
+Trong một PostgreSQL Cluster, dữ liệu được chia sẻ giữa các node PostgreSQL. Đóng vai trò là một hệ thống quản lý cơ sở dữ liệu phân tán (Distributed Database Management System - DDBMS), các node trong Cluster đồng bộ dữ liệu với nhau để đảm bảo tính nhất quán và độ tin cậy.
+
+Dữ liệu chung trong Cluster PostgreSQL được lưu trữ trên các node của Cluster. Bất kỳ thay đổi nào được thực hiện trên một node cụ thể sẽ được sao chép đến các node khác trong Cluster để đảm bảo rằng dữ liệu được đồng bộ và có sẵn trên tất cả các node. Quá trình sao chép và đồng bộ này thường được xử lý thông qua các kỹ thuật sao chép như Streaming Replication hoặc Logical Replication.
+
+Mỗi node trong Cluster có thể giữ một bộ dữ liệu hoặc một phần của bộ dữ liệu, tùy thuộc vào cấu hình và cách bạn thiết kế Cluster. Trong kiến trúc phân tán, dữ liệu được phân chia thành các phân vùng và các phân vùng này được phân tán trên các node. Các tùy chọn cấu hình, chẳng hạn như số lượng và phân vùng của các bảng, sẽ quyết định cách dữ liệu được phân chia giữa các node.
+
+Khi truy vấn thông tin từ Cluster PostgreSQL, các node sẽ cùng làm việc để tìm kiếm và trả về các kết quả từ các phân vùng dữ liệu nằm trên nhiều node khác nhau. Điều này cho phép Cluster cung cấp khả năng mở rộng theo chiều ngang và tăng cường hiệu suất.
+
+Lưu ý rằng phương pháp lưu trữ và phân phối dữ liệu trong Cluster PostgreSQL có thể thay đổi tùy thuộc vào kiến trúc và cấu hình cụ thể của Cluster, cùng với các công nghệ và công cụ mà bạn sử dụng để quản lý Cluster.
