@@ -1,6 +1,20 @@
+package com.smartconsultor.business.handler;
+
+import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Component;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 @Component
 public class SocketHandler extends TextWebSocketHandler {
@@ -40,7 +54,7 @@ public class SocketHandler extends TextWebSocketHandler {
             // Đẩy tin nhắn vào topic INPUT của Kafka
             kafkaTemplate.send("INPUT", payload);
         }        
-        session.updateLastAccessedTime();
+        //session.updateLastAccessedTime();
     }
 
     @Override
@@ -60,7 +74,7 @@ public class SocketHandler extends TextWebSocketHandler {
             
             if (session != null && session.isOpen() && session.getId().equals(sessionId)) {
                 try {
-                    long lastAccessTimeMillis = session.getLastAccessedTime();
+                    long lastAccessTimeMillis = 1;//session.getLastAccessedTime();
                     long currentTimeMillis = System.currentTimeMillis();
                     if (lastAccessTimeMillis + WEBSOCKET_TIMEOUT < currentTimeMillis) {
                         session.close();

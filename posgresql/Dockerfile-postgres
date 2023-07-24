@@ -1,0 +1,16 @@
+FROM debian:latest
+
+# Cài đặt postgresql
+RUN apt update && \
+    echo 'Y' | apt install postgresql && \
+	sed -i.bak "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" /etc/postgresql/15/main/postgresql.conf
+	
+
+# Thông báo cổng mà postgresql lắng nghe
+EXPOSE 5432
+
+# Chạy lệnh pgpool khi container được khởi chạy
+CMD su - postgres -c '/usr/lib/postgresql/15/bin/postgres -D /etc/postgresql/15/main'
+
+
+
