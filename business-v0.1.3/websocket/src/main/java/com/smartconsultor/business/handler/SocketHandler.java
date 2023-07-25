@@ -16,10 +16,16 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Component
 public class SocketHandler extends TextWebSocketHandler {
 
-    @Value("${spring.websocket.timeout}")
+	private static final Logger logger = LoggerFactory.getLogger(SocketHandler.class);
+    
+	
+	@Value("${spring.websocket.timeout}")
     private long WEBSOCKET_TIMEOUT;    
     
     private RedisTemplate<String, Object> redisTemplate;
@@ -28,21 +34,23 @@ public class SocketHandler extends TextWebSocketHandler {
     
     private ScheduledExecutorService executorService;
 
-    public SocketHandler(RedisTemplate<String, Object> redisTemplate, ChannelTopic topic, KafkaTemplate<String, String> kafkaTemplate) {
+    public SocketHandler(RedisTemplate<String, Object> redisTemplate, ChannelTopic topic, 
+    		KafkaTemplate<String, String> kafkaTemplate) throws Exception {
         this.redisTemplate = redisTemplate;
         this.topic = topic;
         this.kafkaTemplate = kafkaTemplate;
         
         this.executorService = Executors.newScheduledThreadPool(1);
-        
         // Lập lịch kiểm tra và loại bỏ session sau 5 phút timeout
         executorService.scheduleAtFixedRate(this::removeExpiredSessions, WEBSOCKET_TIMEOUT, WEBSOCKET_TIMEOUT, TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        // Lưu trạng thái kết nối vào Redis với thời gian timeout
-        redisTemplate.opsForHash().put("clients", session.getId(), session);
+            // Lưu trạng thái kết nối vào Redis với thời gian timeout
+            redisTemplate.opsForHash().put("clients", session.getId(), session);
+            redisTemplate.opsForHash().put("lastAccessTime", session.getId(), System.currentTimeMillis());
+            logger.info("Connection established with session ID: {}", session.getId());
     }
 
     @Override
@@ -50,20 +58,28 @@ public class SocketHandler extends TextWebSocketHandler {
         String payload=message.getPayload();
         
         if (isHeartbeatMessage(payload)) {
-        } else {
+        } 
+        else if (isLogonMessage(payload)) {
             // Đẩy tin nhắn vào topic INPUT của Kafka
-            kafkaTemplate.send("INPUT", payload);
+            kafkaTemplate.send("logon", payload);        	
+        }
+        else {
+
         }        
-        //session.updateLastAccessedTime();
+        redisTemplate.opsForHash().put("lastAccessTime", session.getId(), System.currentTimeMillis());
+        
+        logger.info("Received message: {} from session ID: {}", payload, session.getId());
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         // Xóa trạng thái kết nối khỏi Redis
         redisTemplate.opsForHash().delete("clients", session.getId());
+        redisTemplate.opsForHash().delete("lastAccessTime", session.getId());
+        logger.info("Connection closed for session ID: {}", session.getId());
     }
     
-    private void removeExpiredSessions() {
+    private void removeExpiredSessions() throws Exception {
         // Lấy danh sách tất cả các session
         Map<Object, Object> sessions = redisTemplate.opsForHash().entries("clients");
         
@@ -73,15 +89,13 @@ public class SocketHandler extends TextWebSocketHandler {
             WebSocketSession session = (WebSocketSession) sessions.get(sessionId);
             
             if (session != null && session.isOpen() && session.getId().equals(sessionId)) {
-                try {
-                    long lastAccessTimeMillis = 1;//session.getLastAccessedTime();
-                    long currentTimeMillis = System.currentTimeMillis();
-                    if (lastAccessTimeMillis + WEBSOCKET_TIMEOUT < currentTimeMillis) {
-                        session.close();
-                        redisTemplate.opsForHash().delete("clients", sessionId);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                long lastAccessTimeMillis = (long) redisTemplate.opsForHash().get("lastAccessTime", session.getId());
+                long currentTimeMillis = System.currentTimeMillis();
+                if (lastAccessTimeMillis + WEBSOCKET_TIMEOUT < currentTimeMillis) {
+                    session.close();
+                    redisTemplate.opsForHash().delete("clients", sessionId);
+                    redisTemplate.opsForHash().delete("lastAccessTime", sessionId);
+                    logger.info("Removed expired session having sessionid: {}", session.getId());                        
                 }
             }
         }
@@ -89,12 +103,18 @@ public class SocketHandler extends TextWebSocketHandler {
 
     private boolean isHeartbeatMessage(String message) {
         // Kiểm tra nội dung tin nhắn để xác định nó có phải là heartbeat hay không
-        // Đây chỉ là một ví dụ đơn giản, bạn có thể điều chỉnh phù hợp với nội dung tin nhắn của mình
         if (message.equals("ping")) {
             return true;
         }
         
         return false;
     }
-    
+    private boolean isLogonMessage(String message) {
+        // Kiểm tra nội dung tin nhắn để xác định nó có phải là heartbeat hay không
+        if (message.equals("logon")) {
+            return true;
+        }
+        
+        return false;
+    }    
 }
