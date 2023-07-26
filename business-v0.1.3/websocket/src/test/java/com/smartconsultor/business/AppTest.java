@@ -4,9 +4,61 @@
 package com.smartconsultor.business;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-import com.smartconsultor.business.App;
+//import static org.junit.jupiter.api.Assertions.*;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.client.WebSocketClient;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.WebSocketSession;
+import com.smartconsultor.business.handler.TestSocketHandler;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+@SpringBootTest
 class AppTest {
+	
+	@Value("${spring.websocket.timeout}")
+    private long WEBSOCKET_TIMEOUT;  
+	
+	@Value("${spring.websocket.servername}")
+    private String SERVER_NAME;    
 
+	@Value("${spring.websocket.port}")
+    private String PORT; 
+
+	@Value("${spring.websocket.prefixes}")
+    private String PREFIXES; 
+	
+	
+	private ScheduledExecutorService scheduler;
+	
+	@Autowired
+	private TestSocketHandler webSocketHandler;	
+	
+	@Test
+    public void testWebSocketClient() throws Exception {
+        String strURL = "ws://" + SERVER_NAME + ":" + PORT + "/" + PREFIXES;
+		WebSocketClient webSocketClient = new StandardWebSocketClient();
+        webSocketClient.doHandshake(webSocketHandler, strURL);
+        // Lập lịch gửi heartbeat mỗi 30 giây + 
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(this::sendHeartbeat, 0, WEBSOCKET_TIMEOUT, TimeUnit.SECONDS);
+    }	
+	
+	private void sendHeartbeat() {
+		WebSocketSession session = webSocketHandler.getSession();	    
+		if (session!=null) {
+	        // Gửi heartbeat
+	        try {
+	            session.sendMessage(new TextMessage("Heartbeat message"));
+	        } catch (Exception e) {
+	            // Xử lý lỗi nếu có
+	        }
+	    }
+	}	
 }

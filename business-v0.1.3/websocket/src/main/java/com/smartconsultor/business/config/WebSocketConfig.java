@@ -1,14 +1,11 @@
 package com.smartconsultor.business.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -29,9 +26,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     
     @Value("${spring.redis.password}")
     private String redisPassword;
-
-    @Autowired
-    private RedisConnectionFactory redisConnectionFactory;
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
@@ -65,10 +59,5 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         template.setConnectionFactory(connectionFactory);
     
         return template;
-    }
-
-    @Bean
-    public ChannelTopic topic() {
-        return new ChannelTopic("websocket-topic");
     }
 }
