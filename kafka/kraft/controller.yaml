@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: controller
+  template:
+    metadata:
+      labels:
+        app: controller
+    spec:
+      containers:
+        - name: controller
+          image: kraft:latest
+          env:
+            - name: KAFKA_CLUSTER_ID
+              value: Yclv5fzOT8K3UuIfPP31xg # bin/kafka-storage.sh random-uuid
+            - name: KAFKA_ROLE
+              value: controller
+          ports:
+            - containerPort: 9093
+              protocol: TCP

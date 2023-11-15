@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: windows-gui
+spec:
+  containers:
+  - name: windows-gui
+    image: mcr.microsoft.com/windows/server:ltsc2022
+    command:
+    - powershell.exe
+    - -command
+    - Start-Process explorer -Wait

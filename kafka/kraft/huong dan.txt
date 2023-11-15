@@ -1,0 +1,14 @@
+A. Yeu cau cac file:
+1. broker.properties
+2. controller.properties
+3. Dockerfile
+4. kafka_2.13-3.5.0.tgz
+5. openjdk-20_linux-x64_bin.tar.tgz
+6. kraft_cluster.yaml
+
+B. Thu tu chay lenh
+1. cd vao thu muc dockerfile, chay lenh: docker build -t kraft .
+2. docker tag kraft:latest tuantahp/kraft:0.2
+3. docker login
+4. docker push tuantahp/kraft:0.2
+5. kubectl apply -f kraft_cluster.yaml

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: broker
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: broker
+  template:
+    metadata:
+      labels:
+        app: broker
+    spec:
+      containers:
+        - name: broker
+          image: kraft:latest
+          env:
+            - name: KAFKA_CLUSTER_ID
+              value: Yclv5fzOT8K3UuIfPP31xg # bin/kafka-storage.sh random-uuid; trung voi controller
+            - name: KAFKA_ROLE
+              value: broker
+          ports:
+            - containerPort: 9092
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: broker-service
+spec:
+  selector:
+    app: broker
+  ports:
+    - protocol: TCP
+      port: 9092
+      targetPort: 9092
+
+

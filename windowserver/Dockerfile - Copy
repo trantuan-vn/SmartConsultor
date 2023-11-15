@@ -1,0 +1,10 @@
+# Sử dụng hình ảnh Windows Server có giao diện đồ họa
+FROM mcr.microsoft.com/windows/server:ltsc2022
+
+# Cài đặt các tính năng và ứng dụng cần thiết
+RUN powershell -Command Install-WindowsFeature -Name RDS-RD-Server
+RUN powershell -Command Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
+RUN powershell -Command Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server' -Name "fSingleSessionPerUser" -Value 1
+#RUN powershell -Command net user admin Hatlen@112023 /add
+#RUN powershell -Command net localgroup "Remote Desktop Users" /add admin
+

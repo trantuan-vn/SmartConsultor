@@ -1,0 +1,43 @@
+lib/
+    app/                          <--- application layer
+        pages/                        <-- pages or screens
+          login/                        <-- some page in the app
+            login_controller.dart         <-- login controller extends `Controller`
+            login_presenter.dart          <-- login presenter extends `Presenter`
+            login_view.dart               <-- login view, 2 classes extend `View` and `ViewState` resp.
+        widgets/                      <-- custom widgets
+        utils/                        <-- utility functions/classes/constants
+        navigator.dart                <-- optional application navigator
+    data/                         <--- data layer
+        repositories/                 <-- repositories (retrieve data, heavy processing etc..)
+          data_auth_repo.dart           <-- example repo: handles all authentication
+        helpers/                      <-- any helpers e.g. http helper
+        constants.dart                <-- constants such as API keys, routes, urls, etc..
+    device/                       <--- device layer
+        repositories/                 <--- repositories that communicate with the platform e.g. GPS
+        utils/                        <--- any utility classes/functions
+    domain/                       <--- domain layer (business and enterprise) PURE DART
+        entities/                   <--- enterprise entities (core classes of the app)
+          user.dart                   <-- example entity
+          manager.dart                <-- example entity
+        usecases/                   <--- business processes e.g. Login, Logout, GetUser, etc..
+          login_usecase.dart          <-- example usecase extends `UseCase` or `CompletableUseCase`
+        repositories/               <--- abstract classes that define functionality for data and device layers
+    main.dart                     <--- entry point
+
+
+
+Theo biểu đồ luồng tương tác, chúng ta có một yêu cầu HTTP đến các Controller. Controller sau đó sẽ:
+
+1. Phân tích Request;
+2. Tạo một Request Model với các dữ liệu có liên quan;
+3. Execute một method trong Interactor (đã được đưa (inject) vào Controller bằng cách sử dụng interface của Interactor là Boundary), chuyển nó cho Request Model;
+4. Interactor sẽ:
+5. Sử dụng implementation của Entity Gateway (được đưa vào Interactor bằng cách sử dụng Entity Gateway Interface) để tìm các Entities liên quan;
+	5.1 Phối hợp các tương tác giữa các Entities;
+	5.2 Tạo Response Model với kết quả dữ liệu trả về;
+	5.3 Tạo ra Presenter chứa Response Model;
+	5.4 Trả lại Presenter cho Controller;
+6. Dùng Presenter để tạo ra một ViewModel;
+7. Bind ViewModel với View;
+8. Trả View về cho Client.

@@ -1,0 +1,20 @@
+rabbitmqadmin declare exchange name=test type=topic
+rabbitmqadmin list exchanges
+rabbitmqadmin declare queue name=test
+rabbitmqadmin list queues
+rabbitmqadmin declare binding source="test" destination_type="queue" destination="test" routing_key="#"
+
+rabbitmqadmin publish exchange=test routing_key=1 payload=1
+rabbitmqadmin get queue=test count=1
+
+
+-- create cluster 3 node
+--node2 va node 3
+rabbitmqctl stop_app
+rabbitmqctl reset
+rabbitmqctl join_cluster rabbit@rabbit1
+rabbitmqctl start_app
+-- check cluster
+rabbitmqctl cluster_status
+rabbitmq-diagnostics check_running
+rabbitmq-diagnostics ping

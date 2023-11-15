@@ -1,0 +1,98 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: statefulset-reader-role
+rules:
+  - apiGroups: ["apps"]
+    verbs: ["get", "list"]
+    resources: ["statefulsets"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: statefulset-reader-rolebinding
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role # this must be Role or ClusterRole
+  name: statefulset-reader-role # this must match the name of the Role or ClusterRole you wish to bind to
+subjects:
+  - kind: ServiceAccount # Kind is User or ServiceAccount
+    name: default # name of the SA
+    namespace: default
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: controller
+  template:
+    metadata:
+      labels:
+        app: controller
+    spec:
+      containers:
+        - name: controller
+          image: tuantahp/kraft:0.2
+          env:
+            - name: KAFKA_CLUSTER_ID
+              value: Yclv5fzOT8K3UuIfPP31xg # bin/kafka-storage.sh random-uuid
+            - name: KAFKA_ROLE
+              value: controller
+          ports:
+            - containerPort: 9093
+              protocol: TCP
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: broker
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: broker
+  template:
+    metadata:
+      labels:
+        app: broker
+    spec:
+      containers:
+        - name: broker
+          image: tuantahp/kraft:0.2
+          env:
+            - name: KAFKA_CLUSTER_ID
+              value: Yclv5fzOT8K3UuIfPP31xg # bin/kafka-storage.sh random-uuid; trung voi controller
+            - name: KAFKA_ROLE
+              value: broker
+          ports:
+            - containerPort: 9092
+              protocol: TCP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: broker-service
+spec:
+  selector:
+    app: broker
+  ports:
+    - protocol: TCP
+      port: 9092
+      targetPort: 9092
+
+
+

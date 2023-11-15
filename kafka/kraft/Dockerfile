@@ -3,7 +3,9 @@ FROM debian:latest
 
 # Cài đặt các gói phụ thuộc cần thiết
 RUN apt-get update && \
-	apt-get install sed
+	apt-get install -y sed && \
+	apt-get install -y curl && \	
+	apt-get install -y jq
 
 COPY openjdk-20_linux-x64_bin.tar.gz /opt/java/openjdk.tar.gz
 RUN mkdir -p /opt/java/openjdk-20 && \
@@ -32,19 +34,23 @@ COPY controller.properties config/kraft/controller.properties
 COPY broker.properties config/kraft/broker.properties
 
 
-CMD if [ "$KAFKA_ROLE" = "controller" ]; then \
-		sed -i "s/\${KAFKA_ID}/$KAFKA_ID/g" config/kraft/controller.properties;        \
-		sed -i "s/\${KAFKA_CONTROLLER_FIRST}/$KAFKA_CONTROLLER_FIRST/g" config/kraft/controller.properties;        		\
-		sed -i "s/\${KAFKA_CONTROLLER_SECOND}/$KAFKA_CONTROLLER_SECOND/g" config/kraft/controller.properties ;       	\	
-		sed -i "s/\${KAFKA_CONTROLLER_THIRD}/$KAFKA_CONTROLLER_THIRD/g" config/kraft/controller.properties ;       		\
-		bin/kafka-storage.sh format -t $KAFKA_CLUSTER_ID -c config/kraft/controller.properties; \
+CMD TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token) && \
+	CONTRLOLER_REPLICAS=$(curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer $TOKEN" https://kubernetes/apis/apps/v1/namespaces/default/statefulsets | jq -r '.items[] | select(.metadata.name == "controller") | .spec.replicas') && \
+	VOTERS="1@controller-0:9093" && \
+    for i in $(seq 2 $CONTRLOLER_REPLICAS); do \
+        VOTERS="${VOTERS}, ${i}@controller-$((i-1)):9093"; \
+    done && \
+    if [ "$KAFKA_ROLE" = "controller" ]; then \
+        KAFKA_ID=$(( $(echo $(uname -n) | grep -o '[0-9]\+') + 1 )); \
+        sed -i "s/\${KAFKA_ID}/$KAFKA_ID/g" config/kraft/controller.properties && \
+        sed -i "s/\${VOTERS}/$VOTERS/g" config/kraft/controller.properties && \
+        bin/kafka-storage.sh format -t "$KAFKA_CLUSTER_ID" -c config/kraft/controller.properties && \
         bin/kafka-server-start.sh config/kraft/controller.properties; \
     elif [ "$KAFKA_ROLE" = "broker" ]; then \
-		sed -i "s/\${KAFKA_ID}/$KAFKA_ID/g" config/kraft/broker.properties;        \
-		sed -i "s/\${KAFKA_CONTROLLER_FIRST}/$KAFKA_CONTROLLER_FIRST/g" config/kraft/broker.properties;        		\
-		sed -i "s/\${KAFKA_CONTROLLER_SECOND}/$KAFKA_CONTROLLER_SECOND/g" config/kraft/broker.properties;        	\	
-		sed -i "s/\${KAFKA_CONTROLLER_THIRD}/$KAFKA_CONTROLLER_THIRD/g" config/kraft/broker.properties;        		\
-        bin/kafka-storage.sh format -t $KAFKA_CLUSTER_ID -c config/kraft/broker.properties; \
+        KAFKA_ID=$(( 10 + $(echo $(uname -n) | grep -o '[0-9]\+') + 1 )); \
+        sed -i "s/\${KAFKA_ID}/$KAFKA_ID/g" config/kraft/broker.properties && \
+        sed -i "s/\${VOTERS}/$VOTERS/g" config/kraft/broker.properties && \
+        bin/kafka-storage.sh format -t "$KAFKA_CLUSTER_ID" -c config/kraft/broker.properties && \
         bin/kafka-server-start.sh config/kraft/broker.properties; \
     else \
         exit 0; \

@@ -1,0 +1,765 @@
+* 
+* ==> Audit <==
+* |-----------|-----------------------------------------------------|----------|--------------|---------|---------------------|---------------------|
+|  Command  |                        Args                         | Profile  |     User     | Version |     Start Time      |      End Time       |
+|-----------|-----------------------------------------------------|----------|--------------|---------|---------------------|---------------------|
+| addons    | enable dashboard                                    | minikube | TUANTA\tuant | v1.30.1 | 30 Aug 23 15:35 +07 | 30 Aug 23 15:35 +07 |
+| addons    | list                                                | minikube | TUANTA\tuant | v1.30.1 | 30 Aug 23 15:35 +07 | 30 Aug 23 15:35 +07 |
+| dashboard |                                                     | minikube | TUANTA\tuant | v1.30.1 | 30 Aug 23 15:35 +07 |                     |
+| dashboard | --url=true                                          | minikube | TUANTA\tuant | v1.30.1 | 30 Aug 23 15:40 +07 |                     |
+| addons    | list                                                | minikube | TUANTA\tuant | v1.30.1 | 30 Aug 23 15:46 +07 | 30 Aug 23 15:46 +07 |
+| addons    | enable istio                                        | minikube | TUANTA\tuant | v1.30.1 | 30 Aug 23 16:13 +07 |                     |
+| addons    | list                                                | minikube | TUANTA\tuant | v1.30.1 | 30 Aug 23 16:14 +07 | 30 Aug 23 16:14 +07 |
+| start     |                                                     | minikube | TUANTA\tuant | v1.30.1 | 30 Aug 23 16:54 +07 | 30 Aug 23 16:54 +07 |
+| addons    | list                                                | minikube | TUANTA\tuant | v1.30.1 | 30 Aug 23 16:55 +07 | 30 Aug 23 16:55 +07 |
+| addons    | enable istio                                        | minikube | TUANTA\tuant | v1.30.1 | 30 Aug 23 16:55 +07 |                     |
+| tunnel    |                                                     | minikube | TUANTA\tuant | v1.30.1 | 30 Aug 23 17:22 +07 |                     |
+| dashboard | kiali                                               | minikube | TUANTA\tuant | v1.30.1 | 30 Aug 23 17:27 +07 |                     |
+| dashboard |                                                     | minikube | TUANTA\tuant | v1.30.1 | 30 Aug 23 17:31 +07 |                     |
+| dashboard |                                                     | minikube | TUANTA\tuant | v1.30.1 | 30 Aug 23 19:04 +07 |                     |
+| dashboard | --url=true                                          | minikube | TUANTA\tuant | v1.30.1 | 30 Aug 23 19:04 +07 |                     |
+| start     | --cni=flannel --driver=hyperv                       | minikube | TUANTA\tuant | v1.30.1 | 10 Nov 23 12:11 +07 |                     |
+|           | --kubernetes-version=v1.22.3                        |          |              |         |                     |                     |
+|           | --extra-config=kubelet.container-runtime=containerd |          |              |         |                     |                     |
+|           | --network-plugin=cni                                |          |              |         |                     |                     |
+| start     | --cni=flannel --driver=hyperv                       | minikube | TUANTA\tuant | v1.30.1 | 10 Nov 23 12:11 +07 |                     |
+|           | --kubernetes-version=v1.22.3                        |          |              |         |                     |                     |
+|           | --extra-config=kubelet.container-runtime=containerd |          |              |         |                     |                     |
+|           | --network-plugin=cni                                |          |              |         |                     |                     |
+| delete    |                                                     | minikube | TUANTA\tuant | v1.30.1 | 10 Nov 23 12:12 +07 | 10 Nov 23 12:12 +07 |
+| start     | --cni=flannel --driver=hyperv                       | minikube | TUANTA\tuant | v1.30.1 | 10 Nov 23 12:12 +07 |                     |
+|           | --kubernetes-version=v1.22.3                        |          |              |         |                     |                     |
+|           | --extra-config=kubelet.container-runtime=containerd |          |              |         |                     |                     |
+|           | --network-plugin=cni                                |          |              |         |                     |                     |
+| start     | --cni=flannel --driver=hyperv                       | minikube | TUANTA\tuant | v1.30.1 | 10 Nov 23 12:12 +07 |                     |
+|           | --kubernetes-version=v1.22.3                        |          |              |         |                     |                     |
+|           | --extra-config=kubelet.container-runtime=containerd |          |              |         |                     |                     |
+|           | --network-plugin=cni                                |          |              |         |                     |                     |
+| start     | --cni=flannel --driver=hyperv                       | minikube | TUANTA\tuant | v1.30.1 | 10 Nov 23 12:38 +07 |                     |
+|           | --kubernetes-version=v1.22.3                        |          |              |         |                     |                     |
+|           | --extra-config=kubelet.container-runtime=containerd |          |              |         |                     |                     |
+|           | --network-plugin=cni                                |          |              |         |                     |                     |
+| delete    |                                                     | minikube | TUANTA\tuant | v1.30.1 | 10 Nov 23 12:39 +07 | 10 Nov 23 12:39 +07 |
+| start     | --cni=flannel --driver=hyperv                       | minikube | TUANTA\tuant | v1.30.1 | 10 Nov 23 12:39 +07 | 10 Nov 23 12:40 +07 |
+|           | --kubernetes-version=v1.22.3                        |          |              |         |                     |                     |
+|           | --extra-config=kubelet.container-runtime=containerd |          |              |         |                     |                     |
+|           | --network-plugin=cni                                |          |              |         |                     |                     |
+| ip        |                                                     | minikube | TUANTA\tuant | v1.30.1 | 10 Nov 23 12:42 +07 | 10 Nov 23 12:42 +07 |
+| stop      |                                                     | minikube | TUANTA\tuant | v1.30.1 | 10 Nov 23 15:10 +07 | 10 Nov 23 15:11 +07 |
+| delete    |                                                     | minikube | TUANTA\tuant | v1.30.1 | 10 Nov 23 15:11 +07 | 10 Nov 23 15:11 +07 |
+| start     | --cni=flannel --driver=hyperv                       | minikube | TUANTA\tuant | v1.30.1 | 10 Nov 23 15:14 +07 | 10 Nov 23 15:15 +07 |
+|           | --kubernetes-version=v1.22.3                        |          |              |         |                     |                     |
+|           | --extra-config=kubelet.container-runtime=containerd |          |              |         |                     |                     |
+|           | --network-plugin=cni                                |          |              |         |                     |                     |
+| delete    |                                                     | minikube | TUANTA\tuant | v1.30.1 | 10 Nov 23 15:33 +07 | 10 Nov 23 15:33 +07 |
+| start     | --cni=flannel --driver=hyperv                       | minikube | TUANTA\tuant | v1.30.1 | 10 Nov 23 15:33 +07 | 10 Nov 23 15:35 +07 |
+|           | --kubernetes-version=v1.22.3                        |          |              |         |                     |                     |
+|           | --extra-config=kubelet.container-runtime=containerd |          |              |         |                     |                     |
+|           | --network-plugin=cni                                |          |              |         |                     |                     |
+| delete    |                                                     | minikube | TUANTA\tuant | v1.30.1 | 10 Nov 23 15:39 +07 | 10 Nov 23 15:40 +07 |
+| start     | --cni=flannel --driver=hyperv                       | minikube | TUANTA\tuant | v1.30.1 | 10 Nov 23 15:45 +07 |                     |
+|           | --extra-config=kubelet.container-runtime=containerd |          |              |         |                     |                     |
+|           | --network-plugin=cni                                |          |              |         |                     |                     |
+| delete    |                                                     | minikube | TUANTA\tuant | v1.30.1 | 10 Nov 23 15:50 +07 | 10 Nov 23 15:50 +07 |
+| start     |                                                     | minikube | TUANTA\tuant | v1.30.1 | 10 Nov 23 15:54 +07 | 10 Nov 23 15:55 +07 |
+| ssh       |                                                     | minikube | TUANTA\tuant | v1.30.1 | 13 Nov 23 11:57 +07 | 13 Nov 23 11:59 +07 |
+| stop      |                                                     | minikube | TUANTA\tuant | v1.30.1 | 13 Nov 23 15:55 +07 | 13 Nov 23 15:55 +07 |
+| delete    |                                                     | minikube | TUANTA\tuant | v1.30.1 | 13 Nov 23 15:55 +07 | 13 Nov 23 15:55 +07 |
+| start     | --driver=hyperv                                     | minikube | TUANTA\tuant | v1.30.1 | 13 Nov 23 15:55 +07 | 13 Nov 23 15:56 +07 |
+| ssh       |                                                     | minikube | TUANTA\tuant | v1.30.1 | 13 Nov 23 16:01 +07 |                     |
+| delete    |                                                     | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 08:42 +07 |                     |
+| delete    |                                                     | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 08:43 +07 |                     |
+| start     | --driver=hyperv                                     | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 08:43 +07 |                     |
+| start     | --driver=hyperv                                     | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 08:48 +07 |                     |
+| delete    |                                                     | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 08:48 +07 |                     |
+| stop      |                                                     | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 08:49 +07 |                     |
+| delete    |                                                     | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 08:49 +07 |                     |
+| delete    |                                                     | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 08:53 +07 | 14 Nov 23 08:53 +07 |
+| start     | --driver=hyperv                                     | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 08:53 +07 | 14 Nov 23 08:54 +07 |
+| ssh       |                                                     | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 09:00 +07 | 14 Nov 23 09:04 +07 |
+| delete    |                                                     | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 09:04 +07 | 14 Nov 23 09:04 +07 |
+| delete    |                                                     | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 09:05 +07 | 14 Nov 23 09:05 +07 |
+| start     | --hyperv-virtual-switch                             | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 09:05 +07 |                     |
+|           | MinikubeSwitch                                      |          |              |         |                     |                     |
+| config    | set driver hyperv                                   | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 09:06 +07 | 14 Nov 23 09:06 +07 |
+| delete    |                                                     | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 09:06 +07 | 14 Nov 23 09:06 +07 |
+| config    | set driver hyperv                                   | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 09:06 +07 | 14 Nov 23 09:06 +07 |
+| start     | --hyperv-virtual-switch                             | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 09:06 +07 |                     |
+|           | MinikubeSwitch                                      |          |              |         |                     |                     |
+| start     | --hyperv-virtual-switch                             | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 09:08 +07 | 14 Nov 23 09:09 +07 |
+|           | MinikubeSwitch                                      |          |              |         |                     |                     |
+| ssh       |                                                     | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 09:09 +07 |                     |
+| ssh       |                                                     | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 09:12 +07 |                     |
+| delete    |                                                     | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 09:13 +07 | 14 Nov 23 09:13 +07 |
+| start     | --driver=hyperv                                     | minikube | TUANTA\tuant | v1.30.1 | 14 Nov 23 09:14 +07 |                     |
+|           | --hyperv-virtual-switch                             |          |              |         |                     |                     |
+|           | MinikubeSwitch                                      |          |              |         |                     |                     |
+|-----------|-----------------------------------------------------|----------|--------------|---------|---------------------|---------------------|
+
+* 
+* ==> Last Start <==
+* Log file created at: 2023/11/14 09:14:05
+Running on machine: tuanta
+Binary: Built with gc go1.20.2 for windows/amd64
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I1114 09:14:05.522493    1136 out.go:296] Setting OutFile to fd 100 ...
+I1114 09:14:05.523492    1136 out.go:343] TERM=,COLORTERM=, which probably does not support color
+I1114 09:14:05.523492    1136 out.go:309] Setting ErrFile to fd 104...
+I1114 09:14:05.523492    1136 out.go:343] TERM=,COLORTERM=, which probably does not support color
+I1114 09:14:05.541332    1136 out.go:303] Setting JSON to false
+I1114 09:14:05.544565    1136 start.go:125] hostinfo: {"hostname":"tuanta","uptime":1715,"bootTime":1699926330,"procs":250,"os":"windows","platform":"Microsoft Windows 11 Pro","platformFamily":"Standalone Workstation","platformVersion":"10.0.22621.1413 Build 22621.1413","kernelVersion":"10.0.22621.1413 Build 22621.1413","kernelArch":"x86_64","virtualizationSystem":"","virtualizationRole":"","hostId":"6c86b4fb-ac57-447f-869c-e6c6f5751f83"}
+W1114 09:14:05.545111    1136 start.go:133] gopshost.Virtualization returned error: not implemented yet
+I1114 09:14:05.546669    1136 out.go:177] * minikube v1.30.1 on Microsoft Windows 11 Pro 10.0.22621.1413 Build 22621.1413
+I1114 09:14:05.548773    1136 notify.go:220] Checking for updates...
+I1114 09:14:05.549379    1136 driver.go:375] Setting default libvirt URI to qemu:///system
+I1114 09:14:06.561728    1136 out.go:177] * Using the hyperv driver based on user configuration
+I1114 09:14:06.563808    1136 start.go:295] selected driver: hyperv
+I1114 09:14:06.563808    1136 start.go:870] validating driver "hyperv" against <nil>
+I1114 09:14:06.563808    1136 start.go:881] status for hyperv: {Installed:true Healthy:true Running:false NeedsImprovement:false Error:<nil> Reason: Fix: Doc: Version:}
+I1114 09:14:06.563808    1136 start_flags.go:305] no existing cluster config was found, will generate one from the flags 
+I1114 09:14:06.588120    1136 start_flags.go:386] Using suggested 4000MB memory alloc based on sys=16160MB, container=0MB
+I1114 09:14:06.588639    1136 start_flags.go:901] Wait components to verify : map[apiserver:true system_pods:true]
+I1114 09:14:06.588639    1136 cni.go:84] Creating CNI manager for ""
+I1114 09:14:06.588639    1136 cni.go:157] "hyperv" driver + "docker" container runtime found on kubernetes v1.24+, recommending bridge
+I1114 09:14:06.588639    1136 start_flags.go:314] Found "bridge CNI" CNI - setting NetworkPlugin=cni
+I1114 09:14:06.588639    1136 start_flags.go:319] config:
+{Name:minikube KeepContext:false EmbedCerts:false MinikubeISO: KicBaseImage:gcr.io/k8s-minikube/kicbase:v0.0.39@sha256:bf2d9f1e9d837d8deea073611d2605405b6be904647d97ebd9b12045ddfe1106 Memory:4000 CPUs:2 DiskSize:20000 VMDriver: Driver:hyperv HyperkitVpnKitSock: HyperkitVSockPorts:[] DockerEnv:[] ContainerVolumeMounts:[] InsecureRegistry:[] RegistryMirror:[] HostOnlyCIDR:192.168.59.1/24 HypervVirtualSwitch:MinikubeSwitch HypervUseExternalSwitch:false HypervExternalAdapter: KVMNetwork:default KVMQemuURI:qemu:///system KVMGPU:false KVMHidden:false KVMNUMACount:1 APIServerPort:0 DockerOpt:[] DisableDriverMounts:false NFSShare:[] NFSSharesRoot:/nfsshares UUID: NoVTXCheck:false DNSProxy:false HostDNSResolver:true HostOnlyNicType:virtio NatNicType:virtio SSHIPAddress: SSHUser:root SSHKey: SSHPort:22 KubernetesConfig:{KubernetesVersion:v1.26.3 ClusterName:minikube Namespace:default APIServerName:minikubeCA APIServerNames:[] APIServerIPs:[] DNSDomain:cluster.local ContainerRuntime:docker CRISocket: NetworkPlugin:cni FeatureGates: ServiceCIDR:10.96.0.0/12 ImageRepository: LoadBalancerStartIP: LoadBalancerEndIP: CustomIngressCert: RegistryAliases: ExtraOptions:[] ShouldLoadCachedImages:true EnableDefaultCNI:false CNI: NodeIP: NodePort:8443 NodeName:} Nodes:[] Addons:map[] CustomAddonImages:map[] CustomAddonRegistries:map[] VerifyComponents:map[apiserver:true system_pods:true] StartHostTimeout:6m0s ScheduledStop:<nil> ExposedPorts:[] ListenAddress: Network: Subnet: MultiNodeRequested:false ExtraDisks:0 CertExpiration:26280h0m0s Mount:false MountString:C:\Users\tuant:/minikube-host Mount9PVersion:9p2000.L MountGID:docker MountIP: MountMSize:262144 MountOptions:[] MountPort:0 MountType:9p MountUID:docker BinaryMirror: DisableOptimizations:false DisableMetrics:false CustomQemuFirmwarePath: SocketVMnetClientPath: SocketVMnetPath: StaticIP:}
+I1114 09:14:06.588639    1136 iso.go:125] acquiring lock: {Name:mkf9364cd6e3ffa3316cd4986b39565bc5da06e2 Clock:{} Delay:500ms Timeout:10m0s Cancel:<nil>}
+I1114 09:14:06.591263    1136 out.go:177] * Starting control plane node minikube in cluster minikube
+I1114 09:14:06.592318    1136 preload.go:132] Checking if preload exists for k8s version v1.26.3 and runtime docker
+I1114 09:14:06.592318    1136 preload.go:148] Found local preload: C:\Users\tuant\.minikube\cache\preloaded-tarball\preloaded-images-k8s-v18-v1.26.3-docker-overlay2-amd64.tar.lz4
+I1114 09:14:06.592318    1136 cache.go:57] Caching tarball of preloaded images
+I1114 09:14:06.592318    1136 preload.go:174] Found C:\Users\tuant\.minikube\cache\preloaded-tarball\preloaded-images-k8s-v18-v1.26.3-docker-overlay2-amd64.tar.lz4 in cache, skipping download
+I1114 09:14:06.592856    1136 cache.go:60] Finished verifying existence of preloaded tar for  v1.26.3 on docker
+I1114 09:14:06.592856    1136 profile.go:148] Saving config to C:\Users\tuant\.minikube\profiles\minikube\config.json ...
+I1114 09:14:06.592856    1136 lock.go:35] WriteFile acquiring C:\Users\tuant\.minikube\profiles\minikube\config.json: {Name:mk4d4ff8d82833fb78f1b170aedce81b918dfcc4 Clock:{} Delay:500ms Timeout:1m0s Cancel:<nil>}
+I1114 09:14:06.595418    1136 cache.go:193] Successfully downloaded all kic artifacts
+I1114 09:14:06.595418    1136 start.go:364] acquiring machines lock for minikube: {Name:mkce22c8be2be3933e43bac199807d3d7a63c0eb Clock:{} Delay:500ms Timeout:13m0s Cancel:<nil>}
+I1114 09:14:06.595418    1136 start.go:368] acquired machines lock for "minikube" in 0s
+I1114 09:14:06.595968    1136 start.go:93] Provisioning new machine with config: &{Name:minikube KeepContext:false EmbedCerts:false MinikubeISO:https://storage.googleapis.com/minikube/iso/minikube-v1.30.1-amd64.iso KicBaseImage:gcr.io/k8s-minikube/kicbase:v0.0.39@sha256:bf2d9f1e9d837d8deea073611d2605405b6be904647d97ebd9b12045ddfe1106 Memory:4000 CPUs:2 DiskSize:20000 VMDriver: Driver:hyperv HyperkitVpnKitSock: HyperkitVSockPorts:[] DockerEnv:[] ContainerVolumeMounts:[] InsecureRegistry:[] RegistryMirror:[] HostOnlyCIDR:192.168.59.1/24 HypervVirtualSwitch:MinikubeSwitch HypervUseExternalSwitch:false HypervExternalAdapter: KVMNetwork:default KVMQemuURI:qemu:///system KVMGPU:false KVMHidden:false KVMNUMACount:1 APIServerPort:0 DockerOpt:[] DisableDriverMounts:false NFSShare:[] NFSSharesRoot:/nfsshares UUID: NoVTXCheck:false DNSProxy:false HostDNSResolver:true HostOnlyNicType:virtio NatNicType:virtio SSHIPAddress: SSHUser:root SSHKey: SSHPort:22 KubernetesConfig:{KubernetesVersion:v1.26.3 ClusterName:minikube Namespace:default APIServerName:minikubeCA APIServerNames:[] APIServerIPs:[] DNSDomain:cluster.local ContainerRuntime:docker CRISocket: NetworkPlugin:cni FeatureGates: ServiceCIDR:10.96.0.0/12 ImageRepository: LoadBalancerStartIP: LoadBalancerEndIP: CustomIngressCert: RegistryAliases: ExtraOptions:[] ShouldLoadCachedImages:true EnableDefaultCNI:false CNI: NodeIP: NodePort:8443 NodeName:} Nodes:[{Name: IP: Port:8443 KubernetesVersion:v1.26.3 ContainerRuntime:docker ControlPlane:true Worker:true}] Addons:map[] CustomAddonImages:map[] CustomAddonRegistries:map[] VerifyComponents:map[apiserver:true system_pods:true] StartHostTimeout:6m0s ScheduledStop:<nil> ExposedPorts:[] ListenAddress: Network: Subnet: MultiNodeRequested:false ExtraDisks:0 CertExpiration:26280h0m0s Mount:false MountString:C:\Users\tuant:/minikube-host Mount9PVersion:9p2000.L MountGID:docker MountIP: MountMSize:262144 MountOptions:[] MountPort:0 MountType:9p MountUID:docker BinaryMirror: DisableOptimizations:false DisableMetrics:false CustomQemuFirmwarePath: SocketVMnetClientPath: SocketVMnetPath: StaticIP:} &{Name: IP: Port:8443 KubernetesVersion:v1.26.3 ContainerRuntime:docker ControlPlane:true Worker:true}
+I1114 09:14:06.595968    1136 start.go:125] createHost starting for "" (driver="hyperv")
+I1114 09:14:06.598086    1136 out.go:204] * Creating hyperv VM (CPUs=2, Memory=4000MB, Disk=20000MB) ...
+I1114 09:14:06.598086    1136 start.go:159] libmachine.API.Create for "minikube" (driver="hyperv")
+I1114 09:14:06.598086    1136 client.go:168] LocalClient.Create starting
+I1114 09:14:06.598597    1136 main.go:141] libmachine: Reading certificate data from C:\Users\tuant\.minikube\certs\ca.pem
+I1114 09:14:06.598597    1136 main.go:141] libmachine: Decoding PEM data...
+I1114 09:14:06.598597    1136 main.go:141] libmachine: Parsing certificate...
+I1114 09:14:06.598597    1136 main.go:141] libmachine: Reading certificate data from C:\Users\tuant\.minikube\certs\cert.pem
+I1114 09:14:06.599109    1136 main.go:141] libmachine: Decoding PEM data...
+I1114 09:14:06.599109    1136 main.go:141] libmachine: Parsing certificate...
+I1114 09:14:06.599109    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive @(Get-Module -ListAvailable hyper-v).Name | Get-Unique
+I1114 09:14:06.897758    1136 main.go:141] libmachine: [stdout =====>] : Hyper-V
+
+I1114 09:14:06.897758    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:06.897758    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive @([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(([System.Security.Principal.SecurityIdentifier]::new("S-1-5-32-578")))
+I1114 09:14:07.272277    1136 main.go:141] libmachine: [stdout =====>] : False
+
+I1114 09:14:07.272277    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:07.272277    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive @([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
+I1114 09:14:07.585058    1136 main.go:141] libmachine: [stdout =====>] : True
+
+I1114 09:14:07.585058    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:07.585058    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive [Console]::OutputEncoding = [Text.Encoding]::UTF8; ConvertTo-Json @(Hyper-V\Get-VMSwitch|Select Id, Name, SwitchType|Where-Object {$_.Name -eq 'MinikubeSwitch'}|Sort-Object -Property SwitchType -Descending)
+I1114 09:14:08.675540    1136 main.go:141] libmachine: [stdout =====>] : [
+    {
+        "Id":  "a4710f5b-a98a-4101-ab47-804a0fd8ceff",
+        "Name":  "MinikubeSwitch",
+        "SwitchType":  2
+    }
+]
+
+I1114 09:14:08.675824    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:08.680317    1136 main.go:141] libmachine: Downloading C:\Users\tuant\.minikube\cache\boot2docker.iso from file://C:/Users/tuant/.minikube/cache/iso/amd64/minikube-v1.30.1-amd64.iso...
+I1114 09:14:08.873067    1136 main.go:141] libmachine: Creating SSH key...
+I1114 09:14:09.090702    1136 main.go:141] libmachine: Creating VM...
+I1114 09:14:09.090702    1136 main.go:141] libmachine: Using switch "MinikubeSwitch"
+I1114 09:14:09.090702    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive @([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
+I1114 09:14:09.468248    1136 main.go:141] libmachine: [stdout =====>] : True
+
+I1114 09:14:09.468248    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:09.468248    1136 main.go:141] libmachine: Creating VHD
+I1114 09:14:09.468248    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive Hyper-V\New-VHD -Path 'C:\Users\tuant\.minikube\machines\minikube\fixed.vhd' -SizeBytes 10MB -Fixed
+I1114 09:14:10.920261    1136 main.go:141] libmachine: [stdout =====>] : 
+
+ComputerName            : TUANTA
+Path                    : C:\Users\tuant\.minikube\machines\minikube\fixed.vhd
+VhdFormat               : VHD
+VhdType                 : Fixed
+FileSize                : 10486272
+Size                    : 10485760
+MinimumSize             : 
+LogicalSectorSize       : 512
+PhysicalSectorSize      : 512
+BlockSize               : 0
+ParentPath              : 
+DiskIdentifier          : DAA0698B-418C-4A04-8BA7-35648A07E26B
+FragmentationPercentage : 0
+Alignment               : 1
+Attached                : False
+DiskNumber              : 
+IsPMEMCompatible        : False
+AddressAbstractionType  : None
+Number                  : 
+
+
+
+
+I1114 09:14:10.920261    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:10.920261    1136 main.go:141] libmachine: Writing magic tar header
+I1114 09:14:10.920407    1136 main.go:141] libmachine: Writing SSH key tar header
+I1114 09:14:10.927256    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive Hyper-V\Convert-VHD -Path 'C:\Users\tuant\.minikube\machines\minikube\fixed.vhd' -DestinationPath 'C:\Users\tuant\.minikube\machines\minikube\disk.vhd' -VHDType Dynamic -DeleteSource
+I1114 09:14:12.412221    1136 main.go:141] libmachine: [stdout =====>] : 
+I1114 09:14:12.412221    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:12.412221    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive Hyper-V\Resize-VHD -Path 'C:\Users\tuant\.minikube\machines\minikube\disk.vhd' -SizeBytes 20000MB
+I1114 09:14:13.334205    1136 main.go:141] libmachine: [stdout =====>] : 
+I1114 09:14:13.334205    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:13.334373    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive Hyper-V\New-VM minikube -Path 'C:\Users\tuant\.minikube\machines\minikube' -SwitchName 'MinikubeSwitch' -MemoryStartupBytes 4000MB
+I1114 09:14:15.535157    1136 main.go:141] libmachine: [stdout =====>] : 
+Name     State CPUUsage(%!)(MISSING) MemoryAssigned(M) Uptime   Status             Version
+----     ----- ----------- ----------------- ------   ------             -------
+minikube Off   0           0                 00:00:00 Operating normally 11.0   
+
+
+
+I1114 09:14:15.535157    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:15.535271    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive Hyper-V\Set-VMMemory -VMName minikube -DynamicMemoryEnabled $false
+I1114 09:14:16.046591    1136 main.go:141] libmachine: [stdout =====>] : 
+I1114 09:14:16.046591    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:16.046591    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive Hyper-V\Set-VMProcessor minikube -Count 2
+I1114 09:14:16.530102    1136 main.go:141] libmachine: [stdout =====>] : 
+I1114 09:14:16.530102    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:16.530102    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive Hyper-V\Set-VMDvdDrive -VMName minikube -Path 'C:\Users\tuant\.minikube\machines\minikube\boot2docker.iso'
+I1114 09:14:17.201869    1136 main.go:141] libmachine: [stdout =====>] : 
+I1114 09:14:17.201869    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:17.201869    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive Hyper-V\Add-VMHardDiskDrive -VMName minikube -Path 'C:\Users\tuant\.minikube\machines\minikube\disk.vhd'
+I1114 09:14:17.921563    1136 main.go:141] libmachine: [stdout =====>] : 
+I1114 09:14:17.921563    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:17.921563    1136 main.go:141] libmachine: Starting VM...
+I1114 09:14:17.921563    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive Hyper-V\Start-VM minikube
+I1114 09:14:19.170418    1136 main.go:141] libmachine: [stdout =====>] : 
+I1114 09:14:19.170418    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:19.170418    1136 main.go:141] libmachine: Waiting for host to start...
+I1114 09:14:19.170418    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive ( Hyper-V\Get-VM minikube ).state
+I1114 09:14:19.642157    1136 main.go:141] libmachine: [stdout =====>] : Running
+
+I1114 09:14:19.642157    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:19.642157    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive (( Hyper-V\Get-VM minikube ).networkadapters[0]).ipaddresses[0]
+I1114 09:14:20.282305    1136 main.go:141] libmachine: [stdout =====>] : 
+I1114 09:14:20.282305    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:21.296209    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive ( Hyper-V\Get-VM minikube ).state
+I1114 09:14:21.749662    1136 main.go:141] libmachine: [stdout =====>] : Running
+
+I1114 09:14:21.749662    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:21.749662    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive (( Hyper-V\Get-VM minikube ).networkadapters[0]).ipaddresses[0]
+I1114 09:14:22.371828    1136 main.go:141] libmachine: [stdout =====>] : 
+I1114 09:14:22.372045    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:23.385813    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive ( Hyper-V\Get-VM minikube ).state
+I1114 09:14:23.871258    1136 main.go:141] libmachine: [stdout =====>] : Running
+
+I1114 09:14:23.871258    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:23.871258    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive (( Hyper-V\Get-VM minikube ).networkadapters[0]).ipaddresses[0]
+I1114 09:14:24.512162    1136 main.go:141] libmachine: [stdout =====>] : 
+I1114 09:14:24.512162    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:25.526394    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive ( Hyper-V\Get-VM minikube ).state
+I1114 09:14:25.966690    1136 main.go:141] libmachine: [stdout =====>] : Running
+
+I1114 09:14:25.966690    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:25.966690    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive (( Hyper-V\Get-VM minikube ).networkadapters[0]).ipaddresses[0]
+I1114 09:14:26.577209    1136 main.go:141] libmachine: [stdout =====>] : 192.168.204.107
+
+I1114 09:14:26.577209    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:26.577209    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive ( Hyper-V\Get-VM minikube ).state
+I1114 09:14:27.046137    1136 main.go:141] libmachine: [stdout =====>] : Running
+
+I1114 09:14:27.046344    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:27.046344    1136 machine.go:88] provisioning docker machine ...
+I1114 09:14:27.046344    1136 buildroot.go:166] provisioning hostname "minikube"
+I1114 09:14:27.046438    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive ( Hyper-V\Get-VM minikube ).state
+I1114 09:14:27.497641    1136 main.go:141] libmachine: [stdout =====>] : Running
+
+I1114 09:14:27.497912    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:27.497912    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive (( Hyper-V\Get-VM minikube ).networkadapters[0]).ipaddresses[0]
+I1114 09:14:28.105646    1136 main.go:141] libmachine: [stdout =====>] : 192.168.204.107
+
+I1114 09:14:28.105646    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:28.108325    1136 main.go:141] libmachine: Using SSH client type: native
+I1114 09:14:28.113994    1136 main.go:141] libmachine: &{{{<nil> 0 [] [] []} docker [0xc08640] 0xc0b500 <nil>  [] 0s} 192.168.204.107 22 <nil> <nil>}
+I1114 09:14:28.113994    1136 main.go:141] libmachine: About to run SSH command:
+sudo hostname minikube && echo "minikube" | sudo tee /etc/hostname
+I1114 09:14:28.236445    1136 main.go:141] libmachine: SSH cmd err, output: <nil>: minikube
+
+I1114 09:14:28.236445    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive ( Hyper-V\Get-VM minikube ).state
+I1114 09:14:28.668758    1136 main.go:141] libmachine: [stdout =====>] : Running
+
+I1114 09:14:28.668758    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:28.668892    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive (( Hyper-V\Get-VM minikube ).networkadapters[0]).ipaddresses[0]
+I1114 09:14:29.295291    1136 main.go:141] libmachine: [stdout =====>] : 192.168.204.107
+
+I1114 09:14:29.295291    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:29.299985    1136 main.go:141] libmachine: Using SSH client type: native
+I1114 09:14:29.300493    1136 main.go:141] libmachine: &{{{<nil> 0 [] [] []} docker [0xc08640] 0xc0b500 <nil>  [] 0s} 192.168.204.107 22 <nil> <nil>}
+I1114 09:14:29.300493    1136 main.go:141] libmachine: About to run SSH command:
+
+		if ! grep -xq '.*\sminikube' /etc/hosts; then
+			if grep -xq '127.0.1.1\s.*' /etc/hosts; then
+				sudo sed -i 's/^127.0.1.1\s.*/127.0.1.1 minikube/g' /etc/hosts;
+			else 
+				echo '127.0.1.1 minikube' | sudo tee -a /etc/hosts; 
+			fi
+		fi
+I1114 09:14:29.422906    1136 main.go:141] libmachine: SSH cmd err, output: <nil>: 
+I1114 09:14:29.422906    1136 buildroot.go:172] set auth options {CertDir:C:\Users\tuant\.minikube CaCertPath:C:\Users\tuant\.minikube\certs\ca.pem CaPrivateKeyPath:C:\Users\tuant\.minikube\certs\ca-key.pem CaCertRemotePath:/etc/docker/ca.pem ServerCertPath:C:\Users\tuant\.minikube\machines\server.pem ServerKeyPath:C:\Users\tuant\.minikube\machines\server-key.pem ClientKeyPath:C:\Users\tuant\.minikube\certs\key.pem ServerCertRemotePath:/etc/docker/server.pem ServerKeyRemotePath:/etc/docker/server-key.pem ClientCertPath:C:\Users\tuant\.minikube\certs\cert.pem ServerCertSANs:[] StorePath:C:\Users\tuant\.minikube}
+I1114 09:14:29.422906    1136 buildroot.go:174] setting up certificates
+I1114 09:14:29.422906    1136 provision.go:83] configureAuth start
+I1114 09:14:29.422906    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive ( Hyper-V\Get-VM minikube ).state
+I1114 09:14:29.877263    1136 main.go:141] libmachine: [stdout =====>] : Running
+
+I1114 09:14:29.877263    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:29.877263    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive (( Hyper-V\Get-VM minikube ).networkadapters[0]).ipaddresses[0]
+I1114 09:14:30.503463    1136 main.go:141] libmachine: [stdout =====>] : 192.168.204.107
+
+I1114 09:14:30.503463    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:30.503463    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive ( Hyper-V\Get-VM minikube ).state
+I1114 09:14:30.956797    1136 main.go:141] libmachine: [stdout =====>] : Running
+
+I1114 09:14:30.956797    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:30.956797    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive (( Hyper-V\Get-VM minikube ).networkadapters[0]).ipaddresses[0]
+I1114 09:14:31.583211    1136 main.go:141] libmachine: [stdout =====>] : 192.168.204.107
+
+I1114 09:14:31.583211    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:31.583211    1136 provision.go:138] copyHostCerts
+I1114 09:14:31.583211    1136 exec_runner.go:144] found C:\Users\tuant\.minikube/ca.pem, removing ...
+I1114 09:14:31.583211    1136 exec_runner.go:207] rm: C:\Users\tuant\.minikube\ca.pem
+I1114 09:14:31.583747    1136 exec_runner.go:151] cp: C:\Users\tuant\.minikube\certs\ca.pem --> C:\Users\tuant\.minikube/ca.pem (1074 bytes)
+I1114 09:14:31.585854    1136 exec_runner.go:144] found C:\Users\tuant\.minikube/cert.pem, removing ...
+I1114 09:14:31.585854    1136 exec_runner.go:207] rm: C:\Users\tuant\.minikube\cert.pem
+I1114 09:14:31.585854    1136 exec_runner.go:151] cp: C:\Users\tuant\.minikube\certs\cert.pem --> C:\Users\tuant\.minikube/cert.pem (1119 bytes)
+I1114 09:14:31.587979    1136 exec_runner.go:144] found C:\Users\tuant\.minikube/key.pem, removing ...
+I1114 09:14:31.587979    1136 exec_runner.go:207] rm: C:\Users\tuant\.minikube\key.pem
+I1114 09:14:31.587979    1136 exec_runner.go:151] cp: C:\Users\tuant\.minikube\certs\key.pem --> C:\Users\tuant\.minikube/key.pem (1679 bytes)
+I1114 09:14:31.589595    1136 provision.go:112] generating server cert: C:\Users\tuant\.minikube\machines\server.pem ca-key=C:\Users\tuant\.minikube\certs\ca.pem private-key=C:\Users\tuant\.minikube\certs\ca-key.pem org=tuant.minikube san=[192.168.204.107 192.168.204.107 localhost 127.0.0.1 minikube minikube]
+I1114 09:14:31.670823    1136 provision.go:172] copyRemoteCerts
+I1114 09:14:31.679331    1136 ssh_runner.go:195] Run: sudo mkdir -p /etc/docker /etc/docker /etc/docker
+I1114 09:14:31.679331    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive ( Hyper-V\Get-VM minikube ).state
+I1114 09:14:32.146023    1136 main.go:141] libmachine: [stdout =====>] : Running
+
+I1114 09:14:32.146023    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:32.146023    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive (( Hyper-V\Get-VM minikube ).networkadapters[0]).ipaddresses[0]
+I1114 09:14:32.767160    1136 main.go:141] libmachine: [stdout =====>] : 192.168.204.107
+
+I1114 09:14:32.767160    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:32.767160    1136 sshutil.go:53] new ssh client: &{IP:192.168.204.107 Port:22 SSHKeyPath:C:\Users\tuant\.minikube\machines\minikube\id_rsa Username:docker}
+I1114 09:14:32.864962    1136 ssh_runner.go:235] Completed: sudo mkdir -p /etc/docker /etc/docker /etc/docker: (1.1855797s)
+I1114 09:14:32.865584    1136 ssh_runner.go:362] scp C:\Users\tuant\.minikube\machines\server.pem --> /etc/docker/server.pem (1200 bytes)
+I1114 09:14:32.877499    1136 ssh_runner.go:362] scp C:\Users\tuant\.minikube\machines\server-key.pem --> /etc/docker/server-key.pem (1675 bytes)
+I1114 09:14:32.888274    1136 ssh_runner.go:362] scp C:\Users\tuant\.minikube\certs\ca.pem --> /etc/docker/ca.pem (1074 bytes)
+I1114 09:14:32.898377    1136 provision.go:86] duration metric: configureAuth took 3.4754703s
+I1114 09:14:32.898377    1136 buildroot.go:189] setting minikube options for container-runtime
+I1114 09:14:32.898377    1136 config.go:182] Loaded profile config "minikube": Driver=hyperv, ContainerRuntime=docker, KubernetesVersion=v1.26.3
+I1114 09:14:32.898377    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive ( Hyper-V\Get-VM minikube ).state
+I1114 09:14:33.342710    1136 main.go:141] libmachine: [stdout =====>] : Running
+
+I1114 09:14:33.342710    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:33.342710    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive (( Hyper-V\Get-VM minikube ).networkadapters[0]).ipaddresses[0]
+I1114 09:14:33.965702    1136 main.go:141] libmachine: [stdout =====>] : 192.168.204.107
+
+I1114 09:14:33.965702    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:33.970251    1136 main.go:141] libmachine: Using SSH client type: native
+I1114 09:14:33.970839    1136 main.go:141] libmachine: &{{{<nil> 0 [] [] []} docker [0xc08640] 0xc0b500 <nil>  [] 0s} 192.168.204.107 22 <nil> <nil>}
+I1114 09:14:33.970839    1136 main.go:141] libmachine: About to run SSH command:
+df --output=fstype / | tail -n 1
+I1114 09:14:34.092591    1136 main.go:141] libmachine: SSH cmd err, output: <nil>: tmpfs
+
+I1114 09:14:34.092591    1136 buildroot.go:70] root file system type: tmpfs
+I1114 09:14:34.092591    1136 provision.go:309] Updating docker unit: /lib/systemd/system/docker.service ...
+I1114 09:14:34.092591    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive ( Hyper-V\Get-VM minikube ).state
+I1114 09:14:34.540913    1136 main.go:141] libmachine: [stdout =====>] : Running
+
+I1114 09:14:34.540913    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:34.540913    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive (( Hyper-V\Get-VM minikube ).networkadapters[0]).ipaddresses[0]
+I1114 09:14:35.156290    1136 main.go:141] libmachine: [stdout =====>] : 192.168.204.107
+
+I1114 09:14:35.156290    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:35.159199    1136 main.go:141] libmachine: Using SSH client type: native
+I1114 09:14:35.159919    1136 main.go:141] libmachine: &{{{<nil> 0 [] [] []} docker [0xc08640] 0xc0b500 <nil>  [] 0s} 192.168.204.107 22 <nil> <nil>}
+I1114 09:14:35.159919    1136 main.go:141] libmachine: About to run SSH command:
+sudo mkdir -p /lib/systemd/system && printf %!s(MISSING) "[Unit]
+Description=Docker Application Container Engine
+Documentation=https://docs.docker.com
+After=network.target  minikube-automount.service docker.socket
+Requires= minikube-automount.service docker.socket 
+StartLimitBurst=3
+StartLimitIntervalSec=60
+
+[Service]
+Type=notify
+Restart=on-failure
+
+
+
+# This file is a systemd drop-in unit that inherits from the base dockerd configuration.
+# The base configuration already specifies an 'ExecStart=...' command. The first directive
+# here is to clear out that command inherited from the base configuration. Without this,
+# the command from the base configuration and the command specified here are treated as
+# a sequence of commands, which is not the desired behavior, nor is it valid -- systemd
+# will catch this invalid input and refuse to start the service with an error like:
+#  Service has more than one ExecStart= setting, which is only allowed for Type=oneshot services.
+
+# NOTE: default-ulimit=nofile is set to an arbitrary number for consistency with other
+# container runtimes. If left unlimited, it may result in OOM issues with MySQL.
+ExecStart=
+ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2376 -H unix:///var/run/docker.sock --default-ulimit=nofile=1048576:1048576 --tlsverify --tlscacert /etc/docker/ca.pem --tlscert /etc/docker/server.pem --tlskey /etc/docker/server-key.pem --label provider=hyperv --insecure-registry 10.96.0.0/12 
+ExecReload=/bin/kill -s HUP \$MAINPID
+
+# Having non-zero Limit*s causes performance problems due to accounting overhead
+# in the kernel. We recommend using cgroups to do container-local accounting.
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+
+# Uncomment TasksMax if your systemd version supports it.
+# Only systemd 226 and above support this version.
+TasksMax=infinity
+TimeoutStartSec=0
+
+# set delegate yes so that systemd does not reset the cgroups of docker containers
+Delegate=yes
+
+# kill only the docker process, not all processes in the cgroup
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
+" | sudo tee /lib/systemd/system/docker.service.new
+I1114 09:14:35.290178    1136 main.go:141] libmachine: SSH cmd err, output: <nil>: [Unit]
+Description=Docker Application Container Engine
+Documentation=https://docs.docker.com
+After=network.target  minikube-automount.service docker.socket
+Requires= minikube-automount.service docker.socket 
+StartLimitBurst=3
+StartLimitIntervalSec=60
+
+[Service]
+Type=notify
+Restart=on-failure
+
+
+
+# This file is a systemd drop-in unit that inherits from the base dockerd configuration.
+# The base configuration already specifies an 'ExecStart=...' command. The first directive
+# here is to clear out that command inherited from the base configuration. Without this,
+# the command from the base configuration and the command specified here are treated as
+# a sequence of commands, which is not the desired behavior, nor is it valid -- systemd
+# will catch this invalid input and refuse to start the service with an error like:
+#  Service has more than one ExecStart= setting, which is only allowed for Type=oneshot services.
+
+# NOTE: default-ulimit=nofile is set to an arbitrary number for consistency with other
+# container runtimes. If left unlimited, it may result in OOM issues with MySQL.
+ExecStart=
+ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2376 -H unix:///var/run/docker.sock --default-ulimit=nofile=1048576:1048576 --tlsverify --tlscacert /etc/docker/ca.pem --tlscert /etc/docker/server.pem --tlskey /etc/docker/server-key.pem --label provider=hyperv --insecure-registry 10.96.0.0/12 
+ExecReload=/bin/kill -s HUP $MAINPID
+
+# Having non-zero Limit*s causes performance problems due to accounting overhead
+# in the kernel. We recommend using cgroups to do container-local accounting.
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+
+# Uncomment TasksMax if your systemd version supports it.
+# Only systemd 226 and above support this version.
+TasksMax=infinity
+TimeoutStartSec=0
+
+# set delegate yes so that systemd does not reset the cgroups of docker containers
+Delegate=yes
+
+# kill only the docker process, not all processes in the cgroup
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
+
+I1114 09:14:35.290178    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive ( Hyper-V\Get-VM minikube ).state
+I1114 09:14:35.747543    1136 main.go:141] libmachine: [stdout =====>] : Running
+
+I1114 09:14:35.747543    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:35.747543    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive (( Hyper-V\Get-VM minikube ).networkadapters[0]).ipaddresses[0]
+I1114 09:14:36.357594    1136 main.go:141] libmachine: [stdout =====>] : 192.168.204.107
+
+I1114 09:14:36.357594    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:36.361638    1136 main.go:141] libmachine: Using SSH client type: native
+I1114 09:14:36.362152    1136 main.go:141] libmachine: &{{{<nil> 0 [] [] []} docker [0xc08640] 0xc0b500 <nil>  [] 0s} 192.168.204.107 22 <nil> <nil>}
+I1114 09:14:36.362152    1136 main.go:141] libmachine: About to run SSH command:
+sudo diff -u /lib/systemd/system/docker.service /lib/systemd/system/docker.service.new || { sudo mv /lib/systemd/system/docker.service.new /lib/systemd/system/docker.service; sudo systemctl -f daemon-reload && sudo systemctl -f enable docker && sudo systemctl -f restart docker; }
+I1114 09:14:36.842020    1136 main.go:141] libmachine: SSH cmd err, output: <nil>: diff: can't stat '/lib/systemd/system/docker.service': No such file or directory
+Created symlink /etc/systemd/system/multi-user.target.wants/docker.service → /usr/lib/systemd/system/docker.service.
+
+I1114 09:14:36.842020    1136 machine.go:91] provisioned docker machine in 9.7956763s
+I1114 09:14:36.842020    1136 client.go:171] LocalClient.Create took 30.2439337s
+I1114 09:14:36.842020    1136 start.go:167] duration metric: libmachine.API.Create for "minikube" took 30.2439337s
+I1114 09:14:36.842020    1136 start.go:300] post-start starting for "minikube" (driver="hyperv")
+I1114 09:14:36.842020    1136 start.go:328] creating required directories: [/etc/kubernetes/addons /etc/kubernetes/manifests /var/tmp/minikube /var/lib/minikube /var/lib/minikube/certs /var/lib/minikube/images /var/lib/minikube/binaries /tmp/gvisor /usr/share/ca-certificates /etc/ssl/certs]
+I1114 09:14:36.850699    1136 ssh_runner.go:195] Run: sudo mkdir -p /etc/kubernetes/addons /etc/kubernetes/manifests /var/tmp/minikube /var/lib/minikube /var/lib/minikube/certs /var/lib/minikube/images /var/lib/minikube/binaries /tmp/gvisor /usr/share/ca-certificates /etc/ssl/certs
+I1114 09:14:36.850699    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive ( Hyper-V\Get-VM minikube ).state
+I1114 09:14:37.307533    1136 main.go:141] libmachine: [stdout =====>] : Running
+
+I1114 09:14:37.307533    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:37.307533    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive (( Hyper-V\Get-VM minikube ).networkadapters[0]).ipaddresses[0]
+I1114 09:14:37.916089    1136 main.go:141] libmachine: [stdout =====>] : 192.168.204.107
+
+I1114 09:14:37.916089    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:37.916089    1136 sshutil.go:53] new ssh client: &{IP:192.168.204.107 Port:22 SSHKeyPath:C:\Users\tuant\.minikube\machines\minikube\id_rsa Username:docker}
+I1114 09:14:38.017969    1136 ssh_runner.go:235] Completed: sudo mkdir -p /etc/kubernetes/addons /etc/kubernetes/manifests /var/tmp/minikube /var/lib/minikube /var/lib/minikube/certs /var/lib/minikube/images /var/lib/minikube/binaries /tmp/gvisor /usr/share/ca-certificates /etc/ssl/certs: (1.1672703s)
+I1114 09:14:38.032413    1136 ssh_runner.go:195] Run: cat /etc/os-release
+I1114 09:14:38.034801    1136 info.go:137] Remote host: Buildroot 2021.02.12
+I1114 09:14:38.034801    1136 filesync.go:126] Scanning C:\Users\tuant\.minikube\addons for local assets ...
+I1114 09:14:38.034801    1136 filesync.go:126] Scanning C:\Users\tuant\.minikube\files for local assets ...
+I1114 09:14:38.034801    1136 start.go:303] post-start completed in 1.1927805s
+I1114 09:14:38.038271    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive ( Hyper-V\Get-VM minikube ).state
+I1114 09:14:38.489584    1136 main.go:141] libmachine: [stdout =====>] : Running
+
+I1114 09:14:38.489584    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:38.489584    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive (( Hyper-V\Get-VM minikube ).networkadapters[0]).ipaddresses[0]
+I1114 09:14:39.098711    1136 main.go:141] libmachine: [stdout =====>] : 192.168.204.107
+
+I1114 09:14:39.098711    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:39.099360    1136 profile.go:148] Saving config to C:\Users\tuant\.minikube\profiles\minikube\config.json ...
+I1114 09:14:39.104379    1136 start.go:128] duration metric: createHost completed in 32.5084114s
+I1114 09:14:39.104379    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive ( Hyper-V\Get-VM minikube ).state
+I1114 09:14:39.552535    1136 main.go:141] libmachine: [stdout =====>] : Running
+
+I1114 09:14:39.552535    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:39.552924    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive (( Hyper-V\Get-VM minikube ).networkadapters[0]).ipaddresses[0]
+I1114 09:14:40.179086    1136 main.go:141] libmachine: [stdout =====>] : 192.168.204.107
+
+I1114 09:14:40.179086    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:40.184779    1136 main.go:141] libmachine: Using SSH client type: native
+I1114 09:14:40.185328    1136 main.go:141] libmachine: &{{{<nil> 0 [] [] []} docker [0xc08640] 0xc0b500 <nil>  [] 0s} 192.168.204.107 22 <nil> <nil>}
+I1114 09:14:40.185328    1136 main.go:141] libmachine: About to run SSH command:
+date +%!s(MISSING).%!N(MISSING)
+I1114 09:14:40.304547    1136 main.go:141] libmachine: SSH cmd err, output: <nil>: 1699928080.481892688
+
+I1114 09:14:40.304547    1136 fix.go:207] guest clock: 1699928080.481892688
+I1114 09:14:40.304547    1136 fix.go:220] Guest: 2023-11-14 09:14:40.481892688 +0700 +07 Remote: 2023-11-14 09:14:39.1043797 +0700 +07 m=+33.675392801 (delta=1.377512988s)
+I1114 09:14:40.304547    1136 fix.go:191] guest clock delta is within tolerance: 1.377512988s
+I1114 09:14:40.304547    1136 start.go:83] releasing machines lock for "minikube", held for 33.7091287s
+I1114 09:14:40.304547    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive ( Hyper-V\Get-VM minikube ).state
+I1114 09:14:40.771679    1136 main.go:141] libmachine: [stdout =====>] : Running
+
+I1114 09:14:40.771679    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:40.771679    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive (( Hyper-V\Get-VM minikube ).networkadapters[0]).ipaddresses[0]
+I1114 09:14:41.426044    1136 main.go:141] libmachine: [stdout =====>] : 192.168.204.107
+
+I1114 09:14:41.426044    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:41.430255    1136 ssh_runner.go:195] Run: curl -sS -m 2 https://registry.k8s.io/
+I1114 09:14:41.430255    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive ( Hyper-V\Get-VM minikube ).state
+I1114 09:14:41.438541    1136 ssh_runner.go:195] Run: cat /version.json
+I1114 09:14:41.438541    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive ( Hyper-V\Get-VM minikube ).state
+I1114 09:14:41.941639    1136 main.go:141] libmachine: [stdout =====>] : Running
+
+I1114 09:14:41.941639    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:41.941639    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive (( Hyper-V\Get-VM minikube ).networkadapters[0]).ipaddresses[0]
+I1114 09:14:41.941639    1136 main.go:141] libmachine: [stdout =====>] : Running
+
+I1114 09:14:41.942143    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:41.942143    1136 main.go:141] libmachine: [executing ==>] : C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -NonInteractive (( Hyper-V\Get-VM minikube ).networkadapters[0]).ipaddresses[0]
+I1114 09:14:42.651459    1136 main.go:141] libmachine: [stdout =====>] : 192.168.204.107
+
+I1114 09:14:42.651459    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:42.651459    1136 sshutil.go:53] new ssh client: &{IP:192.168.204.107 Port:22 SSHKeyPath:C:\Users\tuant\.minikube\machines\minikube\id_rsa Username:docker}
+I1114 09:14:42.660188    1136 main.go:141] libmachine: [stdout =====>] : 192.168.204.107
+
+I1114 09:14:42.660188    1136 main.go:141] libmachine: [stderr =====>] : 
+I1114 09:14:42.660188    1136 sshutil.go:53] new ssh client: &{IP:192.168.204.107 Port:22 SSHKeyPath:C:\Users\tuant\.minikube\machines\minikube\id_rsa Username:docker}
+I1114 09:14:42.750500    1136 ssh_runner.go:235] Completed: cat /version.json: (1.3119583s)
+I1114 09:14:42.761910    1136 ssh_runner.go:195] Run: systemctl --version
+I1114 09:14:42.880110    1136 ssh_runner.go:235] Completed: curl -sS -m 2 https://registry.k8s.io/: (1.4498549s)
+I1114 09:14:42.886625    1136 ssh_runner.go:195] Run: sh -c "stat /etc/cni/net.d/*loopback.conf*"
+W1114 09:14:42.889449    1136 cni.go:208] loopback cni configuration skipped: "/etc/cni/net.d/*loopback.conf*" not found
+I1114 09:14:42.897383    1136 ssh_runner.go:195] Run: sudo find /etc/cni/net.d -maxdepth 1 -type f ( ( -name *bridge* -or -name *podman* ) -and -not -name *.mk_disabled ) -printf "%!p(MISSING), " -exec sh -c "sudo mv {} {}.mk_disabled" ;
+I1114 09:14:42.904799    1136 cni.go:261] disabled [/etc/cni/net.d/87-podman-bridge.conflist] bridge cni config(s)
+I1114 09:14:42.904799    1136 preload.go:132] Checking if preload exists for k8s version v1.26.3 and runtime docker
+I1114 09:14:42.908912    1136 ssh_runner.go:195] Run: docker images --format {{.Repository}}:{{.Tag}}
+I1114 09:14:42.919753    1136 docker.go:639] Got preloaded images: 
+I1114 09:14:42.919753    1136 docker.go:645] registry.k8s.io/kube-apiserver:v1.26.3 wasn't preloaded
+I1114 09:14:42.927654    1136 ssh_runner.go:195] Run: sudo cat /var/lib/docker/image/overlay2/repositories.json
+I1114 09:14:42.939973    1136 ssh_runner.go:195] Run: which lz4
+I1114 09:14:42.949456    1136 ssh_runner.go:195] Run: stat -c "%!s(MISSING) %!y(MISSING)" /preloaded.tar.lz4
+I1114 09:14:42.951190    1136 ssh_runner.go:352] existence check for /preloaded.tar.lz4: stat -c "%!s(MISSING) %!y(MISSING)" /preloaded.tar.lz4: Process exited with status 1
+stdout:
+
+stderr:
+stat: cannot statx '/preloaded.tar.lz4': No such file or directory
+I1114 09:14:42.951190    1136 ssh_runner.go:362] scp C:\Users\tuant\.minikube\cache\preloaded-tarball\preloaded-images-k8s-v18-v1.26.3-docker-overlay2-amd64.tar.lz4 --> /preloaded.tar.lz4 (416308310 bytes)
+I1114 09:14:43.721910    1136 docker.go:603] Took 0.780214 seconds to copy over tarball
+I1114 09:14:43.729673    1136 ssh_runner.go:195] Run: sudo tar -I lz4 -C /var -xf /preloaded.tar.lz4
+I1114 09:14:46.474534    1136 ssh_runner.go:235] Completed: sudo tar -I lz4 -C /var -xf /preloaded.tar.lz4: (2.7448612s)
+I1114 09:14:46.474534    1136 ssh_runner.go:146] rm: /preloaded.tar.lz4
+I1114 09:14:46.509403    1136 ssh_runner.go:195] Run: sudo cat /var/lib/docker/image/overlay2/repositories.json
+I1114 09:14:46.514437    1136 ssh_runner.go:362] scp memory --> /var/lib/docker/image/overlay2/repositories.json (2628 bytes)
+I1114 09:14:46.532344    1136 ssh_runner.go:195] Run: sudo systemctl daemon-reload
+I1114 09:14:46.614189    1136 ssh_runner.go:195] Run: sudo systemctl restart docker
+I1114 09:14:48.338209    1136 ssh_runner.go:235] Completed: sudo systemctl restart docker: (1.7240194s)
+I1114 09:14:48.338209    1136 start.go:481] detecting cgroup driver to use...
+I1114 09:14:48.338209    1136 ssh_runner.go:195] Run: /bin/bash -c "sudo mkdir -p /etc && printf %!s(MISSING) "runtime-endpoint: unix:///run/containerd/containerd.sock
+" | sudo tee /etc/crictl.yaml"
+I1114 09:14:48.350189    1136 ssh_runner.go:195] Run: sh -c "sudo sed -i -r 's|^( *)sandbox_image = .*$|\1sandbox_image = "registry.k8s.io/pause:3.9"|' /etc/containerd/config.toml"
+I1114 09:14:48.358065    1136 ssh_runner.go:195] Run: sh -c "sudo sed -i -r 's|^( *)restrict_oom_score_adj = .*$|\1restrict_oom_score_adj = false|' /etc/containerd/config.toml"
+I1114 09:14:48.362738    1136 containerd.go:145] configuring containerd to use "cgroupfs" as cgroup driver...
+I1114 09:14:48.364843    1136 ssh_runner.go:195] Run: sh -c "sudo sed -i -r 's|^( *)SystemdCgroup = .*$|\1SystemdCgroup = false|g' /etc/containerd/config.toml"
+I1114 09:14:48.371553    1136 ssh_runner.go:195] Run: sh -c "sudo sed -i 's|"io.containerd.runtime.v1.linux"|"io.containerd.runc.v2"|g' /etc/containerd/config.toml"
+I1114 09:14:48.378381    1136 ssh_runner.go:195] Run: sh -c "sudo sed -i '/systemd_cgroup/d' /etc/containerd/config.toml"
+I1114 09:14:48.385908    1136 ssh_runner.go:195] Run: sh -c "sudo sed -i 's|"io.containerd.runc.v1"|"io.containerd.runc.v2"|g' /etc/containerd/config.toml"
+I1114 09:14:48.392683    1136 ssh_runner.go:195] Run: sh -c "sudo rm -rf /etc/cni/net.mk"
+I1114 09:14:48.399927    1136 ssh_runner.go:195] Run: sh -c "sudo sed -i -r 's|^( *)conf_dir = .*$|\1conf_dir = "/etc/cni/net.d"|g' /etc/containerd/config.toml"
+I1114 09:14:48.412790    1136 ssh_runner.go:195] Run: sudo sysctl net.bridge.bridge-nf-call-iptables
+I1114 09:14:48.424676    1136 ssh_runner.go:195] Run: sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+I1114 09:14:48.436783    1136 ssh_runner.go:195] Run: sudo systemctl daemon-reload
+I1114 09:14:48.513973    1136 ssh_runner.go:195] Run: sudo systemctl restart containerd
+I1114 09:14:48.523516    1136 start.go:481] detecting cgroup driver to use...
+I1114 09:14:48.531130    1136 ssh_runner.go:195] Run: sudo systemctl cat docker.service
+I1114 09:14:48.546883    1136 ssh_runner.go:195] Run: sudo systemctl is-active --quiet service containerd
+I1114 09:14:48.560374    1136 ssh_runner.go:195] Run: sudo systemctl stop -f containerd
+I1114 09:14:48.583795    1136 ssh_runner.go:195] Run: sudo systemctl is-active --quiet service containerd
+I1114 09:14:48.598360    1136 ssh_runner.go:195] Run: sudo systemctl is-active --quiet service crio
+I1114 09:14:48.611935    1136 ssh_runner.go:195] Run: sudo systemctl stop -f crio
+I1114 09:14:48.645444    1136 ssh_runner.go:195] Run: sudo systemctl is-active --quiet service crio
+I1114 09:14:48.651724    1136 ssh_runner.go:195] Run: /bin/bash -c "sudo mkdir -p /etc && printf %!s(MISSING) "runtime-endpoint: unix:///var/run/cri-dockerd.sock
+" | sudo tee /etc/crictl.yaml"
+I1114 09:14:48.667370    1136 ssh_runner.go:195] Run: which cri-dockerd
+I1114 09:14:48.676616    1136 ssh_runner.go:195] Run: sudo mkdir -p /etc/systemd/system/cri-docker.service.d
+I1114 09:14:48.681244    1136 ssh_runner.go:362] scp memory --> /etc/systemd/system/cri-docker.service.d/10-cni.conf (189 bytes)
+I1114 09:14:48.696416    1136 ssh_runner.go:195] Run: sudo systemctl unmask docker.service
+I1114 09:14:48.765848    1136 ssh_runner.go:195] Run: sudo systemctl enable docker.socket
+I1114 09:14:48.824907    1136 docker.go:538] configuring docker to use "cgroupfs" as cgroup driver...
+I1114 09:14:48.824907    1136 ssh_runner.go:362] scp memory --> /etc/docker/daemon.json (144 bytes)
+I1114 09:14:48.841210    1136 ssh_runner.go:195] Run: sudo systemctl daemon-reload
+I1114 09:14:48.907740    1136 ssh_runner.go:195] Run: sudo systemctl restart docker
+I1114 09:15:49.938078    1136 ssh_runner.go:235] Completed: sudo systemctl restart docker: (1m1.030338s)
+I1114 09:15:49.942794    1136 out.go:177] 
+W1114 09:15:49.944434    1136 out.go:239] X Exiting due to RUNTIME_ENABLE: Failed to enable container runtime: sudo systemctl restart docker: Process exited with status 1
+stdout:
+
+stderr:
+Job for docker.service failed because the control process exited with error code.
+See "systemctl status docker.service" and "journalctl -xe" for details.
+
+W1114 09:15:49.944434    1136 out.go:239] * 
+W1114 09:15:49.947727    1136 out.go:239] ╭─────────────────────────────────────────────────────────────────────────────────────────────╮
+│                                                                                             │
+│    * If the above advice does not help, please let us know:                                 │
+│      https://github.com/kubernetes/minikube/issues/new/choose                               │
+│                                                                                             │
+│    * Please run `minikube logs --file=logs.txt` and attach logs.txt to the GitHub issue.    │
+│                                                                                             │
+╰─────────────────────────────────────────────────────────────────────────────────────────────╯
+I1114 09:15:49.949893    1136 out.go:177] 
+
+* 
+* ==> Docker <==
+* -- Journal begins at Tue 2023-11-14 02:14:23 UTC, ends at Tue 2023-11-14 09:14:23 UTC. --
+Nov 14 02:14:55 minikube dockerd[1141]: time="2023-11-14T02:14:55.077323302Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:14:57 minikube dockerd[1141]: time="2023-11-14T02:14:57.616524650Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:00 minikube dockerd[1141]: time="2023-11-14T02:15:00.175046859Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:02 minikube dockerd[1141]: time="2023-11-14T02:15:02.792732843Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:05 minikube dockerd[1141]: time="2023-11-14T02:15:05.755430358Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:08 minikube dockerd[1141]: time="2023-11-14T02:15:08.160141333Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:11 minikube dockerd[1141]: time="2023-11-14T02:15:11.632892832Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:14 minikube dockerd[1141]: time="2023-11-14T02:15:14.869652764Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:18 minikube dockerd[1141]: time="2023-11-14T02:15:18.261305364Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:21 minikube dockerd[1141]: time="2023-11-14T02:15:21.357111109Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:23 minikube dockerd[1141]: time="2023-11-14T02:15:23.829660451Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:26 minikube dockerd[1141]: time="2023-11-14T02:15:26.376308940Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:29 minikube dockerd[1141]: time="2023-11-14T02:15:29.312476080Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:32 minikube dockerd[1141]: time="2023-11-14T02:15:32.018870156Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:34 minikube dockerd[1141]: time="2023-11-14T02:15:34.795646045Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:37 minikube dockerd[1141]: time="2023-11-14T02:15:37.853304690Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:41 minikube dockerd[1141]: time="2023-11-14T02:15:41.184442245Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:43 minikube dockerd[1141]: time="2023-11-14T02:15:43.987002003Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:46 minikube dockerd[1141]: time="2023-11-14T02:15:46.962167211Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:49 minikube dockerd[1141]: time="2023-11-14T02:15:49.604169443Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:50 minikube dockerd[1141]: failed to start daemon: failed to dial "/run/containerd/containerd.sock": failed to dial "/run/containerd/containerd.sock": context deadline exceeded
+Nov 14 02:15:50 minikube systemd[1]: docker.service: Main process exited, code=exited, status=1/FAILURE
+Nov 14 02:15:50 minikube systemd[1]: docker.service: Failed with result 'exit-code'.
+Nov 14 02:15:50 minikube systemd[1]: Failed to start Docker Application Container Engine.
+Nov 14 02:15:50 minikube systemd[1]: docker.service: Scheduled restart job, restart counter is at 1.
+Nov 14 02:15:50 minikube systemd[1]: Stopped Docker Application Container Engine.
+Nov 14 02:15:50 minikube systemd[1]: Starting Docker Application Container Engine...
+Nov 14 02:15:50 minikube dockerd[1152]: time="2023-11-14T02:15:50.354362528Z" level=info msg="Starting up"
+Nov 14 02:15:50 minikube dockerd[1152]: time="2023-11-14T02:15:50.355563198Z" level=info msg="parsed scheme: \"unix\"" module=grpc
+Nov 14 02:15:50 minikube dockerd[1152]: time="2023-11-14T02:15:50.355592500Z" level=info msg="scheme \"unix\" not registered, fallback to default scheme" module=grpc
+Nov 14 02:15:50 minikube dockerd[1152]: time="2023-11-14T02:15:50.355612601Z" level=info msg="ccResolverWrapper: sending update to cc: {[{unix:///run/containerd/containerd.sock  <nil> 0 <nil>}] <nil> <nil>}" module=grpc
+Nov 14 02:15:50 minikube dockerd[1152]: time="2023-11-14T02:15:50.355621101Z" level=info msg="ClientConn switching balancer to \"pick_first\"" module=grpc
+Nov 14 02:15:50 minikube dockerd[1152]: time="2023-11-14T02:15:50.355719407Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:51 minikube dockerd[1152]: time="2023-11-14T02:15:51.356365817Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:53 minikube dockerd[1152]: time="2023-11-14T02:15:53.078591646Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:55 minikube dockerd[1152]: time="2023-11-14T02:15:55.912403018Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:15:58 minikube dockerd[1152]: time="2023-11-14T02:15:58.812436239Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:16:01 minikube dockerd[1152]: time="2023-11-14T02:16:01.879738862Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:16:04 minikube dockerd[1152]: time="2023-11-14T02:16:04.282402515Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:16:07 minikube dockerd[1152]: time="2023-11-14T02:16:07.681641510Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:16:10 minikube dockerd[1152]: time="2023-11-14T02:16:10.507097474Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:16:13 minikube dockerd[1152]: time="2023-11-14T02:16:13.744055485Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:16:17 minikube dockerd[1152]: time="2023-11-14T02:16:17.029512086Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:16:20 minikube dockerd[1152]: time="2023-11-14T02:16:20.403967227Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:16:23 minikube dockerd[1152]: time="2023-11-14T02:16:23.231963648Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:16:26 minikube dockerd[1152]: time="2023-11-14T02:16:26.541148731Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:16:29 minikube dockerd[1152]: time="2023-11-14T02:16:29.517218319Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:16:33 minikube dockerd[1152]: time="2023-11-14T02:16:33.089326946Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:16:35 minikube dockerd[1152]: time="2023-11-14T02:16:35.853484449Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:16:38 minikube dockerd[1152]: time="2023-11-14T02:16:38.787568225Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:16:42 minikube dockerd[1152]: time="2023-11-14T02:16:42.176025601Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:16:44 minikube dockerd[1152]: time="2023-11-14T02:16:44.681393345Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:16:47 minikube dockerd[1152]: time="2023-11-14T02:16:47.754247807Z" level=warning msg="grpc: addrConn.createTransport failed to connect to {unix:///run/containerd/containerd.sock  <nil> 0 <nil>}. Err :connection error: desc = \"transport: Error while dialing dial unix /run/containerd/containerd.sock: connect: connection refused\". Reconnecting..." module=grpc
+Nov 14 02:16:50 minikube dockerd[1152]: failed to start daemon: failed to dial "/run/containerd/containerd.sock": failed to dial "/run/containerd/containerd.sock": context deadline exceeded
+Nov 14 02:16:50 minikube systemd[1]: docker.service: Main process exited, code=exited, status=1/FAILURE
+Nov 14 02:16:50 minikube systemd[1]: docker.service: Failed with result 'exit-code'.
+Nov 14 02:16:50 minikube systemd[1]: Failed to start Docker Application Container Engine.
+Nov 14 02:16:50 minikube systemd[1]: docker.service: Scheduled restart job, restart counter is at 2.
+Nov 14 02:16:50 minikube systemd[1]: Stopped Docker Application Container Engine.
+Nov 14 02:16:50 minikube systemd[1]: Starting Docker Application Container Engine...
+
+* 
+* ==> container status <==
+* 
+* ==> describe nodes <==
+* 
+* ==> dmesg <==
+* [Nov14 02:14] You have booted with nomodeset. This means your GPU drivers are DISABLED
+[  +0.000001] Any video related functionality will be severely degraded, and you may not even be able to suspend the system properly
+[  +0.000000] Unless you actually understand what nomodeset does, you should reboot without enabling it
+[  +0.063856] acpi PNP0A03:00: fail to add MMCONFIG information, can't access extended PCI configuration space under this bridge.
+[  +0.006916] * Found PM-Timer Bug on the chipset. Due to workarounds for a bug,
+              * this clock source is slow. Consider trying other clock sources
+[  +2.393727] Unstable clock detected, switching default tracing clock to "global"
+              If you want to keep using the local clock, then add:
+                "trace_clock=local"
+              on the kernel command line
+[  +0.000011] platform regulatory.0: Direct firmware load for regulatory.db failed with error -2
+[  +0.549116] psmouse serio1: trackpoint: failed to get extended button data, assuming 3 buttons
+[  +0.373313] systemd-fstab-generator[113]: Ignoring "noauto" for root device
+[  +0.077433] systemd[1]: systemd-journald.service: unit configures an IP firewall, but the local system does not support BPF/cgroup firewalling.
+[  +0.000001] systemd[1]: (This warning is only shown for the first unit using IP firewalling.)
+[  +2.653449] NFSD: Using /var/lib/nfs/v4recovery as the NFSv4 state recovery directory
+[  +0.000004] NFSD: unable to find recovery directory /var/lib/nfs/v4recovery
+[  +0.000000] NFSD: Unable to initialize client recovery tracking! (-2)
+[ +10.492066] systemd-fstab-generator[655]: Ignoring "noauto" for root device
+[  +0.058927] systemd-fstab-generator[666]: Ignoring "noauto" for root device
+[ +10.024875] systemd-fstab-generator[907]: Ignoring "noauto" for root device
+[  +1.691174] kauditd_printk_skb: 14 callbacks suppressed
+[  +0.214916] systemd-fstab-generator[1068]: Ignoring "noauto" for root device
+[  +0.255981] systemd-fstab-generator[1108]: Ignoring "noauto" for root device
+[  +0.067889] systemd-fstab-generator[1119]: Ignoring "noauto" for root device
+[  +0.074037] systemd-fstab-generator[1132]: Ignoring "noauto" for root device
+
+* 
+* ==> kernel <==
+*  02:17:50 up 3 min,  0 users,  load average: 0.07, 0.04, 0.00
+Linux minikube 5.10.57 #1 SMP Mon Apr 3 23:35:10 UTC 2023 x86_64 GNU/Linux
+PRETTY_NAME="Buildroot 2021.02.12"
+
+* 
+* ==> kubelet <==
+* -- Journal begins at Tue 2023-11-14 02:14:23 UTC, ends at Tue 2023-11-14 09:14:23 UTC. --
+-- No entries --
+
