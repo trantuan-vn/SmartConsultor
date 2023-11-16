@@ -1,0 +1,572 @@
+PositionMax=9;
+
+EnableScript("jscript");
+
+function track()
+{
+	strTrack="";
+	strTrack=strTrack + "Res(" + LastValue(Peak(H,0.1,1)) + ", " + LastValue(Peak(H,0.1,2)) + ", " + LastValue(Peak(H,0.1,3)) + ");\n";
+	strTrack=strTrack + "Sup(" + LastValue(Trough(L,0.1,1)) + ", " + LastValue(Trough(L,0.1,2)) + ", " + LastValue(Trough(L,0.1,3)) + ");\n";
+	strTrack=strTrack + "Close(" + close + ", " + Ref(Close,-1) + ", " + Ref(Close,-2) + ", " + Ref(Close,-3) 
+								 + ", " + Ref(Close,-4) + ", " + Ref(Close,-5) + ")\n";
+	return strTrack;
+}
+
+_status = Nz(StaticVarGet("_status"));
+_res = Nz(StaticVarGet("_res"));
+_sup = Nz(StaticVarGet("_sup"));
+
+_short= Nz(StaticVarGet("_short"));
+_shortQuantity= Nz(StaticVarGet("_shortQuantity"));
+_short1= Nz(StaticVarGet("_short1"));
+_shortQuantity1= Nz(StaticVarGet("_shortQuantity1"));
+_short2= Nz(StaticVarGet("_short2"));
+_shortQuantity2= Nz(StaticVarGet("_shortQuantity2"));
+
+_long= Nz(StaticVarGet("_long"));
+_longQuantity= Nz(StaticVarGet("_longQuantity"));
+_long1= Nz(StaticVarGet("_long1"));
+_longQuantity1= Nz(StaticVarGet("_longQuantity1"));
+_long2= Nz(StaticVarGet("_long2"));
+_longQuantity2= Nz(StaticVarGet("_longQuantity2"));
+
+_profit= Nz(StaticVarGet("_profit"));
+_deal= Nz(StaticVarGet("_deal"));
+_dealFailed= Nz(StaticVarGet("_dealFailed"));
+_dealSuccess= Nz(StaticVarGet("_dealSuccess"));
+
+strTrack="";
+
+
+_SECTION_BEGIN("Price");
+SetChartOptions(0,chartShowArrows|chartShowDates);
+_N(Title = StrFormat("{{NAME}} - {{INTERVAL}} {{DATE}} Open %g, Hi %g, Lo %g, Close %g (%.1f%%) {{VALUES}}", O, H, L, C, SelectedValue( ROC( C, 1 ) ) ));
+Plot( C, "Close", ParamColor("Color", colorDefault ), styleNoTitle | ParamStyle("Style") | GetPriceStyle() ); 
+_SECTION_END();
+
+_SECTION_BEGIN("Sup / Res Lines");
+SetChartOptions(0,chartShowArrows|chartShowDates);
+SRswitch = ParamToggle("Sup / Res Lines","On,Off");
+CHLswitch = ParamToggle("Hi Low / Close","Hi Low,Close");
+NoLines = Param("No of Lines",3,1,10,1);
+Sen = Param("Sen",0.1,0.1,1,0.1);
+//trigger = Param("Place Order",0,0,1,1);
+
+Rcolor=ParamColor( "Res Color", colorGreen );
+Rstyle=ParamStyle( "Res Style", styleLine );
+
+Scolor=ParamColor( "Sup Color", colorBrown );
+Sstyle=ParamStyle( "Sup Style", styleLine );
+
+y=0;
+x=0;
+
+minBar=BarCount - 1;
+
+res=LastValue(Peak(IIf(CHLswitch,C,H),Sen,1));
+sup=LastValue(Trough(IIf(CHLswitch,C,L),Sen,1));
+
+for( i = 1; i < NoLines+1 ; i++ )
+{
+Y[i]=LastValue(Peak(IIf(CHLswitch,C,H),Sen,i));
+if (Y[i]>res) {
+	res=Y[i];
+}
+x[i]=BarCount - 1 - LastValue(PeakBars(IIf(CHLswitch,C,H),Sen,i));
+if (minBar>x[i]){
+	minBar=x[i];
+}
+Line = LineArray( x[i], y[i], Null, y[i], 1 );
+Plot( IIf(SRswitch,Null,Line), "", Rcolor, Rstyle );
+
+Y[i]=LastValue(Trough(IIf(CHLswitch,C,L),Sen,i));
+if (Y[i]<sup) {
+	sup=Y[i];
+}
+x[i]=BarCount - 1 - LastValue(TroughBars(IIf(CHLswitch,C,L),Sen,i));
+if (minBar>x[i]){
+	minBar=x[i];
+}
+Line = LineArray( x[i], y[i], Null, y[i], 1 );
+Plot( IIf(SRswitch,Null,Line), "", Scolor, Sstyle );
+}
+_SECTION_END();
+
+/*
+_SECTION_BEGIN("N-th order Polynomial Fit");
+////////////////////////////////////////
+// Example 3
+// N-th order Polynomial Fit example
+/////
+order = Param( "n-th Order", 10, 1, 16, 1 );
+//length = BarCount - 1 - minBar;
+length = 199;
+
+lvb = BarCount - 1;
+fvb = lvb - length;
+
+yy = Matrix( length + 1, 1, 0 );
+xx = Matrix( length + 1, order + 1, 1 );
+
+yy = MxSetBlock( yy, 0, length, 0, 0, Ref( C, fvb ) );
+
+x = BarIndex() - length/2;
+
+for( j = 1; j <= order; j++ )
+{
+     xx = MxSetBlock( xx, 0, length, j, j, x ^ j );
+}
+
+xxt = MxTranspose( xx );
+aa = MxSolve( xxt @ xx, xxt ) @ yy;
+//aa = MxInverse( xxt @ xx ) @ xxt @ yy; // alternative way
+  
+if( aa ) // check if matrix is not null (so solution exists)
+{
+     rr = Null; // store the fit in rr
+   for( i = fvb; i <= lvb; i++ )
+     {
+       rr[i] = aa[0][0];
+
+       for( j = 1; j <= order; j++ )
+       {
+           rr[i] += aa[j][0] * x[ i - fvb ] ^ j;
+       }
+     }
+
+     if( IsNan( rr[ fvb ] ) )
+     {
+       // our polynomial yields infinite or not-a-number result due to overflow/underflow
+      Title = "Polyfit failed. The order of polynomial is too High";
+     }
+     else
+     {
+       SetChartOptions( 0, chartShowDates );
+       SetBarFillColor( IIf( C > O, ColorRGB( 0, 75, 0 ), IIf( C <= O, ColorRGB( 75, 0, 0 ), colorLightGrey ) ) );
+       Plot( rr, "rr", colorWhite, styleLine | styleThick);
+     }
+}
+else
+{
+   Title = "Matrix is singular. The order of polynomial is too high";
+}
+
+Plot( C, "", IIf( C > O, ColorRGB( 0, 255, 0 ), IIf( C <= O, ColorRGB( 255, 0, 0 ), colorLightGrey ) ), styleDots | styleNoLine );
+_SECTION_END();
+
+
+_SECTION_BEGIN("Darvas Box");
+ 
+Periods= Param("Darvas Periods",5,5,260); 
+ 
+boxHigh = Ref(H,-3)>=Ref(HHV(H,Periods),-4) AND
+                  Ref(H,-3)>Ref(H,-2) AND Ref(H,-3)>Ref(H,-1) AND Ref(H,-3)>H;
+ 
+Topbox=ValueWhen(boxHigh, Ref(H,-3)); 
+Botbox=ValueWhen(boxHigh,LLV(L,4)); 
+  
+ 
+//=========================
+//  - Allow color change
+//  - Style change 
+//==========================
+Plot(TopBox, "Top", ParamColor("Box Top Color",  colorRed),    ParamStyle("Box Top Style"));
+Plot(Botbox, "Bot", ParamColor("Box Bottom Color",colorBlue),  ParamStyle("Box Bottom Style"));
+ 
+_SECTION_END();
+*/
+
+_SECTION_BEGIN("Order");
+FS=Param("Font Size", 35, 11, 100,1);
+GfxSetTextColor(ParamColor("Color",colorCustom6));
+GfxSetBkMode(colorWhite);
+GfxSelectFont("Times New Roman",12,600,bold=True,underline=False, True);
+
+Hor=Param("Horizontal Position",20,1,1200,1);
+Ver=Param("Vertical Position",1,1,1,1);
+
+note = "";
+if(_status==1) {
+	note=note+"Long1(" + _longQuantity + ";" + _long + "); ";
+	If(_longQuantity1>0) { note=note + "Long2(" + _longQuantity1 + ";" + _long1 + "); "; }
+	If(_longQuantity2>0) { note=note + "Long3(" + _longQuantity2 + ";" + _long2 + ");"; }
+}
+
+if(_status==2) {
+	note=note+"Short1(" + _shortQuantity + "," + _short + "); ";
+	If(_shortQuantity1>0) note=note + "Short2(" + _shortQuantity1 + "," + _short1 + "); ";
+	If(_shortQuantity2>0) note=note + "Short3(" + _shortQuantity2 + "," + _short2 + ");";
+}
+
+		
+GfxTextOut("Trang thai lenh:" + note,Hor,Ver+15);
+GfxTextOut("Tong so deal: " + _deal,Hor,Ver+35);
+GfxTextOut("Tong so deal(failed): " + _dealFailed,Hor,Ver+55);
+GfxTextOut("Tong so deal(success): " + _dealSuccess,Hor,Ver+75);
+GfxTextOut("Tong lai: " + _profit,Hor,Ver+95);
+
+//GfxTextOut("Lenh mua gan nhat:",Hor,Ver+35);			
+//GfxTextOut("Lenh ban gan nhat:",Hor,Ver+55);			
+//GfxTextOut("Lenh dong mua gan nhat:",Hor,Ver+75);			
+//GfxTextOut("Lenh dong ban gan nhat:",Hor,Ver+95);
+//GfxTextOut("_res:" + _res,Hor,Ver+75);
+//GfxTextOut("_sup:" + _sup,Hor,Ver+95);
+//GfxTextOut("res:" + _res,Hor,Ver+115);
+//GfxTextOut("sup:" + _sup,Hor,Ver+135);
+
+strOrder="";
+
+intTimenum=Now(4);
+int9H15=9*10000+15*100;
+int14h29m30=14*10000+29*100+30;
+
+//strTrack=strTrack+ "B0:_status="+_status + "; strOrder=" + strOrder;
+if(intTimenum>=int9H15 AND intTimenum<=int14h29m30)
+{
+	
+	maclose3=LastValue(MA(C,3));
+	maclose5=LastValue(MA(C,5));
+	maclose7=LastValue(MA(C,7));
+	maclose9=LastValue(MA(C,7));
+	
+	mavolume3=LastValue(MA(V,3));
+	mavolume5=LastValue(MA(V,5));
+	mavolume7=LastValue(MA(V,7));	
+	mavolume14= LastValue(MA(V,14));
+	
+	//int3MA14 = LastValue(SumSince(BarIndex()>BarCount-1-minBar,IIf(V>3*MA(V,14), 1, 0)));
+	
+	// status=0
+	longcondition=((maclose3>res) AND (
+										//mavolume3>mavolume14
+										//OR 
+										mavolume5>mavolume14
+										//OR mavolume7>mavolume14
+										));
+	// status=1
+	longcondition1=((
+						maclose3>_long
+						//maclose7>maclose5
+						//OR maclose3>_long
+					) 
+					//AND (mavolume5>mavolume3) 
+					AND (LastValue(C)-res)>=0 AND (LastValue(C)-res)<=2);
+	// status=1
+	longcondition2=((
+						maclose3>_long1
+						//maclose9>maclose7
+						//OR maclose3>_long1
+					) 
+					//AND (mavolume7>mavolume5) 
+					AND (LastValue(C)-res)>=0 AND (LastValue(C)-res)<=2);
+	
+	// status=0
+	shortcondition=((maclose3<sup) AND (
+									//mavolume3>mavolume14
+									//OR 
+									mavolume5>mavolume14
+									//OR mavolume7>mavolume14
+									));
+	// status=2
+	shortcondition1=((
+					maclose3<_short
+					//maclose7<maclose5
+					//OR maclose3<_short
+					) 
+					//AND (mavolume5>mavolume3) 
+					AND (sup-LastValue(C))>=0 AND (sup-LastValue(C))<=2);
+	// status=2
+	shortcondition2=((
+					maclose3<_short1
+					//maclose9<maclose7
+					//OR maclose3<_short1
+					) 
+					//AND (mavolume7>mavolume5) 
+					AND (sup-LastValue(C))>=0 AND (sup-LastValue(C))<=2);
+
+	if (_status==0){
+		if (longcondition) {
+			StaticVarSet("_status",1);
+			StaticVarSet("_res", res );
+			longprice=LastValue(C)+0.1;
+			StaticVarSet("_long", longprice);
+			StaticVarSet("_longQuantity", Round(PositionMax*0.1));
+			strOrder = "Long1(" + Round(PositionMax*0.1) + ", " + longprice + ")";
+			strTrack=strTrack+ "\nB1:_status="+StaticVarGet("_status")+ "; strOrder=" + strOrder;			
+		}
+		if (shortcondition) {
+			StaticVarSet("_status",2);
+			StaticVarSet("_sup", sup );
+			short_price=LastValue(C)-0.1;
+			StaticVarSet("_short", short_price);
+			StaticVarSet("_shortQuantity", Round(PositionMax*0.1));			
+			strOrder = "Short1("+ Round(PositionMax*0.1) + ", " + short_price + ")";
+			strTrack=strTrack+ "\nB1:_status="+ StaticVarGet("_status") + "; strOrder=" + strOrder;			
+		}
+	}
+
+	if (_status==1){
+		if (res!=_res){
+			StaticVarSet("_status",0);
+			StaticVarSet("_deal",_deal+1);
+			
+			tmpProfit= ((LastValue(C)-0.1)*(_longQuantity+_longQuantity1+_longQuantity2) 
+						-(_longQuantity*_long+ _longQuantity1*_long1 + _longQuantity2*_long2));
+			tmpProfit=tmpProfit*100000-(_longQuantity+_longQuantity1+_longQuantity2)*3700;
+			StaticVarSet("_dealFailed",_dealFailed+ IIf(tmpProfit<0,1,0));
+			StaticVarSet("_dealSuccess",_dealSuccess+ IIf(tmpProfit>=0,1,0));
+			
+			_profit=_profit+ tmpProfit;
+			StaticVarSet("_profit",_profit);
+			
+			StaticVarSet("_longQuantity", 0);
+			StaticVarSet("_longQuantity1", 0);
+			StaticVarSet("_longQuantity2", 0);
+			
+			StaticVarSet("_long", 0);
+			StaticVarSet("_long1", 0);
+			StaticVarSet("_long2", 0);
+			
+			strOrder = "CloseForLastLong("+(_longQuantity+_longQuantity1+_longQuantity2)+ "," + (LastValue(C)-0.1) + ")";
+			
+			strTrack=strTrack+ "\nB4:_status="+StaticVarGet("_status")+ "; strOrder=" + strOrder;			
+		}
+		else 
+		{
+			if (_longQuantity1==0 AND longcondition1){
+				longprice=LastValue(C)+0.1;
+				StaticVarSet("_long1", longprice);
+				StaticVarSet("_longQuantity1", Round(PositionMax*0.3));
+				strOrder = "Long2(" + Round(PositionMax*0.3) + ", " + longprice + ")";
+				strTrack=strTrack+ "\nB2:_status="+StaticVarGet("_status")+ "; strOrder=" + strOrder;			
+			}
+			
+			if (_longQuantity1!=0  AND _longQuantity2==0 AND longcondition2){
+				longprice=LastValue(C)+0.1;
+				StaticVarSet("_long2", longprice);
+				StaticVarSet("_longQuantity2", Round(PositionMax*0.5));
+				strOrder = "Long3(" + Round(PositionMax*0.5) + ", " + longprice + ")";
+				strTrack=strTrack+ "\nB3:_status="+StaticVarGet("_status")+ "; strOrder=" + strOrder;							
+			}
+		}
+	}
+	
+	if (_status==2){
+		if (sup!=_sup){
+			StaticVarSet("_status",0);
+			StaticVarSet("_deal", _deal+1);
+			//postion
+			tmpProfit= (_shortQuantity*_short+ _shortQuantity1*_short1 + _shortQuantity2*_short2)
+						- (LastValue(C)+0.1)*(_shortQuantity+_shortQuantity1+_shortQuantity2);
+			// to money : 100000/1 position and 1000/1 position for CTCK and 2700/1 position for HNX
+			tmpProfit=tmpProfit*100000-(_shortQuantity+_shortQuantity1+_shortQuantity2)*3700;
+			
+			StaticVarSet("_dealFailed",_dealFailed + IIf(tmpProfit<0,1,0));
+			StaticVarSet("_dealSuccess",_dealSuccess + IIf(tmpProfit>=0,1,0));
+			
+			_profit=_profit+ tmpProfit;
+			
+			StaticVarSet("_profit",_profit);
+			
+			StaticVarSet("_shortQuantity", 0);
+			StaticVarSet("_shortQuantity1", 0);
+			StaticVarSet("_shortQuantity2", 0);
+			
+			StaticVarSet("_short", 0);
+			StaticVarSet("_short1", 0);
+			StaticVarSet("_short2", 0);			
+			
+			strOrder = "CloseForLastShort(" + (_shortQuantity+_shortQuantity1+_shortQuantity2) + "," + (LastValue(C)+0.1) + ")";
+			
+			strTrack=strTrack+ "\nB4:_status=" + StaticVarGet("_status")+ "; strOrder=" + strOrder;			
+		}
+		else 
+		{
+			if (_shortQuantity1==0 AND shortcondition1){
+				StaticVarSet("_short1", LastValue(C)-0.1);
+				StaticVarSet("_shortQuantity1", Round(PositionMax*0.3));
+				strOrder = "Short2(" + Round(PositionMax*0.3) + ", " + (LastValue(C)-0.1) + ")";
+				strTrack=strTrack+ "\nB2:_status="+ StaticVarGet("_status")+ "; strOrder=" + strOrder;			
+			}
+			
+			if (_shortQuantity1!=0  AND _shortQuantity2==0 AND shortcondition2){
+				StaticVarSet("_short2", LastValue(C)-0.1);
+				StaticVarSet("_shortQuantity2", Round(PositionMax*0.5));
+				strOrder = "Short3(" + Round(PositionMax*0.5) + ", " + (LastValue(C)-0.1) + ")";
+				strTrack=strTrack+ "\nB3:_status="+StaticVarGet("_status")+ "; strOrder=" + strOrder;							
+			}
+		}
+	}
+}
+
+// close position before 14h29m30
+if (intTimenum>int14h29m30){
+	if (_status==1){
+		StaticVarSet("_status",0);
+		StaticVarSet("_deal",_deal+1);
+		
+		tmpProfit= ((LastValue(C)-0.1)*(_longQuantity+_longQuantity1+_longQuantity2) 
+					-(_longQuantity*_long+ _longQuantity1*_long1 + _longQuantity2*_long2));
+		tmpProfit=tmpProfit*100000-(_longQuantity+_longQuantity1+_longQuantity2)*3700;
+		StaticVarSet("_dealFailed",_dealFailed+ IIf(tmpProfit<0,1,0));
+		StaticVarSet("_dealSuccess",_dealSuccess+ IIf(tmpProfit>=0,1,0));
+		
+		_profit=_profit+ tmpProfit;
+		StaticVarSet("_profit",_profit);
+		
+		strOrder = "CloseForLastLong("+(_longQuantity+_longQuantity1+_longQuantity2)+ "," + (LastValue(C)-0.1) + ")";
+		
+		strTrack=strTrack+ "\nB4:_status="+StaticVarGet("_status")+ "; strOrder=" + strOrder;			
+	}
+	if (_status==2){
+		StaticVarSet("_status",0);
+		StaticVarSet("_deal",_deal+1);
+		//postion
+		tmpProfit= (_shortQuantity*_short+ _shortQuantity1*_short1 + _shortQuantity2*_short2)
+					- (LastValue(C)+0.1)*(_shorQuantity+_shortQuantity1+_shortQuantity2);
+		// to money : 100000/1 position and 1000/1 position for CTCK and 2700/1 position for HNX
+		tmpProfit=tmpProfit*100000-(_shorQuantity+_shortQuantity1+_shortQuantity2)*3700;
+		
+		StaticVarSet("_dealFailed",_dealFailed + IIf(tmpProfit<0,1,0));
+		StaticVarSet("_dealSuccess",_dealSuccess + IIf(tmpProfit>=0,1,0));
+		
+		_profit=_profit+ tmpProfit;
+		
+		StaticVarSet("_profit",_profit);
+		
+		strOrder = "CloseForLastShort("+(_shorQuantity+_shortQuantity1+_shortQuantity2)+ "," + (LastValue(C)+0.1) + ")";
+		
+		strTrack=strTrack+ "\nB4:_status="+StaticVarGet("_status")+ "; strOrder=" + strOrder;			
+	}
+}
+
+//strTrack=strTrack+ "\nB5:_status="+StaticVarGet("_status") + "; strOrder=" + strOrder;
+
+// check new order 
+//neworder= NOT (strOrder=="");
+//pointTrack=track();
+
+<%
+	var strOrder = AFL("strOrder");
+	//var pointTrack = AFL("pointTrack");
+	//var strTrack = AFL("strTrack");
+	
+	if (strOrder!="")
+	{
+		var currentDateTime = new Date();
+		var strDate=currentDateTime.getDate().toString() + "/" + (currentDateTime.getMonth() + 1).toString() + "/" + currentDateTime.getFullYear().toString();
+		var strTime=currentDateTime.getHours().toString() + ":" + currentDateTime.getMinutes().toString() + ":" + currentDateTime.getSeconds().toString();
+		var oShell = new ActiveXObject("Shell.Application");
+		var token_id="5431606828:AAEDIenvthK1pkA0GBFhsLEp2sRgEiIjODY";
+		var chart_id="1683150425";
+		var commandtoRun = "curl.exe";
+		/*
+		var filePath="D:\\Amibroker\\Tmp\\tmp.gif";
+		AB = new ActiveXObject("Broker.Application");
+		AW = AB.ActiveWindow;
+		AW.ExportImage(filePath, 1280, 600 ); // 640, 480 are pixel dimension
+		*/
+		var textParms = "-s -X POST \"https://api.telegram.org/bot" + token_id + "/sendMessage?chat_id=" + chart_id 
+			 + "\" -d text=\"" + strDate + " "  + strTime + ": " + strOrder;
+			 //+ "\n" + strTrack + "\n" + pointTrack + "\""
+			 //+ "\n" + strProfit			 ;
+		//var photoParms = "-s -X POST \"https://api.telegram.org/bot" + token_id + "/sendPhoto?chat_id=" + chart_id 
+		//	+ "\" -F photo=\"@" + filePath +"\" -F caption=\"\"";
+
+		oShell.ShellExecute(commandtoRun, textParms, "", "open", "1");
+
+		//oShell.ShellExecute(commandtoRun, photoParms, "", "open", "1");
+		
+	}
+%>
+
+_SECTION_END();
+
+
+_SECTION_BEGIN("Pattern_Recognition_with_Shading");
+//Pattern Recognition graph with shading
+/*TRENDLINES BREAKOUT*/
+x = Cum(1);
+per = Sen*3;
+s1=L;
+s11=H;
+pS = TroughBars( s1, per, 1 ) == 0;
+endt= LastValue(ValueWhen( pS, x, 1 ));
+startt=LastValue(ValueWhen( pS, x, 2 ));
+endS = LastValue(ValueWhen( pS, s1, 1 ) );
+startS = LastValue( ValueWhen( pS, s1, 2 ));
+dtS =endt-startt;
+aS = (endS-startS)/dtS;
+bS = endS;
+trendlineS = aS * ( x -endt ) + bS;
+pR = PeakBars( s11, per, 1 ) == 0;
+endt1= LastValue(ValueWhen( pR, x, 1 ));
+startt1=LastValue(ValueWhen( pR, x, 2 ));
+endR = LastValue(ValueWhen( pR, s11, 1 ) );
+startR = LastValue( ValueWhen( pR, s11, 2 ));
+DTR=ENDT1-STARTT1;
+aR = (endR-startR)/dtR;
+bR = endR;
+trendlineR = aR * ( x -endt1 ) + bR;
+BEGIN=Min(STARTT,STARTT1);
+TRS = IIf(x>BEGIN-10,trendlineS,-1e10);
+TRR = IIf(x>BEGIN-10,trendlineR,-1e10);
+Condcolor=(Cross(C,trendlineR) AND X>ENDT1) OR (Cross(trendlineS,C) AND
+X>ENDT);
+
+BarColor=IIf(Condcolor,7,1);
+Plot(C,"Close",BarColor,styleCandle);
+Plot(TRS,"Support",colorYellow,styleLine);
+Plot(TRR,"Resist",colorYellow,styleLine);
+/////////////////////////////////////
+// Shading //
+////////////////////////////////////
+/*
+fill=Param("style",2,1,2,1);
+style=IIf(fill==1,styleHistogram,IIf(fill==2,styleArea,Null));
+x=IIf(trs > trr,trr,trs);
+Plot(x,"",colorLightGrey,style);
+Plot(trr,"",colorPink,style);
+*/
+////////////////////////////////////////////
+// Pattern Recognition in title bar //
+///////////////////////////////////////////
+Lowline=Ends-starts;
+Highline=endr-startr;
+Wedge=IIf(Highline <0 AND Lowline > 0,1,0);
+DecendingTriangle=IIf(Highline < 0 AND Lowline==0,1,0);
+AscendingTriangle=IIf(Highline==0 AND Lowline > 0,1,0);
+DownChannel=IIf(Highline<0 AND Lowline<0,1,0);
+UpChannel=IIf(Highline>0 AND Lowline>0,1,0);
+BroadeningWedge=IIf(Highline > 0 AND Lowline < 0,1,0);
+///////////////////////////////////
+// Bullish or Bearish breakout //
+//////////////////////////////////
+BullishBreakout=Cross(C,trendlineR);
+BearishBreakout=Cross(trendlineS,C);
+/*
+Title=Name()+ WriteIf(wedge==1," Wedge","")+WriteIf(DecendingTriangle==1," Decending Triangle","")+WriteIf(AscendingTriangle==1,"Ascending Triangle","")
++WriteIf(DownChannel==1," Downward Sloping Channel","")+WriteIf(UpChannel==1," Upward Sloping Channel","")+WriteIf(broadeningWedge==1," Broadening Wedge","")+"\n"
++EncodeColor(colorGreen)+WriteIf(bullishbreakout,"Bullish Breakout",EncodeColor(colorRed)+WriteIf(bearishbreakout,"Bearish Breakout",""))
+*/
+/*
++WriteVal(highline)*/;
+/////////////////////////////////////
+// Automatic Analysis //
+////////////////////////////////////
+/*
+Filter=AscendingTriangle OR DecendingTriangle OR Wedge OR DownChannel OR 
+
+UpChannel OR BroadeningWedge OR Bullishbreakout OR bearishbreakout;
+AddTextColumn(WriteIf(bullishbreakout,"bullish Breakout",""),"BullBreak");
+AddTextColumn(WriteIf(bearishBreakout,"Bearish Breakout",""),"BearBreak");
+AddTextColumn(WriteIf(ascendingtriangle,"Ascending Triangle",WriteIf
+
+(decendingtriangle,"Decending Triangle",WriteIf(Wedge,"Wedge",WriteIf
+
+(DownChannel,"Down Channel",WriteIf(UpChannel,"Up Channel",WriteIf
+
+(BroadeningWedge,"Broadening Wedge","")))))),"Pattern");
+AddColumn(C,"Close");
+*/
+_SECTION_END();

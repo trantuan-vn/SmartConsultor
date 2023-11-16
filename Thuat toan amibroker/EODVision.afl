@@ -1,0 +1,749 @@
+/*
+_SECTION_BEGIN("ZIG ZAG");
+SetChartOptions(1, chartShowDates);   
+ 
+pr = Param("ZZ", 5, 1, 100);
+  
+EWpk = PeakBars(H, pr, 1) == 0;
+EWtr = TroughBars(L, pr, 1) == 0;
+ 
+zz = Zig(C, pr);
+zzHi = Zig(H, pr);
+zzLo = Zig(L, pr);
+Avg = (zzHi+zzLo)/2;
+ 
+RetroSuccessSecret = IIf(EWpk, zzHi, IIf(EWtr, zzLo, IIf(Avg > Ref(Avg,-1), H, L)));
+EW = Zig(RetroSuccessSecret, pr);
+
+//Plot(C, "Close", colorBlack, styleCandle);
+Plot(EW, "ZIG ZAG", colorBlue, styleThick);
+ 
+Buy = TroughBars(EW, pr, 1) == 0;
+Sell = PeakBars(EW, pr, 1) ==0;
+Buy = ExRem(Buy, Sell);
+Sell = ExRem(Sell, Buy);
+//PlotShapes( shapeUpArrow * Buy, colorGreen, 0, Low );
+//PlotShapes( shapeDownArrow * Sell, colorRed, 0, High );
+
+_SECTION_END();
+*/
+_SECTION_BEGIN("");
+FS=Param("Font Size", 35, 11, 100,1);
+GfxSetTextColor(ParamColor("Color",colorCustom6));
+Hor=Param("Horizontal Position",20,1,1200,1);
+Ver=Param("Vertical Position",1,1,1,1);
+GfxSelectFont("Times New Roman",12,600,bold=True,underline=False, True);
+GfxTextOut("THI TRUONG",Hor+300,Ver+15);
+GfxSetTextColor(ParamColor("Color",colorCustom6));
+GfxSetBkMode(colorWhite);
+//top=Max(Max(Max(Max(Max(Max(Max(Max(Max(Peak(H,5,1),Peak(H,5,2)),Peak(H,5,3)),Peak(H,5,4)),Peak(H,5,5))
+//,Peak(H,5,6)),Peak(H,5,7)),Peak(H,5,8)),Peak(H,5,9)),Peak(H,5,10));
+
+top=Max(Max(Max(Max(Max(Max(Max(Max(Max(Peak(H,3,1),Peak(H,3,2)),Peak(H,3,3)),Peak(H,3,4)),Peak(H,3,5))
+,Peak(H,3,6)),Peak(H,3,7)),Peak(H,3,8)),Peak(H,3,9)),Peak(H,3,10));
+
+ChosenDate = 1221116; // my chosen End date 
+barNumber = LastValue( ValueWhen(DateNum() == ChosenDate , BarIndex(), 1) );
+Lastprice = Low[barNumber];
+
+//bottom=Trough(L,5,1);
+bottom=Lastprice;
+
+Canslim= GetFnData("EPS")>0
+AND Close*GetFnData("SharesOut")/1000000>=300
+//AND REF (C, -1)*REF (V, -1) > 5000000
+//AND REF (V, -1) >= 100000;
+AND MA(V,14)>50000;
+
+big_vol= ((REF (V, -1)> 1.3 * MA(V,14) AND REF (C, -1)-REF (O, -1)>0 AND (REF (C, -1)-REF (O, -1))> 1.2 * (REF (C, -2)-REF (O, -2))) 
+OR (V> 1.3 * MA(V,14) AND C-O>0 AND C-O> 1.2 * (REF (C, -1)-REF (O, -1))));
+
+DM[0]=SelectedValue(C);
+
+/*
+congnghiep=CategoryGetSymbols(categoryICB,8779);
+
+num4=1+StrCount(congnghiep,",");
+for( i = 0; ( sym4 = StrExtract(congnghiep,i ) ) != ""; i++ )
+{
+	
+	SetForeign(sym4);
+	b2=MA(V,14)>10000 AND V>10000 AND (Close*GetFnData("SharesOut")/1000000)>100;
+	
+	num4-=IIf(NOT b2,1,0);
+}
+*/
+
+
+GfxTextOut("Break:" + Prec(top,2), Hor+300, Ver+95);
+GfxTextOut("Bottom:" + Prec(bottom,2), Hor+300, Ver+115);
+GfxTextOut("San:" + MarketID(1), Hor+300, Ver+135);
+GfxTextOut("Nhom nganh:" + ICBID(2), Hor+300, Ver+155);
+x=Cum(1);
+//ps= PeakBars(H,5)==0;
+ps= TroughBars(L,5)==0;
+//x=Cum(ps);
+//GfxTextOut("test:" + Highest(ValueWhen(ps,H)) , Hor+300, Ver+175);
+//GfxTextOut("test:" + Lowest(ValueWhen(ps,L)) , Hor+300, Ver+175);
+//GfxTextOut("test:" + int(Now(4) % 100) , Hor+300, Ver+175);
+//GfxTextOut("test:" + DateTimeFormat("%Y%m%d",LastValue(Ref(Datetime(), -(BarCount -1- LastValue(Highest(ValueWhen(ps,x))))))) , Hor+300, Ver+175);
+//GfxTextOut("Các mã cùng nghành:" + CategoryGetSymbols(categoryICB,1000) , Hor+300, Ver+175);
+//wlnumber = CategoryFind("MyWatch List 1", categoryWatchlist );
+//mysymbols = CategoryGetSymbols(categoryWatchlist, wlnumber );
+//GfxTextOut("test:" + CategoryFind("ngan hang", categoryICB ), Hor+300, Ver+175);
+//x=abs(H-L)/(2*Ref(C,-1)*IIf(MarketID(1)=="HSX",0.07,IIf(MarketID(1)=="HNX",0.1,iif(MarketID(1)=="UPCOM",0.14,0.07))));
+//GfxTextOut("test:" + close[BarCount-2] , Hor+300, Ver+175);
+
+ChosenDate = 1230620; // my chosen End date : =10000 * (2023 - 1900) + 100 * 6 + 20
+
+barNumber = LastValue( ValueWhen(DateNum() == ChosenDate , BarIndex(), 1) );
+Lastprice = High[barNumber];
+top=Lastprice;
+
+GfxTextOut("test:" + Prec((C-top)*100/top,2), Hor+300, Ver+175);
+
+_SECTION_END();
+
+_SECTION_BEGIN("CHI SO TAI CHINH");
+FS=Param("Font Size", 35, 11, 100,1);
+GfxSetTextColor(ParamColor("Color",colorCustom6));
+Hor=Param("Horizontal Position",20,1,1200,1);
+Ver=Param("Vertical Position",1,1,1,1);
+GfxSelectFont("Times New Roman",12,600,bold=True,underline=False, True);
+GfxTextOut("CHI SO TAI CHINH",Hor+10,Ver+15);
+GfxSetTextColor(ParamColor("Color",colorCustom6));
+GfxSetBkMode(colorWhite);
+GfxTextOut("Gia tri P/e:" + Prec(Close/GetFnData("EPS"),2), Hor+10, Ver+35);
+GfxTextOut("Gia tri EPS:" + Prec(GetFnData("EPS"),2), Hor+10, Ver+55);
+GfxTextOut("Gia tri P/S:" + Prec((Close/GetFnData("SalesPerShare")),2), Hor+10, Ver+75);
+GfxTextOut("Gia tri P/B:" + Prec((Close/GetFnData("BookValuePerShare")),2), Hor+10, Ver+95);
+GfxTextOut("Gia tri So sach:" + Prec(GetFnData("BookValuePerShare"),2), Hor+10, Ver+115);
+GfxTextOut("Doanh thu tren co phan:" + Prec(GetFnData("SalesPerShare"),2), Hor+10, Ver+135);
+GfxTextOut("Gia tri ROE:" + Prec(GetFnData("ReturnOnEquity"),2), Hor+10, Ver+155);
+GfxTextOut("Gia tri ROA:" + Prec(GetFnData("ReturnOnAssets"),2), Hor+10, Ver+175);
+GfxTextOut("Gia graham:" + Prec(sqrt(22.5*GetFnData("EPS")*GetFnData("BookValuePerShare")),2), Hor+10, Ver+195);
+GfxTextOut("Beta:" + Prec(GetFnData("Beta"),2), Hor+10, Ver+215);
+GfxTextOut("Tang truong quy :" + Prec(GetFnData("QtrlyEarningsGrowth"),2), Hor+10, Ver+235);
+_SECTION_END();
+
+_SECTION_BEGIN("THI TRUONG");
+FS=Param("Font Size", 35, 11, 100,1);
+GfxSetTextColor(ParamColor("Color",colorCustom6));
+Hor=Param("Horizontal Position",20,1,1200,1);
+Ver=Param("Vertical Position",1,1,1,1);
+GfxSelectFont("Times New Roman",12,600,bold=True,underline=False, True);
+GfxTextOut("THI TRUONG",Hor+300,Ver+15);
+GfxSetTextColor(ParamColor("Color",colorCustom6));
+GfxSetBkMode(colorWhite);
+GfxTextOut("Gia: " + close, Hor+300, Ver+35);
+GfxTextOut("Von hoa(ty):"+ Prec((Close*GetFnData("SharesOut")/1000000),2), Hor+300, Ver+55);
+GfxTextOut("Ti le % thay doi:" + Prec((Close-Ref(Close,-1))*100/Ref(Close,-1),2), Hor+300, Ver+75);
+_SECTION_END();
+
+
+_SECTION_BEGIN("Price");
+SetChartOptions(0,chartShowArrows|chartShowDates);
+_N(Title = StrFormat("{{NAME}} - {{INTERVAL}} {{DATE}} Open %g, Hi %g, Lo %g, Close %g (%.1f%%) {{VALUES}}", O, H, L, C, SelectedValue( ROC( C, 1 ) ) ));
+//Plot( GetRTData("Bid"), "Bid", ParamColor("Color", colorDefault ), styleNoTitle | ParamStyle("Style") | GetPriceStyle() ); 
+Plot( C, "Close", ParamColor("Color", colorDefault ), styleNoTitle | ParamStyle("Style") | GetPriceStyle() ); 
+//Plot( GetRTData("Ask"), "Ask", ParamColor("Color", colorDefault ), styleNoTitle | ParamStyle("Style") | GetPriceStyle() ); 
+//Plot( GetRTData("Bid"), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+//Plot( GetRTData("Ask"), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+_SECTION_END();
+
+m1=MACD(12,26);
+sig=Signal(12,26,9);
+
+em=MA(C,20);
+
+Buy1=Cross(m1,sig) AND C>em;
+Buy2=Cross(C,em) AND m1>sig;
+Sell1=Cross(sig,m1) AND C<em;
+Sell2=Cross(em,C) AND m1<sig;
+
+
+Buy=Buy1 OR Buy2;
+Sell=Sell1 OR Sell2;
+Buy=ExRem(Buy,Sell);
+Sell=ExRem(Sell,Buy);
+/*
+PlotShapes(shapeUpArrow*Buy,colorBlue,0,L);
+PlotShapes(shapeDownArrow*Sell,colorRed,0,H);
+*/
+Filter=Buy OR Sell;
+AddColumn(IIf(Buy,66,IIf(Sell,83,Null)),"Tin Hieu",formatChar,colorDefault,IIf(Buy,colorGreen,IIf(Sell,colorOrange,colorDefault)));
+
+/*_SECTION_BEGIN("Bollinger Bands");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 100, 1 );
+Width = Param("Width", 2, 0, 10, 0.05 );
+Color = ParamColor("Color", colorLightGrey );
+Style = ParamStyle("Style", styleLine | styleNoLabel ) | styleNoLabel;
+Plot( bbt = BBandTop( P, Periods, Width ), "BBTop" + _PARAM_VALUES(), Color, Style ); 
+Plot( bbb = BBandBot( P, Periods, Width ), "BBBot" + _PARAM_VALUES(), Color, Style ); 
+PlotOHLC( bbt, bbt, bbb, bbb, "", ColorBlend( Color, GetChartBkColor(), 0.8 ), styleNoLabel | styleCloud | styleNoRescale, Null, Null, Null, -1 );
+_SECTION_END();
+*/
+
+
+
+_SECTION_BEGIN("MA1");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1, 10 );
+Plot( MA( P, Periods ), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+PlotText( "Hello", 100, 100, colorGreen );
+_SECTION_END();
+
+_SECTION_BEGIN("MA4");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1, 10 );
+Plot( MA( P, Periods ), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+PlotText( "Hello", 100, 100, colorGreen );
+_SECTION_END();
+_SECTION_BEGIN("MA5");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1, 10 );
+Plot( MA( P, Periods ), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+PlotText( "Hello", 100, 100, colorGreen );
+_SECTION_END();
+_SECTION_BEGIN("MA6");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1, 10 );
+Plot( MA( P, Periods ), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+PlotText( "Hello", 100, 100, colorGreen );
+_SECTION_END();
+Buy=Buy;
+Short=Sell;
+/*
+PlotShapes(IIf(Buy, shapeSquare, shapeNone),colorGreen, 0, L, Offset=-40);
+PlotShapes(IIf(Buy, shapeSquare, shapeNone),colorLime, 0,L, Offset=-50);                      
+PlotShapes(IIf(Buy, shapeUpArrow, shapeNone),colorWhite, 0,L, Offset=-45); 
+PlotShapes(IIf(Short, shapeSquare, shapeNone),colorRed, 0, H, Offset=40);
+PlotShapes(IIf(Short, shapeSquare, shapeNone),colorOrange, 0,H, Offset=50);                      
+PlotShapes(IIf(Short, shapeDownArrow, shapeNone),colorWhite, 0,H, Offset=-45);
+*/
+
+_SECTION_BEGIN("Bollinger Bands1");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1 );
+Width = Param("Width", 2, 0, 10, 0.05 );
+Color = ParamColor("Color", colorCycle );
+Style = ParamStyle("Style");
+Plot( BBandTop( P, Periods, Width ), "BBTop" + _PARAM_VALUES(), Color, Style ); 
+Plot( BBandBot( P, Periods, Width ), "BBBot" + _PARAM_VALUES(), Color, Style ); 
+_SECTION_END();
+
+_SECTION_BEGIN("MA2");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1, 10 );
+Plot( MA( P, Periods ), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+_SECTION_END();
+
+_SECTION_BEGIN("MA3");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1, 10 );
+Plot( MA( P, Periods ), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+_SECTION_END();
+
+/*
+_SECTION_BEGIN("ZIG ZAG");
+SetChartOptions(1, chartShowDates);   
+ 
+pr = Param("ZZ", 5, 1, 100);
+  
+EWpk = PeakBars(H, pr, 1) == 0;
+EWtr = TroughBars(L, pr, 1) == 0;
+ 
+zz = Zig(C, pr);
+zzHi = Zig(H, pr);
+zzLo = Zig(L, pr);
+Avg = (zzHi+zzLo)/2;
+ 
+RetroSuccessSecret = IIf(EWpk, zzHi, IIf(EWtr, zzLo, IIf(Avg > Ref(Avg,-1), H, L)));
+EW = Zig(RetroSuccessSecret, pr);
+
+//Plot(C, "Close", colorBlack, styleCandle);
+Plot(EW, "ZIG ZAG", colorBlue, styleThick);
+ 
+Buy = TroughBars(EW, pr, 1) == 0;
+Sell = PeakBars(EW, pr, 1) ==0;
+Buy = ExRem(Buy, Sell);
+Sell = ExRem(Sell, Buy);
+//PlotShapes( shapeUpArrow * Buy, colorGreen, 0, Low );
+//PlotShapes( shapeDownArrow * Sell, colorRed, 0, High );
+
+_SECTION_END();
+*/
+_SECTION_BEGIN("");
+FS=Param("Font Size", 35, 11, 100,1);
+GfxSetTextColor(ParamColor("Color",colorCustom6));
+Hor=Param("Horizontal Position",20,1,1200,1);
+Ver=Param("Vertical Position",1,1,1,1);
+GfxSelectFont("Times New Roman",12,600,bold=True,underline=False, True);
+GfxTextOut("THI TRUONG",Hor+300,Ver+15);
+GfxSetTextColor(ParamColor("Color",colorCustom6));
+GfxSetBkMode(colorWhite);
+top=Max(Max(Max(Max(Max(Max(Max(Max(Max(Peak(H,5,1),Peak(H,5,2)),Peak(H,5,3)),Peak(H,5,4)),Peak(H,5,5))
+,Peak(H,5,6)),Peak(H,5,7)),Peak(H,5,8)),Peak(H,5,9)),Peak(H,5,10));
+
+//GfxTextOut("Break:" + Prec(top,2), Hor+300, Ver+95);
+
+_SECTION_END();
+
+_SECTION_BEGIN("CHI SO TAI CHINH");
+FS=Param("Font Size", 35, 11, 100,1);
+GfxSetTextColor(ParamColor("Color",colorCustom6));
+Hor=Param("Horizontal Position",20,1,1200,1);
+Ver=Param("Vertical Position",1,1,1,1);
+GfxSelectFont("Times New Roman",12,600,bold=True,underline=False, True);
+GfxTextOut("CHI SO TAI CHINH",Hor+10,Ver+15);
+GfxSetTextColor(ParamColor("Color",colorCustom6));
+GfxSetBkMode(colorWhite);
+GfxTextOut("Gia tri P/e:" + Prec(Close/GetFnData("EPS"),2), Hor+10, Ver+35);
+GfxTextOut("Gia tri EPS:" + Prec(GetFnData("EPS"),2), Hor+10, Ver+55);
+GfxTextOut("Gia tri P/S:" + Prec((Close/GetFnData("SalesPerShare")),2), Hor+10, Ver+75);
+GfxTextOut("Gia tri P/B:" + Prec((Close/GetFnData("BookValuePerShare")),2), Hor+10, Ver+95);
+GfxTextOut("Gia tri So sach:" + Prec(GetFnData("BookValuePerShare"),2), Hor+10, Ver+115);
+GfxTextOut("Doanh thu tren co phan:" + Prec(GetFnData("SalesPerShare"),2), Hor+10, Ver+135);
+GfxTextOut("Gia tri ROE:" + Prec(GetFnData("ReturnOnEquity"),2), Hor+10, Ver+155);
+GfxTextOut("Gia tri ROA:" + Prec(GetFnData("ReturnOnAssets"),2), Hor+10, Ver+175);
+GfxTextOut("Gia graham:" + Prec(sqrt(22.5*GetFnData("EPS")*GetFnData("BookValuePerShare")),2), Hor+10, Ver+195);
+GfxTextOut("Beta:" + Prec(GetFnData("Beta"),2), Hor+10, Ver+215);
+GfxTextOut("Tang truong quy :" + Prec(GetFnData("QtrlyEarningsGrowth"),2), Hor+10, Ver+235);
+_SECTION_END();
+
+_SECTION_BEGIN("THI TRUONG");
+FS=Param("Font Size", 35, 11, 100,1);
+GfxSetTextColor(ParamColor("Color",colorCustom6));
+Hor=Param("Horizontal Position",20,1,1200,1);
+Ver=Param("Vertical Position",1,1,1,1);
+GfxSelectFont("Times New Roman",12,600,bold=True,underline=False, True);
+GfxTextOut("THI TRUONG",Hor+300,Ver+15);
+GfxSetTextColor(ParamColor("Color",colorCustom6));
+GfxSetBkMode(colorWhite);
+//GfxTextOut("San: ", Hor+300, Ver+35);
+GfxTextOut("Von hoa(ty):"+ Prec((Close*GetFnData("SharesOut")/1000000),2), Hor+300, Ver+55);
+GfxTextOut("Ti le % thay doi:" + Prec((Close-Ref(Close,-1))*100/Ref(Close,-1),2), Hor+300, Ver+75);
+_SECTION_END();
+
+
+_SECTION_BEGIN("Price");
+SetChartOptions(0,chartShowArrows|chartShowDates);
+_N(Title = StrFormat("{{NAME}} - {{INTERVAL}} {{DATE}} Open %g, Hi %g, Lo %g, Close %g (%.1f%%) {{VALUES}}", O, H, L, C, SelectedValue( ROC( C, 1 ) ) ));
+Plot( C, "Close", ParamColor("Color", colorDefault ), styleNoTitle | ParamStyle("Style") | GetPriceStyle() ); 
+_SECTION_END();
+
+m1=MACD(12,26);
+sig=Signal(12,26,9);
+
+em=MA(C,20);
+
+Buy1=Cross(m1,sig) AND C>em;
+Buy2=Cross(C,em) AND m1>sig;
+Sell1=Cross(sig,m1) AND C<em;
+Sell2=Cross(em,C) AND m1<sig;
+
+
+Buy=Buy1 OR Buy2;
+Sell=Sell1 OR Sell2;
+Buy=ExRem(Buy,Sell);
+Sell=ExRem(Sell,Buy);
+/*
+PlotShapes(shapeUpArrow*Buy,colorBlue,0,L);
+PlotShapes(shapeDownArrow*Sell,colorRed,0,H);
+*/
+Filter=Buy OR Sell;
+AddColumn(IIf(Buy,66,IIf(Sell,83,Null)),"Tin Hieu",formatChar,colorDefault,IIf(Buy,colorGreen,IIf(Sell,colorOrange,colorDefault)));
+
+/*_SECTION_BEGIN("Bollinger Bands");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 100, 1 );
+Width = Param("Width", 2, 0, 10, 0.05 );
+Color = ParamColor("Color", colorLightGrey );
+Style = ParamStyle("Style", styleLine | styleNoLabel ) | styleNoLabel;
+Plot( bbt = BBandTop( P, Periods, Width ), "BBTop" + _PARAM_VALUES(), Color, Style ); 
+Plot( bbb = BBandBot( P, Periods, Width ), "BBBot" + _PARAM_VALUES(), Color, Style ); 
+PlotOHLC( bbt, bbt, bbb, bbb, "", ColorBlend( Color, GetChartBkColor(), 0.8 ), styleNoLabel | styleCloud | styleNoRescale, Null, Null, Null, -1 );
+_SECTION_END();
+*/
+
+
+
+_SECTION_BEGIN("MA1");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1, 10 );
+Plot( MA( P, Periods ), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+PlotText( "Hello", 100, 100, colorGreen );
+_SECTION_END();
+
+_SECTION_BEGIN("MA4");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1, 10 );
+Plot( MA( P, Periods ), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+PlotText( "Hello", 100, 100, colorGreen );
+_SECTION_END();
+_SECTION_BEGIN("MA5");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1, 10 );
+Plot( MA( P, Periods ), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+PlotText( "Hello", 100, 100, colorGreen );
+_SECTION_END();
+_SECTION_BEGIN("MA6");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1, 10 );
+Plot( MA( P, Periods ), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+PlotText( "Hello", 100, 100, colorGreen );
+_SECTION_END();
+Buy=Buy;
+Short=Sell;
+/*
+PlotShapes(IIf(Buy, shapeSquare, shapeNone),colorGreen, 0, L, Offset=-40);
+PlotShapes(IIf(Buy, shapeSquare, shapeNone),colorLime, 0,L, Offset=-50);                      
+PlotShapes(IIf(Buy, shapeUpArrow, shapeNone),colorWhite, 0,L, Offset=-45); 
+PlotShapes(IIf(Short, shapeSquare, shapeNone),colorRed, 0, H, Offset=40);
+PlotShapes(IIf(Short, shapeSquare, shapeNone),colorOrange, 0,H, Offset=50);                      
+PlotShapes(IIf(Short, shapeDownArrow, shapeNone),colorWhite, 0,H, Offset=-45);
+*/
+
+_SECTION_BEGIN("Bollinger Bands1");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1 );
+Width = Param("Width", 2, 0, 10, 0.05 );
+Color = ParamColor("Color", colorCycle );
+Style = ParamStyle("Style");
+Plot( BBandTop( P, Periods, Width ), "BBTop" + _PARAM_VALUES(), Color, Style ); 
+Plot( BBandBot( P, Periods, Width ), "BBBot" + _PARAM_VALUES(), Color, Style ); 
+_SECTION_END();
+
+_SECTION_BEGIN("MA2");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1, 10 );
+Plot( MA( P, Periods ), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+_SECTION_END();
+
+_SECTION_BEGIN("MA3");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1, 10 );
+Plot( MA( P, Periods ), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+_SECTION_END();
+
+
+//------------------------------------------------------------------------------
+//  Formula Name	:      SUPPORT RESISTANCE AMIBROKER AFL by pipschart
+//  Author	:      KrT group
+//  Uploader	:      www.pipschart.com
+//  E-mail		:      info@pipschart.com
+//  Amibroker Blog	:      www.pipschart.com/amibroker
+//  Origin		:      Modified & Collected from different sources.
+//------------------------------------------------------------------------------
+/*
+_SECTION_BEGIN("The Fighter4 Logo");
+GfxSetBkMode(1);
+X=750;
+Y=1;
+Font=10;
+GfxSelectFont("Impact",Font*2.2, 550);GfxSetTextColor(colorRed);GfxTextOut("KrT group",x,y);
+GfxSelectFont("Impact",Font*2.2, 550);GfxSetTextColor(colorGreen);GfxTextOut("RESEARCH",x+120,Y);
+
+_SECTION_END();
+*/
+//------------------------------------------------------------------------------
+/*
+_SECTION_BEGIN("Price");
+SetChartOptions(0,chartShowArrows|chartShowDates);
+_N(Title = StrFormat("{{NAME}} - {{INTERVAL}} {{DATE}} Open %g, Hi %g, Lo %g, Close %g (%.1f%%) {{VALUES}}", O, H, L, C, SelectedValue( ROC( C, 1 ) ) ));
+Plot( C, "Close", ParamColor("Color", colorDefault ), styleNoTitle | ParamStyle("Style") | GetPriceStyle() ); 
+_SECTION_END();
+*/
+_SECTION_BEGIN("Sup / Res Lines");
+SRswitch = ParamToggle("Sup / Res Lines","On,Off");
+CHLswitch = ParamToggle("Hi Low / Close","Hi Low,Close");
+NoLines = Param("No of Lines",3,1,10,1);
+Sen = Param("Sensitivity",5,1,100,1);
+
+Rcolor=ParamColor( "Res Color", colorGreen );
+Rstyle=ParamStyle( "Res Style", styleLine );
+
+Scolor=ParamColor( "Sup Color", colorBrown );
+Sstyle=ParamStyle( "Sup Style", styleLine );
+
+y=0;
+x=0;
+
+for( i = 1; i < NoLines+1 ; i++ )
+{
+Y[i]=LastValue(Peak(IIf(CHLswitch,C,H),Sen,i));
+x[i]=BarCount - 1 - LastValue(PeakBars(IIf(CHLswitch,C,H),Sen,i));
+Line = LineArray( x[i], y[i], Null, y[i], 1 );
+Plot( IIf(SRswitch,Null,Line), "", Rcolor, Rstyle );
+
+Y[i]=LastValue(Trough(IIf(CHLswitch,C,L),Sen,i));
+x[i]=BarCount - 1 - LastValue(TroughBars(IIf(CHLswitch,C,L),Sen,i));
+Line = LineArray( x[i], y[i], Null, y[i], 1 );
+Plot( IIf(SRswitch,Null,Line), "", Scolor, Sstyle );
+}
+_SECTION_END();
+
+//------------------------------------------------------------------------------
+//  Formula Name	:      Pattern Candlestick  Recognition With Shading afl
+//  Author	:      KrT group
+//  Uploader	:      www.pipschart.com
+//  E-mail		:      info@pipschart.com
+//  Amibroker Blog	:      www.pipschart.com/amibroker
+//  Origin		:      Modified & Collected from different sources.
+//------------------------------------------------------------------------------
+/*
+_SECTION_BEGIN("The Fighter4 Logo");
+GfxSetBkMode(1);
+X=750;
+Y=1;
+Font=10;
+GfxSelectFont("Impact",Font*2.2, 550);GfxSetTextColor(colorRed);GfxTextOut("KrT group",x,y);
+GfxSelectFont("Impact",Font*2.2, 550);GfxSetTextColor(colorGreen);GfxTextOut("RESEARCH",x+120,Y);
+
+_SECTION_END();
+*/
+//------------------------------------------------------------------------------
+
+_SECTION_BEGIN("Pattern_Recognition_with_Shading");
+//Pattern Recognition graph with shading
+/*TRENDLINES BREAKOUT*/
+x = Cum(1);
+per = 3.5;
+s1=L;
+s11=H;
+pS = TroughBars( s1, per, 1 ) == 0;
+endt= LastValue(ValueWhen( pS, x, 1 ));
+startt=LastValue(ValueWhen( pS, x, 2 ));
+endS = LastValue(ValueWhen( pS, s1, 1 ) );
+startS = LastValue( ValueWhen( pS, s1, 2 ));
+dtS =endt-startt;
+aS = (endS-startS)/dtS;
+bS = endS;
+trendlineS = aS * ( x -endt ) + bS;
+pR = PeakBars( s11, per, 1 ) == 0;
+endt1= LastValue(ValueWhen( pR, x, 1 ));
+startt1=LastValue(ValueWhen( pR, x, 2 ));
+endR = LastValue(ValueWhen( pR, s11, 1 ) );
+startR = LastValue( ValueWhen( pR, s11, 2 ));
+DTR=ENDT1-STARTT1;
+aR = (endR-startR)/dtR;
+bR = endR;
+trendlineR = aR * ( x -endt1 ) + bR;
+BEGIN=Min(STARTT,STARTT1);
+TRS = IIf(x>BEGIN-10,trendlineS,-1e10);
+TRR = IIf(x>BEGIN-10,trendlineR,-1e10);
+Condcolor=(Cross(C,trendlineR) AND X>ENDT1) OR (Cross(trendlineS,C) AND
+X>ENDT);
+
+BarColor=IIf(Condcolor,7,1);
+Plot(C,"Close",BarColor,styleCandle);
+Plot(TRS,"Support",colorYellow,styleLine);
+Plot(TRR,"Resist",colorYellow,styleLine);
+/////////////////////////////////////
+// Shading //
+////////////////////////////////////
+/*
+fill=Param("style",2,1,2,1);
+style=IIf(fill==1,styleHistogram,IIf(fill==2,styleArea,Null));
+x=IIf(trs > trr,trr,trs);
+Plot(x,"",colorLightGrey,style);
+Plot(trr,"",colorPink,style);
+*/
+////////////////////////////////////////////
+// Pattern Recognition in title bar //
+///////////////////////////////////////////
+Lowline=Ends-starts;
+Highline=endr-startr;
+Wedge=IIf(Highline <0 AND Lowline > 0,1,0);
+DecendingTriangle=IIf(Highline < 0 AND Lowline==0,1,0);
+AscendingTriangle=IIf(Highline==0 AND Lowline > 0,1,0);
+DownChannel=IIf(Highline<0 AND Lowline<0,1,0);
+UpChannel=IIf(Highline>0 AND Lowline>0,1,0);
+BroadeningWedge=IIf(Highline > 0 AND Lowline < 0,1,0);
+///////////////////////////////////
+// Bullish or Bearish breakout //
+//////////////////////////////////
+BullishBreakout=Cross(C,trendlineR);
+BearishBreakout=Cross(trendlineS,C);
+/*
+Title=Name()+ WriteIf(wedge==1," Wedge","")+WriteIf(DecendingTriangle==1," Decending Triangle","")+WriteIf(AscendingTriangle==1,"Ascending Triangle","")
++WriteIf(DownChannel==1," Downward Sloping Channel","")+WriteIf(UpChannel==1," Upward Sloping Channel","")+WriteIf(broadeningWedge==1," Broadening Wedge","")+"\n"
++EncodeColor(colorGreen)+WriteIf(bullishbreakout,"Bullish Breakout",EncodeColor(colorRed)+WriteIf(bearishbreakout,"Bearish Breakout",""))
+*/
+/*
++WriteVal(highline)*/;
+/////////////////////////////////////
+// Automatic Analysis //
+////////////////////////////////////
+/*
+Filter=AscendingTriangle OR DecendingTriangle OR Wedge OR DownChannel OR 
+
+UpChannel OR BroadeningWedge OR Bullishbreakout OR bearishbreakout;
+AddTextColumn(WriteIf(bullishbreakout,"bullish Breakout",""),"BullBreak");
+AddTextColumn(WriteIf(bearishBreakout,"Bearish Breakout",""),"BearBreak");
+AddTextColumn(WriteIf(ascendingtriangle,"Ascending Triangle",WriteIf
+
+(decendingtriangle,"Decending Triangle",WriteIf(Wedge,"Wedge",WriteIf
+
+(DownChannel,"Down Channel",WriteIf(UpChannel,"Up Channel",WriteIf
+
+(BroadeningWedge,"Broadening Wedge","")))))),"Pattern");
+AddColumn(C,"Close");
+*/
+_SECTION_END();
+
+Plot( C, "Close", IIf(C>Ref(C,-1),colorCustom9,colorRed),  ParamStyle("Style") | GetPriceStyle() ); 
+
+/*_SECTION_BEGIN("Bollinger Bands");
+Plot(MA( C, 20 ),"MA20",colorYellow,styleLine|styleThick);
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 20, 2, 100, 1 );
+Width = Param("Width", 2, 0, 10, 0.05 );
+Color = ParamColor("Color", colorDarkGrey );
+Style = ParamStyle("Style", styleLine | styleNoLabel ) | styleNoLabel;
+Plot( bbt = BBandTop( P, Periods, Width ), "BBTop" + _PARAM_VALUES(), colorCustom1, Style ); 
+Plot( bbb = BBandBot( P, Periods, Width ), "BBBot" + _PARAM_VALUES(), colorCustom1, Style ); 
+PlotOHLC( bbt, bbt, bbb, bbb, "", ColorBlend( Color, GetChartBkColor(), 0.1 ), styleThick | styleCloud | styleNoRescale, Null, Null, Null, -1 );
+_SECTION_END(); */
+
+_SECTION_BEGIN("Ichimoku");
+/* ICHIMOKU CHART */
+n1 = Param("Tenkan-sen Period",9,1,200,1); 
+n2 = Param("Kijun-sen Period",26,1,400,1); 
+n3 = Param("Senkou Span B Period",52,1,600,1); 
+ 
+TenkanSen   =(HHV(H,n1)+LLV(L,n1))/2;            // Tenkan-sen 
+KijunSen    =(HHV(H,n2)+LLV(L,n2))/2;            // Kijun-sen 
+ChinkouSpan =Ref(C,-n2);                          // Chinkou Span 
+Cks         = Close;                             
+SenkouSpanA =Ref((KijunSen+TenkanSen)/2,-n2);    // Senkou Span A 
+SpA         =(KijunSen+TenkanSen)/2;              
+SenkouSpanB =Ref((HHV(H,n3)+LLV(L,n3))/2,-n2);   // Senkou Span B 
+SpB         =(HHV(H,n3)+LLV(L,n3))/2;            
+DL = Ref( C, 25 );
+ 
+ 
+Cond1 =  Ref(Close > Max(SenkouSpanA,SenkouSpanB),-1);  
+Cond2 =  Ref(Close < Min(SenkouSpanA,SenkouSpanB),-1);  
+Cond3 =  Ref(Cross(TenkanSen,KijunSen),-1);  
+Cond4 =  Ref(Cross(KijunSen,TenkanSen),-1);  
+Cond5 =  Ref(Cross(Close,ChinkouSpan ),-1);  
+Cond6 =  Ref(Cross(ChinkouSpan ,Close),-1);  
+Cond7 =  Ref(Cross (Close , Max(SenkouSpanA,SenkouSpanB)),-1);  
+Cond8 =  Ref(Cross ( Min(SenkouSpanA,SenkouSpanB), Close),-1);  
+Cond9 = Close > TenkanSen AND TenkanSen > KijunSen AND KijunSen > Max(SenkouSpanA,SenkouSpanB); 
+Cond10= Close < TenkanSen AND TenkanSen < KijunSen AND KijunSen < Min(SenkouSpanA,SenkouSpanB); 
+RemCond9=ExRem(Cond9,NOT Cond9);                  
+RemCond10=ExRem(Cond10,NOT Cond10); 
+ 
+ColSenk =IIf (Cond1,colorGreen, IIf(Cond2,colorRed,colorLightGrey)); 
+Flat  =  TenkanSen == Ref(TenkanSen,-1) OR (NOT(Cond1) AND NOT(Cond2)) ; 
+ 
+for( i = 0; i < BarCount; i++ ) 
+{ 
+   if (Flat[i]) 
+      ColTenk[i] = colorLightGrey; 
+   else
+   { 
+		if (Cond1[i] AND TenkanSen[i] > TenkanSen[i-1]) 
+			 ColTenk[i] = colorGreen; 
+		if (Cond1[i] AND TenkanSen[i] < TenkanSen[i-1]) 
+			 ColTenk[i] = colorRed; 
+		if (Cond2[i] AND TenkanSen[i] < TenkanSen[i-1]) 
+			 ColTenk[i] = colorRed; 
+		if (Cond2[i] AND TenkanSen[i] > TenkanSen[i-1]) 
+			 ColTenk[i] = colorGreen; 
+   } 
+} 
+/*
+PlotShapes(IIf(Cond7, shapeSmallUpTriangle ,shapeNone),colorGreen,0,H,10);              
+PlotShapes(IIf(Cond8, shapeSmallDownTriangle ,shapeNone),colorRed,0,L,10); 
+PlotShapes(IIf(Cond3, shapeHollowSmallUpTriangle,shapeNone),colorGreen,0,H,12);              
+PlotShapes(IIf(Cond4, shapeHollowSmallDownTriangle ,shapeNone),colorRed,0,L,12); 
+PlotShapes(IIf(Cond5, shapeSmallCircle ,shapeNone),colorGreen,0,H,4);              
+PlotShapes(IIf(Cond6, shapeSmallCircle + shapePositionAbove ,shapeNone),colorRed,0,L,4); 
+PlotShapes(IIf(RemCond9 , shapeHollowSquare ,shapeNone),colorGreen,0,H,18);              
+PlotShapes(IIf(RemCond10, shapeHollowSquare + shapePositionAbove ,shapeNone),colorRed,0,L,18); 
+*/
+ 
+//Plot (C,"Close",colorBlack,styleThick); 
+//Plot (C,"Bars",colorBlack,styleCandle); 
+//Plot (TenkanSen,"Tenkan-sen",colorRed); 
+//Plot (KijunSen, "Kijun-sen", colorBlue); 
+//Plot (Cks,"Chinkou Span",colorLime, style = styleLine,0,0,-n2); 
+//Plot (SpA,"SenkouSpanA",colorOrange,styleDashed,0,0,n2); 
+//Plot (SpB,"SenkouSpanB",colorViolet,styleDashed + styleThick,0,0,n2); 
+PlotOHLC (SpA,SpA,SpB,SpB,"Cloud",IIf (SpA > SpB,ColorGreen,colorPink),styleCloud, 10, 10, n2 ); 
+above = IIf(KijunSen>SenkouSpanA AND TenkanSen>SenkouSpanB,1,0);
+within = IIf(KijunSen>SenkouSpanA AND TenkanSen<SenkouSpanB,1,0);
+below = IIf(TenkanSen<SenkouSpanA AND TenkanSen<SenkouSpanB,1,0);
+BuyCond1 = C> SenkouSpanB;
+BuyCond2 = (SpB > SpA);
+BuyCond3 = (SenkouSpanB > SenkouSpanA);
+BuyCond4 = Cross(C, SenkouSpanB) or Cross(C, SenkouSpanA);
+
+SellCond1 = C< SenkouSpanA;
+SellCond2 = (SpB < SpA);
+SellCond3 = (SenkouSpanB < SenkouSpanA);
+SellCond4 = Cross(SenkouSpanB, C) or Cross(SenkouSpanA, C);
+
+
+Buy = BuyCond1  AND BuyCond3 AND BuyCond4;
+Sell = SellCond1 AND SellCond3 AND SellCond4;
+
+Buy = ExRem(Buy, Sell);
+Sell = ExRem(Sell, Buy);
+
+PlotShapes( shapeUpArrow * Buy ,colorBlue,0,L,Offset=-15);
+PlotShapes( shapeDownArrow * Sell ,colorOrange,0,H,Offset=15);
+
+ 
+
+//PlotShapes( IIF( buy, shapeUpArrow, shapeNone ), colorGreen , layer = 0, L); 
+//PlotShapes( IIF( sell, shapeDownArrow, shapeNone ), colorRed , layer = 0, H);
+
+
+TradeCond = MA(V, 20) > 100000;
+Cover = Buy AND TradeCond;
+Filter = Cover OR buy;
+AddColumn(V,"Volume",1.0);
+AddColumn(Cover,"Break Out the cloud",True,colorcustom2,colorCustom6);
+//Buy = Cross(TenkanSen,KijunSen) AND (DL>Close);
+//Sell = Cross(KijunSen,TenkanSen) AND (DL<KijunSen);
+//StrongBuy = Buy AND above;
+//MediumBuy = Buy AND within;
+//WeakBuy = Buy AND below;
+//StrongSell = Sell AND below;
+//MediumSell = Sell AND within;
+//WeakSell = Sell AND above;
+
+ 
+//IIf( (StrongBuy),PlotShapes(shapeUpTriangle*StrongBuy,colorGreen),0);
+//IIf( (MediumBuy),PlotShapes(shapeUpArrow*MediumBuy,colorGreen),0);
+//IIf( (WeakBuy),PlotShapes(shapeHollowUpArrow*WeakBuy,colorIndigo),0);
+//IIf( (StrongSell),PlotShapes(shapeDownTriangle*StrongSell,colorRed),0);
+//IIf( (MediumSell),PlotShapes(shapeDownArrow*MediumSell,colorRed),0);
+//IIf( (WeakSell),PlotShapes(shapeHollowDownArrow*WeakSell,colorBrown),0);
+ 
+ 
+
+ 
+ 
+//Plot( 1, "Ribbon", ColTenk, styleOwnScale|styleArea|styleNoLabel, -2, 200 );   
+//Plot( 4, "Ribbon", ColSenk, styleOwnScale|styleArea|styleNoLabel, -1, 200 );   
+_SECTION_END();
+
+_SECTION_BEGIN("MA7");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1, 10 );
+Plot( MA( P, Periods ), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+_SECTION_END();
+
+_SECTION_BEGIN("MA8");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1, 10 );
+Plot( MA( P, Periods ), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+_SECTION_END();
+
+
