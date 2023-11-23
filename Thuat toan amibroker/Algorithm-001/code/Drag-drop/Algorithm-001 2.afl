@@ -1,0 +1,330 @@
+_SECTION_BEGIN("Price");
+SetChartOptions(0,chartShowArrows|chartShowDates);
+_N(Title = StrFormat("{{NAME}} - {{INTERVAL}} {{DATE}} Open %g, Hi %g, Lo %g, Close %g (%.1f%%) {{VALUES}}", O, H, L, C, SelectedValue( ROC( C, 1 ) ) ));
+Plot( C, "Close", ParamColor("Color", colorDefault ), styleNoTitle | ParamStyle("Style") | GetPriceStyle() ); 
+_SECTION_END();
+
+_SECTION_BEGIN("Sup / Res Lines");
+
+function CalculateAngle(x1, y1, x2, y2)
+{
+	PI = 3.141592653589793;
+	dx = x2 - x1;
+	dy = y2 - y1;
+
+	// S? d?ng hàm atan2 d? tính toán d? góc
+	angle = atan2(dy, dx);
+
+	// Chuy?n d?i d? sang radian
+	angle = angle * 180 / PI;
+
+
+	return angle;
+}
+
+SetChartOptions(0,chartShowArrows|chartShowDates);
+SRswitch = ParamToggle("Sup / Res Lines","On,Off");
+CHLswitch = ParamToggle("Hi Low / Close","Hi Low,Close");
+NoLines = Param("No of Lines",3,1,10,1);
+Sen = Param("Sen",0.1,0.1,1,0.1);
+//trigger = Param("Place Order",0,0,1,1);
+
+Rcolor=ParamColor( "Res Color", colorGreen );
+Rstyle=ParamStyle( "Res Style", styleLine );
+
+Scolor=ParamColor( "Sup Color", colorBrown );
+Sstyle=ParamStyle( "Sup Style", styleLine );
+
+y=0;
+x=0;
+
+TimeFrameSet(in15Minute);
+// Res 1
+in15m_res_y[1]=LastValue(Peak(IIf(CHLswitch,C,H),Sen,1));
+in15m_res_x[1]=BarCount - 1 - LastValue(PeakBars(IIf(CHLswitch,C,H),Sen,1));
+// Res 2
+in15m_res_y[2]=LastValue(Peak(IIf(CHLswitch,C,H),Sen,2));
+in15m_res_x[2]=BarCount - 1 - LastValue(PeakBars(IIf(CHLswitch,C,H),Sen,2));
+// Sup 1
+in15m_sup_y[1]=LastValue(Trough(IIf(CHLswitch,C,L),Sen,1));
+in15m_sup_x[1]=BarCount - 1 - LastValue(TroughBars(IIf(CHLswitch,C,L),Sen,1));
+// Sup 2
+in15m_sup_y[2]=LastValue(Trough(IIf(CHLswitch,C,L),Sen,2));
+in15m_sup_x[2]=BarCount - 1 - LastValue(TroughBars(IIf(CHLswitch,C,L),Sen,2));
+
+in15m_up_angle = CalculateAngle(in15m_sup_x[2], in15m_sup_y[2], in15m_sup_x[1], in15m_sup_y[1]);
+in15m_down_angle = CalculateAngle(in15m_res_x[2], in15m_res_y[2], in15m_res_x[1], in15m_res_y[1]);
+TimeFrameRestore();
+
+TimeFrameSet(in5Minute);
+// Res 1
+in5m_res_y[1]=LastValue(Peak(IIf(CHLswitch,C,H),Sen,1));
+in5m_res_x[1]=BarCount - 1 - LastValue(PeakBars(IIf(CHLswitch,C,H),Sen,1));
+// Res 2
+in5m_res_y[2]=LastValue(Peak(IIf(CHLswitch,C,H),Sen,2));
+in5m_res_x[2]=BarCount - 1 - LastValue(PeakBars(IIf(CHLswitch,C,H),Sen,2));
+// Sup 1
+in5m_sup_y[1]=LastValue(Trough(IIf(CHLswitch,C,L),Sen,1));
+in5m_sup_x[1]=BarCount - 1 - LastValue(TroughBars(IIf(CHLswitch,C,L),Sen,1));
+// Sup 2
+in5m_sup_y[2]=LastValue(Trough(IIf(CHLswitch,C,L),Sen,2));
+in5m_sup_x[2]=BarCount - 1 - LastValue(TroughBars(IIf(CHLswitch,C,L),Sen,2));
+
+in5m_up_angle = CalculateAngle(in5m_sup_x[2], in5m_sup_y[2], in5m_sup_x[1], in5m_sup_y[1]);
+in5m_down_angle = CalculateAngle(in5m_res_x[2], in5m_res_y[2], in5m_res_x[1], in5m_res_y[1]);
+TimeFrameRestore();
+
+// Res 1
+res_y[1]=LastValue(Peak(IIf(CHLswitch,C,H),Sen,1));
+res_x[1]=BarCount - 1 - LastValue(PeakBars(IIf(CHLswitch,C,H),Sen,1));
+res_line1 = LineArray( res_x[1], res_y[1], Null, res_y[1], 1 );
+
+textFormat = "" + 1;
+PlotText(textFormat, LastValue(BarIndex()), res_y[1], Rcolor, Rstyle);
+Plot( IIf(SRswitch,Null,res_line1), "", Rcolor, Rstyle );
+// Res 2
+res_y[2]=LastValue(Peak(IIf(CHLswitch,C,H),Sen,2));
+res_x[2]=BarCount - 1 - LastValue(PeakBars(IIf(CHLswitch,C,H),Sen,2));
+res_line2 = LineArray( res_x[2], res_y[2], Null, res_y[2], 1 );
+
+textFormat = "" + 2;
+PlotText(textFormat, LastValue(BarIndex()), res_y[2], Rcolor, Rstyle);
+Plot( IIf(SRswitch,Null,res_line2), "", Rcolor, Rstyle );
+
+// Res 3
+res_y[3]=LastValue(Peak(IIf(CHLswitch,C,H),Sen,3));
+res_x[3]=BarCount - 1 - LastValue(PeakBars(IIf(CHLswitch,C,H),Sen,3));
+res_line3 = LineArray( res_x[3], res_y[3], Null, res_y[3], 1 );
+
+textFormat = "" + 3;
+PlotText(textFormat, LastValue(BarIndex()), res_y[3], Rcolor, Rstyle);
+Plot( IIf(SRswitch,Null,res_line3), "", Rcolor, Rstyle );
+
+
+// Sup 1
+sup_y[1]=LastValue(Trough(IIf(CHLswitch,C,L),Sen,1));
+sup_x[1]=BarCount - 1 - LastValue(TroughBars(IIf(CHLswitch,C,L),Sen,1));
+sup_line1 = LineArray( sup_x[1], sup_y[1], Null, sup_y[1], 1 );
+textFormat = "" + 1;
+PlotText(textFormat, LastValue(BarIndex()), sup_y[1], Scolor, Sstyle);
+Plot( IIf(SRswitch,Null,sup_line1), "", Scolor, Sstyle );
+
+// Sup 2
+sup_y[2]=LastValue(Trough(IIf(CHLswitch,C,L),Sen,2));
+sup_x[2]=BarCount - 1 - LastValue(TroughBars(IIf(CHLswitch,C,L),Sen,2));
+sup_line2 = LineArray( sup_x[2], sup_y[2], Null, sup_y[2], 1 );
+textFormat = "" + 2;
+PlotText(textFormat, LastValue(BarIndex()), sup_y[2], Scolor, Sstyle);
+Plot( IIf(SRswitch,Null,sup_line2), "", Scolor, Sstyle );
+
+// Sup 3
+sup_y[3]=LastValue(Trough(IIf(CHLswitch,C,L),Sen,3));
+sup_x[3]=BarCount - 1 - LastValue(TroughBars(IIf(CHLswitch,C,L),Sen,3));
+sup_line3 = LineArray( sup_x[3], sup_y[3], Null, sup_y[3], 1 );
+textFormat = "" + 3;
+PlotText(textFormat, LastValue(BarIndex()), sup_y[3], Scolor, Sstyle);
+Plot( IIf(SRswitch,Null,sup_line3), "", Scolor, Sstyle );
+
+up_angle = CalculateAngle(sup_x[2], sup_y[2], sup_x[1], sup_y[1]);
+down_angle = CalculateAngle(res_x[2], res_y[2], res_x[1], res_y[1]);
+
+//trang thai thi truong
+uptrend=(res_y[1]>res_y[2]) AND (res_y[2]>res_y[3]) AND (sup_y[1]>sup_y[2]) AND (sup_y[2]>sup_y[3]);
+downtrend=(res_y[1]<res_y[2]) AND (res_y[2]<res_y[3]) AND (sup_y[1]<sup_y[2]) AND (sup_y[2]<sup_y[3]);
+
+// duong noi sup 1, 2
+sup_channel_12 = LineArray( sup_x[2], sup_y[2], sup_x[1], sup_y[1], 1 );
+Plot( IIf(SRswitch,Null,sup_channel_12), "", Rcolor, styleLine );
+sup_paranel_y= (sup_y[1]-sup_y[2])*(BarCount - 1-res_x[1])/(sup_x[1]-sup_x[2]) + res_y[1];
+paranel_sup_channel_12 = LineArray( res_x[1], res_y[1], BarCount - 1, sup_paranel_y , 1 );
+Plot( IIf(SRswitch,Null,paranel_sup_channel_12), "", Rcolor, styleLine );
+
+// duong noi res 1, 2
+res_channel_12 = LineArray( res_x[2], res_y[2], res_x[1], res_y[1], 1 );
+Plot( IIf(SRswitch,Null,res_channel_12), "", Scolor, styleLine );
+res_paranel_y= (res_y[1]-res_y[2])*(BarCount - 1-sup_x[1])/(res_x[1]-res_x[2]) + sup_y[1];
+paranel_res_channel_12 = LineArray( sup_x[1], sup_y[1], BarCount - 1, res_paranel_y , 1 );
+Plot( IIf(SRswitch,Null,paranel_res_channel_12), "", Scolor, styleLine );
+
+trading=0;
+// fibo res_y[1] và sup_y[1]
+y=res_y[1];
+z=sup_y[1];
+if (sup_y[1]>res_y[1]){
+	y=res_y[1];
+	z=sup_y[1];
+}
+// Tính toán các m?c Fibonacci
+fibonacciRetrace78_6 = y - 0.786 * (y - z);
+fibonacciRetrace61_8 = y - 0.618 * (y - z);
+fibonacciRetrace50 = y - 0.5 * (y - z);
+fibonacciRetrace38_2 = y - 0.382 * (y - z);
+fibonacciRetrace23_6 = y - 0.236 * (y - z);
+
+// V? du?ng trend t? Y d?n Z
+Plot(y, "Y", colorGreen, styleDashed);
+//PlotText("0%", LastValue(BarIndex()), y, colorGreen, styleDashed);	
+Plot(z, "Z", colorRed, styleDashed);
+//PlotText("100%", LastValue(BarIndex()), z, colorGreen, styleDashed);	
+
+// V? các m?c Fibonacci Retracement
+Plot(fibonacciRetrace78_6, "78.6%", colorBlue, styleLine);
+//PlotText("78.6%", LastValue(BarIndex()), fibonacciRetrace78_6, colorBlue, styleLine);	
+Plot(fibonacciRetrace61_8, "61.8%", colorOrange, styleLine);	
+//PlotText("61.8%", LastValue(BarIndex()), fibonacciRetrace61_8, colorOrange, styleLine);		
+Plot(fibonacciRetrace50, "50%", colorBlue, styleLine);
+//PlotText("50%", LastValue(BarIndex()), fibonacciRetrace50, colorBlue, styleLine);			
+Plot(fibonacciRetrace38_2, "38.2%", colorBrown, styleLine);
+//PlotText("38.2%", LastValue(BarIndex()), fibonacciRetrace38_2, colorBrown, styleLine);			
+Plot(fibonacciRetrace23_6, "23.6%", colorBlueGrey, styleLine);
+//PlotText("23.6%", LastValue(BarIndex()), fibonacciRetrace23_6, colorBlueGrey, styleLine);				
+	
+// fibo paranel_sup_channel_12 và sup_channel_12
+y=paranel_sup_channel_12;
+z=sup_channel_12;
+// Tính toán các m?c Fibonacci
+up_fibonacciRetrace78_6 = y - 0.786 * (y - z);
+up_fibonacciRetrace61_8 = y - 0.618 * (y - z);
+up_fibonacciRetrace50 = y - 0.5 * (y - z);
+up_fibonacciRetrace38_2 = y - 0.382 * (y - z);
+up_fibonacciRetrace23_6 = y - 0.236 * (y - z);
+
+// V? du?ng trend t? Y d?n Z
+Plot(y, "Y", colorGreen, styleDashed);
+//PlotText("0%", LastValue(BarIndex()), y, colorGreen, styleDashed);	
+Plot(z, "Z", colorRed, styleDashed);
+//PlotText("100%", LastValue(BarIndex()), z, colorGreen, styleDashed);	
+
+// V? các m?c Fibonacci Retracement
+Plot(up_fibonacciRetrace78_6, "78.6%", colorBlue, styleLine);
+//PlotText("78.6%", LastValue(BarIndex()), fibonacciRetrace78_6, colorBlue, styleLine);	
+Plot(up_fibonacciRetrace61_8, "61.8%", colorOrange, styleLine);	
+//PlotText("61.8%", LastValue(BarIndex()), fibonacciRetrace61_8, colorOrange, styleLine);		
+Plot(up_fibonacciRetrace50, "50%", colorBlue, styleLine);
+//PlotText("50%", LastValue(BarIndex()), fibonacciRetrace50, colorBlue, styleLine);			
+Plot(up_fibonacciRetrace38_2, "38.2%", colorBrown, styleLine);
+//PlotText("38.2%", LastValue(BarIndex()), fibonacciRetrace38_2, colorBrown, styleLine);			
+Plot(up_fibonacciRetrace23_6, "23.6%", colorBlueGrey, styleLine);
+//PlotText("23.6%", LastValue(BarIndex()), fibonacciRetrace23_6, colorBlueGrey, styleLine);				
+
+// fibo paranel_sup_channel_12 và sup_channel_12
+y=res_channel_12;
+z=paranel_res_channel_12;
+// Tính toán các m?c Fibonacci
+down_fibonacciRetrace78_6 = y - 0.786 * (y - z);
+down_fibonacciRetrace61_8 = y - 0.618 * (y - z);
+down_fibonacciRetrace50 = y - 0.5 * (y - z);
+down_fibonacciRetrace38_2 = y - 0.382 * (y - z);
+down_fibonacciRetrace23_6 = y - 0.236 * (y - z);
+
+// V? du?ng trend t? Y d?n Z
+Plot(y, "Y", colorGreen, styleDashed);
+//PlotText("0%", LastValue(BarIndex()), y, colorGreen, styleDashed);	
+Plot(z, "Z", colorRed, styleDashed);
+//PlotText("100%", LastValue(BarIndex()), z, colorGreen, styleDashed);	
+
+// V? các m?c Fibonacci Retracement
+Plot(down_fibonacciRetrace78_6, "78.6%", colorBlue, styleLine);
+//PlotText("78.6%", LastValue(BarIndex()), fibonacciRetrace78_6, colorBlue, styleLine);	
+Plot(down_fibonacciRetrace61_8, "61.8%", colorOrange, styleLine);	
+//PlotText("61.8%", LastValue(BarIndex()), fibonacciRetrace61_8, colorOrange, styleLine);		
+Plot(down_fibonacciRetrace50, "50%", colorBlue, styleLine);
+//PlotText("50%", LastValue(BarIndex()), fibonacciRetrace50, colorBlue, styleLine);			
+Plot(down_fibonacciRetrace38_2, "38.2%", colorBrown, styleLine);
+//PlotText("38.2%", LastValue(BarIndex()), fibonacciRetrace38_2, colorBrown, styleLine);			
+Plot(down_fibonacciRetrace23_6, "23.6%", colorBlueGrey, styleLine);
+//PlotText("23.6%", LastValue(BarIndex()), fibonacciRetrace23_6, colorBlueGrey, styleLine);				
+
+
+_SECTION_END();
+
+_SECTION_BEGIN("Index");
+	Hor=Param("Horizontal Position",20,1,1200,1);
+	Ver=Param("Vertical Position",1,1,1,1);
+
+	FS=Param("Font Size", 35, 11, 100,1);
+	GfxSetTextColor(ParamColor("Color",colorCustom6));
+	GfxSetBkMode(colorWhite);
+	GfxSelectFont("Times New Roman",12,600,bold=True,underline=False, True);
+	//khung thoi gian
+	timeFrameBars = Interval(-1);
+	GfxTextOut("Khung thoi gian (s): " + NumToStr(timeFrameBars,0), Hor, Ver+15);
+	if (uptrend) market_status="Uptrend";
+	else if (downtrend) market_status="Downtrend";
+	else market_status="Sideway";
+	// Xác d?nh n?i dung van b?n d?a trên tr?ng thái th? tru?ng
+	GfxTextOut("Trang thai thi truong: " + market_status, Hor, Ver+35);
+
+	GfxTextOut("Góc up: " + prec(up_angle,2), Hor, Ver+55);
+	GfxTextOut("Góc down: " + prec(down_angle,2), Hor, Ver+75);
+	GfxTextOut("Góc up (15m): " + prec(in15m_up_angle,2), Hor, Ver+95);
+	GfxTextOut("Góc down (15m): " + prec(in15m_down_angle,2), Hor, Ver+115);
+	GfxTextOut("Góc up (5m): " + prec(in5m_up_angle,2), Hor, Ver+135);
+	GfxTextOut("Góc down (5m): " + prec(in5m_down_angle,2), Hor, Ver+155);
+
+
+_SECTION_END();
+
+
+
+_SECTION_BEGIN("Pin bar");
+
+// Tính toán kích thu?c thân n?n và bóng
+BodySize = abs(Close - Open);
+UpperShadow = High - max(Open, Close);
+LowerShadow = min(Open, Close) - Low;
+
+
+// Ði?u ki?n xác d?nh n?n pin bar
+DownPinBarCondition = UpperShadow > 2 * BodySize; //AND (High - Low)>MA((High - Low),100);
+UpPinBarCondition = LowerShadow > 2 * BodySize; //AND (High - Low)>MA((High - Low),100);
+
+// V? m?u n?n pin bar trên bi?u d?
+PlotShapes(IIf(UpPinBarCondition, shapeHollowSmallCircle, shapeNone), colorGreen, 0, Low, Offset=-20);
+PlotShapes(IIf(DownPinBarCondition, shapeHollowSmallCircle, shapeNone), colorRed, 0, High, Offset=20);
+_SECTION_END();
+
+
+_SECTION_BEGIN("Engulfing");
+
+// Xác d?nh m?u Engulfing Bullish
+BullishEngulfingCondition = Ref(Close, -1) < Ref(Open, -1) AND Open < Close AND Close > Ref(Open, -1) AND Open < Ref(Close, -1);
+
+// Xác d?nh m?u Engulfing Bearish
+BearishEngulfingCondition = Ref(Close, -1) > Ref(Open, -1) AND Open > Close AND Close < Ref(Open, -1) AND Open > Ref(Close, -1);
+
+// V? m?u Engulfing trên bi?u d?
+PlotShapes(IIf(BullishEngulfingCondition, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset=-40);
+PlotShapes(IIf(BearishEngulfingCondition, shapeDownArrow, shapeNone), colorRed, 0, High, Offset=-40);
+
+_SECTION_END();
+
+_SECTION_BEGIN("Doji");
+// Tính toán kích thu?c thân n?n
+BodySize = abs(Close - Open);
+
+// Xác d?nh m?u n?n Doji
+DojiCondition = BodySize < 0.05 * (High - Low);
+
+// V? m?u n?n Doji trên bi?u d?
+PlotShapes(IIf(DojiCondition, shapeSmallCircle, shapeNone), colorYellow, 0, Low, Offset=-60);
+_SECTION_END();
+
+_SECTION_BEGIN("Hammer and Hangman");
+BodySize = abs(Close - Open);
+UpperShadow = High - max(Open, Close);
+LowerShadow = min(Open, Close) - Low;
+
+// Xác d?nh m?u n?n Hammer
+HammerCondition = BodySize > 0.1 * (High - Low) AND
+                  LowerShadow > 2 * BodySize AND
+                  UpperShadow < 0.1 * (High - Low);
+HangmanCondition = BodySize > 0.1 * (High - Low) AND
+                  UpperShadow > 2 * BodySize AND
+                  LowerShadow < 0.1 * (High - Low);                  
+
+// V? m?u n?n Hammer trên bi?u d?
+PlotShapes(IIf(HammerCondition, shapeSmallUpTriangle, shapeNone), colorGreen, 0, Low, Offset=-80);
+PlotShapes(IIf(HangmanCondition, shapeSmallDownTriangle, shapeNone), colorRed, 0, High, Offset=-80);
+
+_SECTION_END();
