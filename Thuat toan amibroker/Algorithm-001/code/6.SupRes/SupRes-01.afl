@@ -1,0 +1,78 @@
+#include "C:\Users\tuant\SmartConsultor\Thuat toan amibroker\Algorithm-001\code\1.Utilities\Common.afl"
+
+change = StrToNum(ReadConfig("change"));
+
+level1 = StrToNum(ReadConfig("Level1"));
+level2 = StrToNum(ReadConfig("Level2"));
+level3 = StrToNum(ReadConfig("Level3"));
+
+TimeFrameSet(level1);
+// Res 1
+level1_res_y[1]=LastValue(Peak(C,change,1));
+level1_res_x[1]=BarCount - 1 - LastValue(PeakBars(C,change,1));
+// Res 2
+level1_res_y[2]=LastValue(Peak(C,change,2));
+level1_res_x[2]=BarCount - 1 - LastValue(PeakBars(C,change,2));
+// Sup 1
+level1_sup_y[1]=LastValue(Trough(C,change,1));
+level1_sup_x[1]=BarCount - 1 - LastValue(TroughBars(C,change,1));
+// Sup 2
+level1_sup_y[2]=LastValue(Trough(C,change,2));
+level1_sup_x[2]=BarCount - 1 - LastValue(TroughBars(C,change,2));
+
+level1_up_angle = CalculateAngle(level1_sup_x[2], level1_sup_y[2], level1_sup_x[1], level1_sup_y[1]);
+level1_down_angle = CalculateAngle(level1_res_x[2], level1_res_y[2], level1_res_x[1], level1_res_y[1]);
+
+TimeFrameSet(level2);
+// Res 1
+level2_res_y[1]=LastValue(Peak(C,change,1));
+level2_res_x[1]=BarCount - 1 - LastValue(PeakBars(C,change,1));
+// Res 2
+level2_res_y[2]=LastValue(Peak(C,change,2));
+level2_res_x[2]=BarCount - 1 - LastValue(PeakBars(C,change,2));
+// Sup 1
+level2_sup_y[1]=LastValue(Trough(C,change,1));
+level2_sup_x[1]=BarCount - 1 - LastValue(TroughBars(C,change,1));
+// Sup 2
+level2_sup_y[2]=LastValue(Trough(C,change,2));
+level2_sup_x[2]=BarCount - 1 - LastValue(TroughBars(C,change,2));
+
+level2_up_angle = CalculateAngle(level2_sup_x[2], level2_sup_y[2], level2_sup_x[1], level2_sup_y[1]);
+level2_down_angle = CalculateAngle(level2_res_x[2], level2_res_y[2], level2_res_x[1], level2_res_y[1]);
+
+TimeFrameSet(level3);
+// Res 1
+level3_res_y[1]=LastValue(Peak(C,change,1));
+level3_res_x[1]=BarCount - 1 - LastValue(PeakBars(C,change,1));
+// Res 2
+level3_res_y[2]=LastValue(Peak(C,change,2));
+level3_res_x[2]=BarCount - 1 - LastValue(PeakBars(C,change,2));
+// Sup 1
+level3_sup_y[1]=LastValue(Trough(C,change,1));
+level3_sup_x[1]=BarCount - 1 - LastValue(TroughBars(C,change,1));
+// Sup 2
+level3_sup_y[2]=LastValue(Trough(C,change,2));
+level3_sup_x[2]=BarCount - 1 - LastValue(TroughBars(C,change,2));
+
+level3_up_angle = CalculateAngle(level3_sup_x[2], level3_sup_y[2], level3_sup_x[1], level3_sup_y[1]);
+level3_down_angle = CalculateAngle(level3_res_x[2], level3_res_y[2], level3_res_x[1], level3_res_y[1]);
+
+TimeFrameRestore();
+
+// Res 1
+res_y[1]=LastValue(Peak(C,change,1));
+res_x[1]=BarCount - 1 - LastValue(PeakBars(C,change,1));
+// Res 2
+res_y[2]=LastValue(Peak(C,change,2));
+res_x[2]=BarCount - 1 - LastValue(PeakBars(C,change,2));
+// Sup 1
+sup_y[1]=LastValue(Trough(C,change,1));
+sup_x[1]=BarCount - 1 - LastValue(TroughBars(C,change,1));
+// Sup 2
+sup_y[2]=LastValue(Trough(C,change,2));
+sup_x[2]=BarCount - 1 - LastValue(TroughBars(C,change,2));
+
+up_angle = CalculateAngle(sup_x[2], sup_y[2], sup_x[1], sup_y[1]);
+down_angle = CalculateAngle(res_x[2], res_y[2], res_x[1], res_y[1]);
+
+

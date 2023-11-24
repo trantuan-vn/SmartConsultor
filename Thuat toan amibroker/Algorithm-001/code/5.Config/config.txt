@@ -1,0 +1,9 @@
+// cau hinh cac thong so cua peak, trough
+[Pick/Trough Settings]
+change=0.1
+
+// cau hinh khung thoi gian cua 3 cap do theo giây
+[timeframe Settings]
+Level1=60
+Level2=300
+Level3=900

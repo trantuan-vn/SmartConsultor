@@ -1,0 +1,90 @@
+// Ham doc file config
+configFilePath = "C:\\Users\\tuant\\SmartConsultor\\Thuat toan amibroker\\Algorithm-001\\code\\5.Config\\config.txt";
+function ReadConfig(key)
+{
+	result = Null; // Initialize result variable
+	fileHandle = fopen(configFilePath, "r");
+	if (fileHandle)
+	{
+		
+
+		while (!feof(fileHandle))
+		{
+			line = fgets(fileHandle);
+			
+			
+			if (StrFind(line, key))
+			{
+				value = StrExtract(line, 1, '=');
+				result = StrTrim(value," "); // Store the result in the variable
+				
+				break; // Exit the loop once a match is found
+			}
+			
+		}
+
+		fclose(fileHandle); // Close the file handle outside the loop
+	}
+
+	return result;
+}	
+
+// tin toan goc giua duong line voi truc tung
+function CalculateAngle(x1, y1, x2, y2)
+{
+	PI = 3.141592653589793;
+	dx = x2 - x1;
+	dy = y2 - y1;
+
+	// S? d?ng hàm atan2 d? tính toán d? góc
+	angle = atan2(dy, dx);
+
+	// Chuy?n d?i d? sang radian
+	angle = angle * 180 / PI;
+
+
+	return angle;
+}
+
+// ve line
+procedure DrawLine(x1, y1, x2, y2, vtext,vcolor,vstyle)
+{
+	line1 = LineArray( x1, y1, x2, y2, 1 );
+	PlotText(vtext, LastValue(BarIndex()), y2, vcolor, vstyle);
+	Plot(line1, "", vcolor, vstyle );
+}
+
+
+// ve line
+procedure DrawFibonacci(y,z,vcolor)
+{
+	// Tinh toan Fibonacci
+	fibonacciRetrace78_6 = y - 0.786 * (y - z);
+	fibonacciRetrace61_8 = y - 0.618 * (y - z);
+	fibonacciRetrace50 = y - 0.5 * (y - z);
+	fibonacciRetrace38_2 = y - 0.382 * (y - z);
+	fibonacciRetrace23_6 = y - 0.236 * (y - z);
+
+	// Ve duong trend tu Y den Z
+	Plot(y, "Y", vcolor, styleDashed);
+	//PlotText("0%", LastValue(BarIndex()), y, colorGreen, styleDashed);	
+	Plot(z, "Z", vcolor, styleDashed);
+	//PlotText("100%", LastValue(BarIndex()), z, colorGreen, styleDashed);	
+
+	// Ve cac moc Fibonacci Retracement
+	Plot(fibonacciRetrace78_6, "78.6%", colorBlue, styleLine);
+	//PlotText("78.6%", LastValue(BarIndex()), fibonacciRetrace78_6, colorBlue, styleLine);	
+	Plot(fibonacciRetrace61_8, "61.8%", colorOrange, styleLine);	
+	//PlotText("61.8%", LastValue(BarIndex()), fibonacciRetrace61_8, colorOrange, styleLine);		
+	Plot(fibonacciRetrace50, "50%", colorBlue, styleLine);
+	//PlotText("50%", LastValue(BarIndex()), fibonacciRetrace50, colorBlue, styleLine);			
+	Plot(fibonacciRetrace38_2, "38.2%", colorBrown, styleLine);
+	//PlotText("38.2%", LastValue(BarIndex()), fibonacciRetrace38_2, colorBrown, styleLine);			
+	Plot(fibonacciRetrace23_6, "23.6%", colorBlueGrey, styleLine);
+	//PlotText("23.6%", LastValue(BarIndex()), fibonacciRetrace23_6, colorBlueGrey, styleLine);		
+}
+
+
+
+
+
