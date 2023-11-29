@@ -1,0 +1,60 @@
+// This work is licensed under a Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) https://creativecommons.org/licenses/by-nc-sa/4.0/
+// © LuxAlgo
+
+_SECTION_BEGIN("Elliott Wave [LuxAlgo]");
+
+//------------------------------------------------------------------------------
+//Settings
+//------------------------------------------------------------------------------ 
+i_hi = ParamStr("high", "high|close|max open/close");
+i_lo = ParamStr("low", "low|close|min open/close");
+
+s1 = ParamToggle("ZigZag", "On|Off", 1);
+len1 = Param("1 Length", 4, 1);
+col1 = ParamColor("Color 1", colorRed);
+s2 = ParamToggle("ZigZag", "On|Off", 1);
+len2 = Param("2 Length", 8, 1);
+col2 = ParamColor("Color 2", colorBlue);
+s3 = ParamToggle("ZigZag", "On|Off", 1);
+len3 = Param("3 Length", 16, 1);
+col3 = ParamColor("Color 3", colorWhite);
+
+i_500 = Param("level 1", 0.500, 0, 1, 0.01);
+i_618 = Param("level 2", 0.618, 0, 1, 0.01);
+i_764 = Param("level 3", 0.764, 0, 1, 0.01);
+i_854 = Param("level 4", 0.854, 0, 1, 0.01);
+
+shZZ = ParamToggle("show ZZ", "On|Off", 0);
+
+//------------------------------------------------------------------------------
+//User Defined Types
+//------------------------------------------------------------------------------
+ZZ = Null;
+Ewave = Null;
+fibL = Null;
+
+//------------------------------------------------------------------------------
+//Functions
+//------------------------------------------------------------------------------
+hi = IIf(i_hi == "high", High, IIf(i_hi == "close", Close, Max(Open, Close)));
+lo = IIf(i_lo == "low", Low, IIf(i_lo == "close", Close, Min(Open, Close)));
+
+in_out(aZZ, d, x1, y1, x2, y2, col) =>
+{
+    aZZ.d.Insert(0, d); 
+    aZZ.x.Insert(0, x2); 
+    aZZ.y.Insert(0, y2);
+    aZZ.d.RemoveAt(aZZ.d.Count - 1); 
+    aZZ.x.RemoveAt(aZZ.x.Count - 1); 
+    aZZ.y.RemoveAt(aZZ.y.Count - 1);
+    
+    if (shZZ)
+    {
+        aZZ.l.Insert(0, LineArray(x1, y1, x2, y2, 1, col)); 
+        aZZ.l.RemoveAt(aZZ.l.Count - 1);
+    }
+};
+
+
+
+_SECTION_END();

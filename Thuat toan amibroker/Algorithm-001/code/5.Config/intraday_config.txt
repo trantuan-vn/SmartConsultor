@@ -1,6 +1,6 @@
 // cau hinh cac thong so cua peak, trough
 [Pick/Trough Settings]
-change=3
+change=0.2
 
 // cau hinh khung thoi gian cua 3 cap do theo giây
 [timeframe Settings]

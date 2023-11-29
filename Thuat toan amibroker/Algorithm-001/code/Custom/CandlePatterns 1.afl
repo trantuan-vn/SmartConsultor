@@ -1,0 +1,106 @@
+_SECTION_BEGIN("Price");
+SetChartOptions(0,chartShowArrows|chartShowDates);
+_N(Title = StrFormat("{{NAME}} - {{INTERVAL}} {{DATE}} Open %g, Hi %g, Lo %g, Close %g (%.1f%%) {{VALUES}}", O, H, L, C, SelectedValue( ROC( C, 1 ) ) ));
+Plot( C, "Close", ParamColor("Color", colorDefault ), styleNoTitle | ParamStyle("Style") | GetPriceStyle() ); 
+// Tính EMA(5)
+ema5 = EMA(C, 5);
+Plot(ema5, "EMA(5)", colorBlue);
+
+// Tính EMA(25)
+ema25 = EMA(C, 25);
+Plot(ema25, "EMA(25)", colorRed);
+
+_SECTION_END();
+
+//CANDLESTICKS
+//atrLength = 100;
+vatr = ATR(100);
+
+redBar = Close < Open;
+greenBar = Close > Open;
+body = abs(Close - Open);
+total = High - Low;
+bodyTopLoc = Max(Open, Close);
+bodyBottomLoc = Min(Open, Close);
+shadowTop = High - bodyTopLoc;
+shadowBottom = bodyBottomLoc - Low;
+fallingBars = (Cum(1) - Cum(greenBar));
+risingBars = (Cum(1) - Cum(redBar)); 
+
+function percent (x, y) {
+    z = x * 100 / y;
+    z;
+    return z;
+};
+
+//CUSTOMIZE THESE ONLY
+SizeBottom = vatr / 10; //Smallest size, anything less is a DOJI
+SSizeBottom = vatr / 8; //Small bottom size, used for short candles
+SSizeTop = vatr / 3; //Small top size, used for short candles
+NSizeBottom = vatr / 3; //Normal bottom size, used for normal candles
+NSizeTop = vatr * 1.1; //Normal top size, used for normal candles
+LSizeBottom = vatr * 1.1; //Long bottom size, used for LONG candles
+LSizeTop = vatr * 6; //Long Top size, candles longer than this will be IGNORED
+doji = (body < SizeBottom and percent(body, total) < 25); //DOJI
+sBody = (body > SSizeBottom and body < SSizeTop); //SMALL BODY
+nBody = (body > NSizeBottom and body < NSizeTop); //NORMAL BODY
+lBody = (body > LSizeBottom and body < LSizeTop); //LONG BODY
+
+function sGap(x, y) {
+    return abs(x - y) < SSizeBottom and abs(x - y) > SSizeBottom / 2;
+};
+
+function nGap(x, y) {
+    return abs(x - y) > SSizeBottom and abs(x - y) < LSizeBottom / 2;
+};
+
+function lGap(x, y) {
+    return abs(x - y) > LSizeBottom / 2;
+};
+
+function VSShadow(x) {
+    return percent(x, total) < 15;
+};
+
+function SShadow(x) {
+    return percent(x, total) > 15 and percent(x, total) < 30;
+};
+
+function LShadow(x) {
+    return percent(x, total) > 70;
+};
+
+SUpTrend = Close > EMA(Close, 6); //SHORT UPTREND, used in retracement calculations and such
+LUpTrend = Close > EMA(Close, 25); //LONG UPTREND
+SPeak = HighestBars(25); //PEAK OF SHORT UPTREND
+LPeak = HighestBars(50); //PEAK OF LONG UPTREND
+SDownTrend = Close < EMA(Close, 6); //SHORT DOWNTREND, used in retracement calculations and such
+LDownTrend = Close < EMA(Close, 25); //LONG DOWNTREND
+SBottom = LowestBars(25); //PEAK OF SHORT DOWNTREND
+LBottom = LowestBars(50); //PEAK OF LONG DOWNTREND
+
+//END CUSTOMIZE
+lowPercDiffFall = ((Close - Low) * 100) / (Open - Low);
+lowPercDiffRise = ((Open - Low) * 100) / (Close - Low);
+highPercDiffFall = ((High - Open) * 100 / (High - Close));
+highPercDiffRise = ((High - Close) * 100 / (High - Open));
+
+bi = Barindex();
+fvb = FirstVisibleValue( bi );
+lvb = LastVisibleValue( bi );
+PlotTextSetFont("", "Symbola", size = 8, lvb, 0, -1 );
+dist = 40;
+
+
+//BULLISH SIGNALS
+
+//DRAGONFLY DOJI
+DFly = (doji and LShadow(shadowBottom) and VSShadow(shadowTop) and total > NSizeBottom and total < LSizeTop and ((LUpTrend and SDownTrend) or (LDownTrend)));
+PlotShapes(IIf(DFly and Ref(DFly, -1) == 0, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+// Thêm text ghi chú
+shape_star = "Dragonfly\nDoji";
+for ( i = fvb; i <= lvb; i++ ) {
+	if ( DFly[i] )	PlotText( shape_star, i, L[i], colorGreen, -1, -dist );
+}
+
+

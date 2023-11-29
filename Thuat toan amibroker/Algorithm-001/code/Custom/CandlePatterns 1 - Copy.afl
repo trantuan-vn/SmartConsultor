@@ -1,0 +1,284 @@
+_SECTION_BEGIN("Price");
+SetChartOptions(0,chartShowArrows|chartShowDates);
+_N(Title = StrFormat("{{NAME}} - {{INTERVAL}} {{DATE}} Open %g, Hi %g, Lo %g, Close %g (%.1f%%) {{VALUES}}", O, H, L, C, SelectedValue( ROC( C, 1 ) ) ));
+Plot( C, "Close", ParamColor("Color", colorDefault ), styleNoTitle | ParamStyle("Style") | GetPriceStyle() ); 
+_SECTION_END();
+
+//CANDLESTICKS
+//atrLength = 100;
+vatr = ATR(100);
+
+redBar = Close < Open;
+greenBar = Close > Open;
+body = abs(Close - Open);
+total = High - Low;
+bodyTopLoc = Max(Open, Close);
+bodyBottomLoc = Min(Open, Close);
+shadowTop = High - bodyTopLoc;
+shadowBottom = bodyBottomLoc - Low;
+fallingBars = (Cum(1) - Cum(greenBar));
+risingBars = (Cum(1) - Cum(redBar)); 
+
+function percent (x, y) {
+    z = x * 100 / y;
+    z;
+    return z;
+};
+
+//CUSTOMIZE THESE ONLY
+SizeBottom = vatr / 10; //Smallest size, anything less is a DOJI
+SSizeBottom = vatr / 8; //Small bottom size, used for short candles
+SSizeTop = vatr / 3; //Small top size, used for short candles
+NSizeBottom = vatr / 3; //Normal bottom size, used for normal candles
+NSizeTop = vatr * 1.1; //Normal top size, used for normal candles
+LSizeBottom = vatr * 1.1; //Long bottom size, used for LONG candles
+LSizeTop = vatr * 6; //Long Top size, candles longer than this will be IGNORED
+doji = (body < SizeBottom and percent(body, total) < 25); //DOJI
+sBody = (body > SSizeBottom and body < SSizeTop); //SMALL BODY
+nBody = (body > NSizeBottom and body < NSizeTop); //NORMAL BODY
+lBody = (body > LSizeBottom and body < LSizeTop); //LONG BODY
+
+function sGap(x, y) {
+    return abs(x - y) < SSizeBottom and abs(x - y) > SSizeBottom / 2;
+};
+
+function nGap(x, y) {
+    return abs(x - y) > SSizeBottom and abs(x - y) < LSizeBottom / 2;
+};
+
+function lGap(x, y) {
+    return abs(x - y) > LSizeBottom / 2;
+};
+
+function VSShadow(x) {
+    return percent(x, total) < 15;
+};
+
+function SShadow(x) {
+    return percent(x, total) > 15 and percent(x, total) < 30;
+};
+
+function LShadow(x) {
+    return percent(x, total) > 70;
+};
+
+SUpTrend = Close > EMA(Close, 6); //SHORT UPTREND, used in retracement calculations and such
+LUpTrend = Close > EMA(Close, 25); //LONG UPTREND
+SPeak = HighestBars(25); //PEAK OF SHORT UPTREND
+LPeak = HighestBars(50); //PEAK OF LONG UPTREND
+SDownTrend = Close < EMA(Close, 6); //SHORT DOWNTREND, used in retracement calculations and such
+LDownTrend = Close < EMA(Close, 25); //LONG DOWNTREND
+SBottom = LowestBars(25); //PEAK OF SHORT DOWNTREND
+LBottom = LowestBars(50); //PEAK OF LONG DOWNTREND
+
+//END CUSTOMIZE
+lowPercDiffFall = ((Close - Low) * 100) / (Open - Low);
+lowPercDiffRise = ((Open - Low) * 100) / (Close - Low);
+highPercDiffFall = ((High - Open) * 100 / (High - Close));
+highPercDiffRise = ((High - Close) * 100 / (High - Open));
+
+//BULLISH SIGNALS
+
+//DRAGONFLY DOJI
+DFly = (doji and LShadow(shadowBottom) and VSShadow(shadowTop) and total > NSizeBottom and total < LSizeTop and ((LUpTrend and SDownTrend) or (LDownTrend)));
+PlotShapes(IIf(DFly and Ref(DFly, -1) == 0, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+PlotText("Dragonfly\nDoji", LastValue(BarIndex()), LastValue(Low) - 40, colorGreen);
+
+//HAMMER
+Hammer = (sBody and LShadow(shadowBottom) and VSShadow(shadowTop) and total > LSizeBottom and total < LSizeBottom * 2 and ((LUpTrend and SDownTrend) or (LDownTrend)));
+PlotShapes(IIf(Hammer and Ref(Hammer, -1) == 0, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+
+//TAKURI LINE
+Takuri = (sBody and LShadow(shadowBottom) and VSShadow(shadowTop) and total > LSizeBottom * 2 and ((LUpTrend and SDownTrend) or (LDownTrend)));
+PlotShapes(IIf(Takuri and Ref(Takuri, -1) == 0, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+
+//BULLISH BELT HOLD
+BBelt = ((nBody or lBody) and Open <= Low[1] and Low == Open and (VSShadow(shadowTop) or SShadow(shadowTop)) and ((LUpTrend and SDownTrend))); //or(LDownTrend)
+PlotShapes(IIf(BBelt and Ref(BBelt, -1) == 0, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+
+//BULLISH ENGULFING
+BullEngulf = ((sBody[1] or nBody[1]) and redBar[1] and Close > Open[1] and Open < Close[1] and not (VSShadow(shadowTop) or VSShadow(shadowBottom)) and greenBar and ((LUpTrend and SDownTrend))); //or(LDownTrend)
+PlotShapes(IIf(BullEngulf, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+
+//HARAMI CROSS BULLISH
+HCBull = (doji and redBar[1] and High < Open[1] and Low > Close[1] and SBottom[1] == 0 and LUpTrend and (sGap(Low, Close[1]) or nGap(Low, Close[1])));
+PlotShapes(IIf(HCBull, shapeUpArrow, shapeNone), colorBlack, 0, Low, Offset = -20);
+
+//HARAMI BULLISH
+HBull = (not doji and redBar[1] and greenBar and High < Open[1] and Low > Close[1] and SBottom[1] == 0 and ((LUpTrend and SDownTrend)) and not (abs(High - High[1]) < SSizeBottom and abs(Low - Low[1]) < SSizeBottom) and not (VSShadow(shadowTop) or VSShadow(shadowBottom)) and (sGap(Low, Close[1]) or nGap(Low, Close[1])));
+PlotShapes(IIf(HBull, shapeUpArrow, shapeNone), colorBlack, 0, Low, Offset = -20);
+
+//INVERTED HAMMER BULLISH
+IHammer = (sBody and LShadow(shadowTop) and VSShadow(shadowBottom) and total > LSizeBottom and total < LSizeBottom * 2 and ((LUpTrend and SDownTrend)));
+PlotShapes(IIf(IHammer, shapeUpArrow, shapeNone), colorBlack, 0, Low, Offset = -20);
+
+//PIERCING LINE
+PLine = ((nBody[1] or lBody[1]) and (nBody or lBody) and redBar[1] and greenBar and Close >= ((Body[1] * 50 / 100) + bodyBottomLoc[1]) and Close < Open[1] and nGap(Open, Close[1]) and nGap(Open, Close[2]) and ((LUpTrend and SDownTrend)));
+PlotShapes(IIf(PLine, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+
+//BULLISH DOJI STAR
+BDojiStar = (doji and redBar[1] and Open < Close[1] and nGap(Open, Close[1]) and ((LUpTrend and SDownTrend)));
+PlotShapes(IIf(BDojiStar, shapeUpArrow, shapeNone), colorBlack, 0, Low, Offset = -20);
+
+//BULLISH MEETING LINES
+BMeetLine = ((nBody[2] or lBody[2]) and (nBody[1] or lBody[1]) and redBar[2] and greenBar[1] and greenBar and abs(Close[2] - Close[1]) < SizeBottom and ((LUpTrend and SDownTrend)) and VSShadow(shadowTop[2]) and VSShadow(shadowBottom[1]) and Close > Open[1]);
+PlotShapes(IIf(BMeetLine, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+
+//BULLISH HOMING PIGEON
+HPigeon = (not doji and redBar[1] and redBar and High < Open[1] and Low > Close[1] and ((LUpTrend and SDownTrend)) and not (abs(High - High[1]) < SSizeBottom and abs(Low - Low[1]) < SSizeBottom) and not (VSShadow(shadowTop) or VSShadow(shadowBottom)) and (sGap(Low, Close[1]) or nGap(Low, Close[1])));
+PlotShapes(IIf(HPigeon, shapeUpArrow, shapeNone), colorBlack, 0, Low, Offset = -20);
+
+//BULLISH MATCHING LOW
+BMatchLow = ((nBody[2] or sBody[2]) and (nBody[1] or sBody[1]) and redBar[2] and redBar[1] and greenBar and abs(Close[2] - Close[1]) < SizeBottom and ((LUpTrend and SDownTrend)) and VSShadow(shadowTop[1]) and VSShadow(shadowTop[2]) and Close > Open[1]);
+PlotShapes(IIf(BMatchLow, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+
+//KICKER PATTERN
+Kicker = (High[1] < Open and lGap(High[1], Open) and greenBar and lBody and (SDownTrend or LDownTrend) and Volume >= MA(Volume, 50));
+PlotShapes(IIf(Kicker, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+
+//ABANDONED BABY
+ABaby = ((doji[1] or sBody[1]) and SDownTrend[1] and redBar[2] and (nBody[2] or lBody[2]) and greenBar and (nBody or lBody) and High[1] <= Low[2] and Low >= High[1] and Close >= ((Body[2] * 40 / 100) + bodyBottomLoc[2]) and (sGap(Low[2], High[1]) or nGap(Low[2], High[1]) or lGap(Low[2], High[1])) and (sGap(Low, High[1]) or nGap(Low, High[1]) or lGap(Low, High[1])));
+PlotShapes(IIf(ABaby, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+
+//MORNING STAR
+MStar = ((doji[1] or sBody[1]) and SDownTrend[1] and redBar[2] and (nBody[2] or lBody[2]) and greenBar and (nBody or lBody) and Open[1] <= Close[2] and Close[1] <= Close[2] and Open >= Close[1] and Close >= ((Body[2] * 40 / 100) + bodyBottomLoc[2]));
+PlotShapes(IIf(MStar and not ABaby, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+
+//BULLISH TRI STAR
+BullTriStar = (doji[1] and doji[2] and doji and LUpTrend[1] and Open[1] <= Close[2] and Close[1] <= Close[2] and Open >= Close[1]);
+PlotShapes(IIf(BullTriStar, shapeUpArrow, shapeNone), colorBlack, 0, Low, Offset = -20);
+
+//BULLISH DOWNSIDE GAP TWO RABBITS
+BullDownTwoRabb = (((LUpTrend and SDownTrend)) and redBar[2] and (nBody[2] or lBody[2]) and greenBar[1] and greenBar and (nBody[1] or sBody[1]) and (nBody or lBody) and (sGap(Close[2], Open[1]) or nGap(Close[2], Open[1])) and (sGap(Close[1], Open) or nGap(Close[1], Open)) and Close[2] > Open[1] and Close[1] > Open);
+PlotShapes(IIf(BullDownTwoRabb, shapeUpArrow, shapeNone), colorBlack, 0, Low, Offset = -20);
+
+//BULLISH UNIQUE THREE RIVER BOTTOM
+BullUnThreeRiver = (((LUpTrend and SDownTrend)) and (nBody[2] or lBody[2]) and redBar[2] and redBar[1] and greenBar and Open[1] > Close[2] and Close[1] < Close[2] and Low[1] > Low[2] and (nBody[1] or sBody[1]) and (sGap(Close[2], Open[1]) or nGap(Close[2], Open[1])) and not VSShadow(shadowBottom) and sBody and Open < Close[1] and (sGap(Close[1], Open) or nGap(Close[1], Open)));
+PlotShapes(IIf(BullUnThreeRiver, shapeUpArrow, shapeNone), colorBlack, 0, Low, Offset = -20);
+
+//THREE WHITE SOLDIERS
+TGSol = ((nBody[2] or lBody[2]) and (nBody[1] or lBody[1]) and (nBody or lBody) and greenBar[2] and greenBar[1] and greenBar and Close[2] < Close[1] and Close[1] < Close and High[2] < High[1] and High[1] < High and Open[1] <= Close[2] and Open <= Close[1] and VSShadow(shadowTop[2]) and VSShadow(shadowTop[1]) and VSShadow(shadowTop));
+PlotShapes(IIf(TGSol and not Ref(TGSol, -1), shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+
+//BULLISH DESCENT BLOCK
+BullDescBlock = ((nBody[2] or lBody[2]) and (nBody[1] or lBody[1]) and (nBody or lBody) and redBar[2] and redBar[1] and redBar and Close[2] > Close[1] and Close[1] > Close and Open[1] >= Close[2] and Open >= Close[1] and (not VSShadow(shadowBottom[1]) or SShadow(shadowBottom[1])) and (not VSShadow(shadowBottom[1]) or SShadow(shadowBottom[1])) and Body < Body[1]);
+PlotShapes(IIf(BullDescBlock and not Ref(BullDescBlock, -1), shapeUpArrow, shapeNone), colorBlack, 0, Low, Offset = -20);
+
+//BULLISH DELIBERATION BLOCK
+BullDeliBlock = (((LUpTrend and SDownTrend)) and (nBody[2] or lBody[2]) and (nBody[1] or lBody[1]) and (sBody or doji) and redBar[2] and redBar[1] and redBar and Close[2] > Close[1] and Close[1] > Close and Open[1] >= Close[2] and (sGap(Open, Close[1]) or nGap(Open, Close[1])) and Open < Close);
+PlotShapes(IIf(BullDeliBlock, shapeUpArrow, shapeNone), colorBlack, 0, Low, Offset = -20);
+
+// BULLISH DELIBERATION
+Deliberation = (NOT LDownTrend AND (nBody[2] OR lBody[2]) AND (nBody[1] OR lBody[1]) AND (sBody OR doji) AND greenBar[2] AND greenBar[1] AND greenBar AND close[2] < close[1] AND close[1] < close AND open[1] <= close[2] AND (sGap(open, close[1]) OR nGap(open, close[1])) AND open > close);
+PlotShapes(IIf(Deliberation, shapeUpArrow, shapeNone) , colorGreen, 0,  Low,  Offset = -20);
+
+// BULLISH TWO RABBITS
+TwoRabbits = (LUpTrend AND (nBody[2] OR lBody[2]) AND redBar[2] AND open[1] < close[2] AND greenBar[1] AND greenBar AND (nBody[1] OR sBody[1]) AND (nBody OR lBody) AND (sGap(open[1], close[2]) OR nGap(open[1], close[2]) OR lGap(open[1], close[2])) AND open <= close[1] AND close >= ((body[2] * 15 / 100) + bodyBottomLoc[2]));
+PlotShapes(TwoRabbits, color = colorBlack, style = shapeArrowUp, text = "Two\nRabbits");
+
+// BEARISH INDICATORS ...
+
+// INVERTED HAMMER
+IHammer2 = (sBody AND LShadow(shadowTop) AND VSShadow(shadowBottom) AND total > LSizeBottom AND total < LSizeBottom*2 AND LDownTrend);
+PlotShapes(IHammer2, title = "Inverted Hammer", location = location.abovebar, color = colorRed, style = shapeArrowDown, text = "Inverted\nHammer");
+
+// BULLISH DOJI STAR
+BDojiStar2 = (doji AND redBar[1] AND open < close[1] AND nGap(open, close[1]) AND LDownTrend);
+PlotShapes(BDojiStar2, title = "BULLISH DOJI STAR", location = location.abovebar, color = colorRed, style = shapeArrowDown, text = "Bullish\nDoji\nStar");
+
+// BULLISH MATCHING LOW
+BMatchLow2 = ((nBody[1] OR sBody[1]) AND (nBody OR sBody) AND redBar[1] AND redBar AND ABS(close[1] - close) < SizeBottom AND LDownTrend AND VSShadow(shadowTop[1]) AND VSShadow(shadowTop));
+PlotShapes(BMatchLow2, title = "BULLISH MATCHING LOW", location = location.abovebar, color = colorRed, style = shapeArrowDown, text = "Bull\nMatching\nLow");
+
+// BULLISH HOMING PIGEON
+HPigeon2 = (NOT doji AND redBar[1] AND redBar AND high < open[1] AND low > close[1] AND LDownTrend AND NOT (ABS(high - high[1]) < SSizeBottom AND ABS(low - low[1]) < SSizeBottom) AND NOT (VSShadow(shadowTop) OR VSShadow(shadowBottom)) AND (sGap(low, close[1]) OR nGap(low, close[1])));
+PlotShapes(HPigeon2, title = "BULLISH HOMING PIGEON", location = location.belowbar, color = colorBlack, style = shapeArrowDown, text = "Bull\nHoming\nPigeon");
+
+// BULLISH UNIQUE THREE RIVER BOTTOM
+BullUnThreeRiver2 = (LDownTrend AND (nBody[2] OR lBody[2]) AND redBar[2] AND redBar[1] AND greenBar AND open[1] > close[2] AND close[1] < close[2] AND low[1] > low[2] AND (nBody[1] OR sBody[1]) AND (sGap(close[2], open[1]) OR nGap(close[2], open[1])) AND NOT VSShadow(shadowBottom) AND sBody AND open < close[1] AND (sGap(close[1], open) OR nGap(close[1], open)));
+PlotShapes(BullUnThreeRiver2, title = "BULLISH UNIQUE THREE RIVER BOTTOM", location = location.belowbar, color = colorBlack, style = shapeArrowDown, text = "Bull\nUnique\nThree\nRiver\nBottom");
+
+// BULLISH DELIBERATION BLOCK
+BullDeliBlock2 = (NOT LUpTrend AND (nBody[2] OR lBody[2]) AND (nBody[1] OR lBody[1]) AND (sBody OR doji) AND redBar[2] AND redBar[1] AND redBar AND close[2] > close[1] AND close[1] > close AND open[1] >= close[2] AND (sGap(open, close[1]) OR nGap(open, close[1])) AND open < close);
+PlotShapes(BullDeliBlock2, title = "BULLISH DELIBERATION BLOCK", location = location.belowbar, color = colorBlack, style = shapeArrowUp, text = "Bull\nDeliberation\nBlock");
+
+// DELIBERATION
+Deliberation2 = (((LDownTrend AND SUpTrend)) AND (nBody[2] OR lBody[2]) AND (nBody[1] OR lBody[1]) AND (sBody OR doji) AND greenBar[2] AND greenBar[1] AND greenBar AND close[2] < close[1] AND close[1] < close AND open[1] <= close[2] AND (sGap(open, close[1]) OR nGap(open, close[1])) AND open > close);
+PlotShapes(Deliberation2, title = "DELIBERATION", location = location.belowbar, color = colorBlack, style = shapeArrowDown, text = "Deliberation");
+
+// THREE LINE STRIKE
+TLS = (Close[1] < Close[2] AND Close[2] < Close[3] AND Open[3] > Close[3] AND Close > High[3]);
+PlotShapes(TLS, title = "Three Line Strike", location = location.belowbar, color = colorGreen, style = shapeArrowUp, text = "Three\nLine\nStrike");
+
+// TWO BLACK GAPPING MODIFIED
+TwoBGap = (Close < Close[1] AND Close[1] < Close[2] AND Close[2] < Close[3] AND LPeak[3] == 0 AND High[2] < High[3] AND Open[2] - Close[1] > (Close[3] - Open[3]) * 3 AND Open[3] < Close[3] AND Close[3] - Open[3] > vatr[3]);
+PlotShapes(TwoBGap, title = "Two Black Gapping", location = location.abovebar, color = colorRed, style = shapeArrowDown, text = "Two\nBlack\nGapping");
+
+// THREE BLACK CROWS
+TBC = (LPeak[2] >= -1 AND Close < Close[1] AND Close[1] < Close[2] AND Low < Low[1] AND Low[1] < Low[2] AND LowPercDiffFall < 45 AND LowPercDiffFall[1] < 45 AND LowPercDiffFall[2] < 45);
+PlotShapes(TBC, title = "THREE BLACK CROWS", location = location.abovebar, color = colorRed, style = shapeArrowDown, text = "Three\nBlack\nCrows");
+
+// EVENING STAR
+EStar = ((Doji[1] OR sBody[1]) AND LPeak[1] == 0 AND (Close[2] - Open[2]) > vatr[2] * 1.25 AND ((redBar AND Open - Close < vatr / 2) OR HighPercDiffFall > 30 OR HighPercDiffRise > 50) AND Close < (Close[2] - ((Close[2] - Open[2]) * 34 / 100)) AND redBar AND High[1] - Low[1] < vatr / 1.5);
+PlotShapes(EStar, title = "EVENING STAR", location = location.abovebar, color = colorRed, style = shapeArrowDown, text = "Evening\nStar");
+
+// BEARISH ISLAND REVERSAL
+BearIR = (High[2] < Open[1] AND Open[1] - High[2] > vatr[1] / 3 AND ABS(Close[1] - Open[1]) < vatr[1] / 8 AND Close[1] > High AND Close[1] - High > vatr / 3 AND Volume[1] >= SMA(Volume, 50) / 2);
+PlotShapes(BearIR, title = "BEARISH ISLAND REVERSAL", location = location.abovebar, color = colorRed, style = shapeArrowDown, text = "Bear\nIsland\nReversal");
+
+// BULLISH ISLAND REVERSAL
+BullIR = (Low[2] > Open[1] AND Low[2] - Open[1] > vatr[1] / 3 AND ABS(Close[1] - Open[1]) < vatr[1] / 8 AND Close[1] < Low AND High - Close[1] > vatr / 3 AND Volume[1] >= SMA(Volume, 50) / 2);
+PlotShapes(BullIR, title = "BULLISH ISLAND REVERSAL", location = location.belowbar, color = colorGreen, style = shapeArrowUp, text = "Bull\nIsland\nReversal");
+
+// BEARISH HOOK REVERSAL
+BearHR = (redBar AND greenBar[1] AND High[1] - Open < vatr / 6 AND Low > Low[1] AND High < High[1] AND Low - Low[1] < vatr / 4 AND Volume >= SMA(Volume, 50) / 2 AND SPeak[1] == 0 AND ABS(Close[1] - Open[1]) > vatr / 3 AND Close - Open[1] < vatr / 6 AND Close[1] - Open < vatr / 6);
+PlotShapes(BearHR, title = "BEARISH HOOK REVERSAL", location = location.abovebar, color = colorRed, style = shapeArrowDown, text = "Bear\nHook\nReversal");
+
+// BULLISH HOOK REVERSAL
+BullHR = (greenBar AND redBar[1] AND Open - Low[1] < vatr / 6 AND Low > Low[1] AND High < High[1] AND High[1] - High < vatr / 4 AND Volume >= SMA(Volume, 50) / 2 AND SBottom[1] == 0 AND ABS(Close[1] - Open[1]) > vatr / 3 AND Open[1] - Close < vatr / 6 AND Open - Close[1] < vatr / 6);
+PlotShapes(BullHR, title = "BULLISH HOOK REVERSAL", location = location.belowbar, color = colorGreen, style = shapeArrowUp, text = "Bull\nHook\nReversal");
+
+// SAN KU Pattern
+SanKuBear = (greenBar AND Close[1] > Open[1] AND Close[2] > Open[2] AND Open[1] - Close[2] > vatr / 6 AND Open - Close[1] > vatr / 6 AND ABS(Close[2] - Open[2]) > vatr / 7 AND ABS(Close[1] - Open[1]) > vatr / 7 AND Body > vatr / 7);
+PlotShapes(SanKuBear, title = "SAN KU PATTERN BEAR", location = location.abovebar, color = colorRed, style = shapeArrowDown, text = "San Ku\nBear");
+
+SanKuBull = (redBar AND Close[1] < Open[1] AND Close[2] < Open[2] AND Close[2] - Open[1] > vatr / 6 AND Close[1] - Open > vatr / 6 AND ABS(Close[2] - Open[2]) > vatr / 7 AND ABS(Close[1] - Open[1]) > vatr / 7 AND Body > vatr / 7);
+PlotShapes(SanKuBull, title = "SAN KU PATTERN BULL", location = location.belowbar, color = colorGreen, style = shapeArrowUp, text = "San Ku\nBull");
+
+// HARAMI CROSS BEARISH
+HCBear = (Doji AND High < Close[1] AND Low > Open[1] AND Close[1] > Open[1] AND SPeak[1] == 0);
+PlotShapes(HCBear, title = "HARAMI CROSS BEAR", location = location.abovebar, color = colorRed, style = shapeArrowDown, text = "Harami\nCross");
+
+// GRAVESTONE DOJI
+Gravestone = (Doji AND (Max(Open, Close) - Low) / (High - Low) < 0.25 AND High - Low > vatr / 2);
+PlotShapes(Gravestone, title = "GRAVESTONE DOJI", location = location.belowbar, color = colorGreen, style = shapeArrowUp, text = "Gravestone\nDoji");
+
+// SHOOTING STAR
+SStar = (sBody AND ShadowBottom / (High - Low) < 0.15 AND ShadowTop / (High - Low) > 0.7 AND SPeak[1] == 0 AND redBar AND High - Low > vatr * 1.25);
+PlotShapes(SStar, title = "Shooting Star", location = location.abovebar, color = colorRed, style = shapeArrowDown, text = "Shooting\nStar");
+
+// HANGING MAN
+Hanging = (sBody AND ShadowBottom / (High - Low) > 0.7 AND ShadowTop / (High - Low) < 0.15 AND SPeak[1] == 0 AND Open >= Close[1]);
+PlotShapes(Hanging, title = "HANGING MAN", location = location.abovebar, color = colorRed, style = shapeArrowDown, text = "Hanging\nMan");
+
+// Upside Gap Two Crows
+UpsideGapTwoCrows = (greenBar[2] AND redBar[1] AND redBar AND Body[2] > vatr[2] AND Open[1] >= Close[2] AND sBody[1] AND Open >= Open[1] AND Close < Close[1] AND Close > Close[2] AND Body > vatr / 1.5);
+PlotShapes(UpsideGapTwoCrows, title = "Upside Gap Two Crows", location = location.abovebar, color = colorRed, style = shapeArrowDown, text = "Upside\nGap\nTwo\nCrows");
+
+// DARK CLOUD COVER
+DarkCC = (Body[1] > vatr[1] / 2 AND Body > vatr / 2 AND Open >= Close[1] AND Close < (Open[1] + Close[1]) / 2 AND Close > Open[1] AND redBar);
+PlotShapes(DarkCC, title = "DARK CLOUD COVER", location = location.abovebar, color = colorRed, style = shapeArrowDown, text = "Dark\nCloud\nCover");
+
+// BEARISH ENGULFING
+BearEngulf = ((sBody[1] OR Doji[1]) AND LPeak[1] == 0 AND Body > vatr * 1.15 AND redBar AND Close < Low[1] AND ShadowBottom / (High - Low) < 0.1);
+PlotShapes(BearEngulf, title = "BEARISH ENGULFING", location = location.abovebar, color = colorRed, style = shapeArrowDown, text = "Bear\nEngulf");
+
+// CANDLESTICK SANDWICH
+CSandwich = (((nBody[2] AND nBody[1] AND nBody) OR ((lBody[2] AND lBody[1] AND lBody))) AND redBar[2] AND greenBar[1] AND redBar AND ABS(Close - Close[2]) < vatr / 6 AND ABS(Open - Open[2]) < vatr / 6);
+PlotShapes(CSandwich, title = "CANDLESTICK SANDWICH", location = location.belowbar, color = colorGreen, style = shapeArrowUp, text = "CandleStick\nSandwich");
+
+
+
+
+
+
