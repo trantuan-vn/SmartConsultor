@@ -1,3 +1,11 @@
+#include "C:\Users\tuant\SmartConsultor\Thuat toan amibroker\Algorithm-001\code\1.Utilities\Common.afl"
+
+configFilePath="C:\\Users\\tuant\\SmartConsultor\\Thuat toan amibroker\\Algorithm-001\\code\\5.Config\\intraday_config.txt";
+change = StrToNum(ReadConfig("change",configFilePath));
+level1 = StrToNum(ReadConfig("Level1",configFilePath));
+level2 = StrToNum(ReadConfig("Level2",configFilePath));
+level3 = StrToNum(ReadConfig("Level3",configFilePath));
+
 _SECTION_BEGIN("Price");
 	SetChartOptions(0,chartShowArrows|chartShowDates);
 	_N(Title = StrFormat("{{NAME}} - {{INTERVAL}} {{DATE}} Open %g, Hi %g, Lo %g, Close %g (%.1f%%) {{VALUES}}", O, H, L, C, SelectedValue( ROC( C, 1 ) ) ));

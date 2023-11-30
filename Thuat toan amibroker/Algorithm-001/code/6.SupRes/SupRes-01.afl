@@ -1,11 +1,3 @@
-#include "C:\Users\tuant\SmartConsultor\Thuat toan amibroker\Algorithm-001\code\1.Utilities\Common.afl"
-
-change = StrToNum(ReadConfig("change"));
-
-level1 = StrToNum(ReadConfig("Level1"));
-level2 = StrToNum(ReadConfig("Level2"));
-level3 = StrToNum(ReadConfig("Level3"));
-
 TimeFrameSet(level1);
 // Res 1
 level1_res_y[1]=LastValue(Peak(C,change,1));

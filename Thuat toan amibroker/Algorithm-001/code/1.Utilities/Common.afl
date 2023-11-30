@@ -1,6 +1,5 @@
 // Ham doc file config
-configFilePath = "C:\\Users\\tuant\\SmartConsultor\\Thuat toan amibroker\\Algorithm-001\\code\\5.Config\\config.txt";
-function ReadConfig(key)
+function ReadConfig(key,configFilePath)
 {
 	result = Null; // Initialize result variable
 	fileHandle = fopen(configFilePath, "r");

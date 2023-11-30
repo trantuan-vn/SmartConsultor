@@ -1,3 +1,5 @@
+configFilePath = "C:\\Users\\tuant\\SmartConsultor\\Thuat toan amibroker\\Algorithm-001\\code\\5.Config\\config.txt";
+
 _SECTION_BEGIN("Price");
 	SetChartOptions(0,chartShowArrows|chartShowDates);
 	_N(Title = StrFormat("{{NAME}} - {{INTERVAL}} {{DATE}} Open %g, Hi %g, Lo %g, Close %g (%.1f%%) {{VALUES}}", O, H, L, C, SelectedValue( ROC( C, 1 ) ) ));
