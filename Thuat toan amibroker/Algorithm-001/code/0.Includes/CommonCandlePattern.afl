@@ -77,96 +77,102 @@ Hammer = (sBody and LShadow(shadowBottom) and VSShadow(shadowTop) and total > LS
 //TAKURI LINE
 Takuri = (sBody and LShadow(shadowBottom) and VSShadow(shadowTop) and total > LSizeBottom * 2 and ((LUpTrend and SDownTrend) or (LDownTrend)));
 //BULLISH BELT HOLD
-BBelt = ((nBody or lBody) and Open <= Low[1] and Low == Open and (VSShadow(shadowTop) or SShadow(shadowTop)) and ((LUpTrend and SDownTrend) OR (LDownTrend))) ;
+BBelt = ((nBody or lBody) and Open <= Ref(Low,-1) and Low == Open and (VSShadow(shadowTop) or SShadow(shadowTop)) and ((LUpTrend and SDownTrend) OR (LDownTrend))) ;
 //BULLISH ENGULFING
-BullEngulf = ((sBody[1] or nBody[1]) and redBar[1] and Close > Open[1] and Open < Close[1] and not (VSShadow(shadowTop) or VSShadow(shadowBottom)) and greenBar and ((LUpTrend and SDownTrend) OR (LDownTrend))); //
+BullEngulf = ((Ref(sBody,-1) or Ref(nBody,-1)) and Ref(redBar,-1) and Close > Ref(Open,-1) and Open < Ref(Close,-1) and not (VSShadow(shadowTop) or VSShadow(shadowBottom)) and greenBar and ((LUpTrend and SDownTrend) OR (LDownTrend))); //
 //HARAMI CROSS BULLISH
-HCBull = (doji and redBar[1] and High < Open[1] and Low > Close[1] and SBottom[1] == 0 and LUpTrend and (sGap(Low, Close[1]) or nGap(Low, Close[1])));
+HCBull = (doji and Ref(redBar,-1) and High < Ref(Open,-1) and Low > Ref(Close,-1) and Ref(SBottom,-1) == 0 and LUpTrend and (sGap(Low, Ref(Close,-1)) or nGap(Low, Ref(Close,-1))));
 //HARAMI BULLISH
-HBull = (not doji and redBar[1] and greenBar and High < Open[1] and Low > Close[1] and SBottom[1] == 0 and ((LUpTrend and SDownTrend) OR (LDownTrend)) and not (abs(High - High[1]) < SSizeBottom and abs(Low - Low[1]) < SSizeBottom) and not (VSShadow(shadowTop) or VSShadow(shadowBottom)) and (sGap(Low, Close[1]) or nGap(Low, Close[1])));
+HBull = (not doji and Ref(redBar,-1) and greenBar and High < Ref(Open,-1) and Low > Ref(Close,-1) and Ref(SBottom,-1) == 0 and ((LUpTrend and SDownTrend) OR (LDownTrend)) and not (abs(High - Ref(High,-1)) < SSizeBottom and abs(Low - Ref(Low,-1)) < SSizeBottom) and not (VSShadow(shadowTop) or VSShadow(shadowBottom)) and (sGap(Low, Ref(Close,-1)) or nGap(Low, Ref(Close,-1))));
 //INVERTED HAMMER BULLISH
 IHammer = (sBody and LShadow(shadowTop) and VSShadow(shadowBottom) and total > LSizeBottom and total < LSizeBottom * 2 and ((LUpTrend and SDownTrend) OR (LDownTrend) ));
 //PIERCING LINE
-PLine = ((nBody[1] or lBody[1]) and (nBody or lBody) and redBar[1] and greenBar and Close >= ((Body[1] * 50 / 100) + bodyBottomLoc[1]) and Close < Open[1] and nGap(Open, Close[1]) and nGap(Open, Close[2]) and ((LUpTrend and SDownTrend) OR (LDownTrend)));
+PLine = ((Ref(nBody,-1) or Ref(lBody,-1)) and (nBody or lBody) and Ref(redBar,-1) and greenBar and Close >= ((Ref(Body,-1) * 50 / 100) + Ref(bodyBottomLoc,-1)) and Close < Ref(Open,-1) and nGap(Open, Ref(Close,-1)) and nGap(Open, Ref(Close,-2)) and ((LUpTrend and SDownTrend) OR (LDownTrend)));
 //BULLISH DOJI STAR
-BDojiStar = (doji and redBar[1] and Open < Close[1] and nGap(Open, Close[1]) and ((LUpTrend and SDownTrend) OR (LDownTrend)));
+BDojiStar = (doji and Ref(redBar,-1) and Open < Ref(Close,-1) and nGap(Open, Ref(Close,-1)) and ((LUpTrend and SDownTrend) OR (LDownTrend)));
 //BULLISH MEETING LINES
-BMeetLine = ((nBody[2] or lBody[2]) and (nBody[1] or lBody[1]) and redBar[2] and greenBar[1] and greenBar and abs(Close[2] - Close[1]) < SizeBottom and ((LUpTrend and SDownTrend) OR (LDownTrend)) and VSShadow(shadowTop[2]) and VSShadow(shadowBottom[1]) and Close > Open[1]);
+BMeetLine = ((Ref(nBody,-2) or Ref(lBody,-2)) and (Ref(nBody,-1) or Ref(lBody,-1)) and Ref(redBar,-2) and Ref(greenBar,-1) and greenBar and abs(Ref(Close,-2) - Ref(Close,-1)) < SizeBottom and ((LUpTrend and SDownTrend) OR (LDownTrend)) and VSShadow(shadowTop[2]) and VSShadow(shadowBottom[1]) and Close > Ref(Open,-1));
 //BULLISH HOMING PIGEON
-HPigeon = (not doji and redBar[1] and redBar and High < Open[1] and Low > Close[1] and ((LUpTrend and SDownTrend) OR (LDownTrend)) and not (abs(High - High[1]) < SSizeBottom and abs(Low - Low[1]) < SSizeBottom) and not (VSShadow(shadowTop) or VSShadow(shadowBottom)) and (sGap(Low, Close[1]) or nGap(Low, Close[1])));
+HPigeon = (not doji and Ref(redBar,-1) and redBar and High < Ref(Open,-1) and Low > Ref(Close,-1) and ((LUpTrend and SDownTrend) OR (LDownTrend)) and not (abs(High - Ref(High,-1)) < SSizeBottom and abs(Low - Ref(Low,-1)) < SSizeBottom) and not (VSShadow(shadowTop) or VSShadow(shadowBottom)) and (sGap(Low, Ref(Close,-1)) or nGap(Low, Ref(Close,-1))));
 //BULLISH MATCHING LOW
-BMatchLow = ((nBody[2] or sBody[2]) and (nBody[1] or sBody[1]) and redBar[2] and redBar[1] and greenBar and abs(Close[2] - Close[1]) < SizeBottom and ((LUpTrend and SDownTrend) OR (LDownTrend)) and VSShadow(shadowTop[1]) and VSShadow(shadowTop[2]) and Close > Open[1]);
+BMatchLow = ((Ref(nBody,-2) or Ref(sBody,-2)) and (Ref(nBody,-1) or Ref(sBody,-1)) and Ref(redBar,-2) and Ref(redBar,-1) and greenBar and abs(Ref(Close,-2) - Ref(Close,-1)) < SizeBottom and ((LUpTrend and SDownTrend) OR (LDownTrend)) and VSShadow(shadowTop[1]) and VSShadow(shadowTop[2]) and Close > Ref(Open,-1));
 //KICKER PATTERN
-Kicker = (High[1] < Open and lGap(High[1], Open) and greenBar and lBody and (SDownTrend or LDownTrend) and Volume >= MA(Volume, 50));
+Kicker = (Ref(High,-1) < Open and lGap(Ref(High,-1), Open) and greenBar and lBody and (SDownTrend or LDownTrend) and Volume >= MA(Volume, 50));
 //ABANDONED BABY
-ABaby = ((doji[1] or sBody[1]) and SDownTrend[1] and redBar[2] and (nBody[2] or lBody[2]) and greenBar and (nBody or lBody) and High[1] <= Low[2] and Low >= High[1] and Close >= ((Body[2] * 40 / 100) + bodyBottomLoc[2]) and (sGap(Low[2], High[1]) or nGap(Low[2], High[1]) or lGap(Low[2], High[1])) and (sGap(Low, High[1]) or nGap(Low, High[1]) or lGap(Low, High[1])));
+ABaby = ((Ref(doji,-1) or Ref(sBody,-1)) and Ref(SDownTrend,-1) and Ref(redBar,-2) and (Ref(nBody,-2) or Ref(lBody,-2)) and greenBar and (nBody or lBody) and Ref(High,-1) <= Ref(Low,-2) and Low >= Ref(High,-1) and Close >= ((Ref(Body,-2) * 40 / 100) + Ref(bodyBottomLoc,-2)) and (sGap(Ref(Low,-2), Ref(High,-1)) or nGap(Ref(Low,-2), Ref(High,-1)) or lGap(Ref(Low,-2), Ref(High,-1))) and (sGap(Low, Ref(High,-1)) or nGap(Low, Ref(High,-1)) or lGap(Low, Ref(High,-1))));
 //MORNING STAR
-MStar = ((doji[1] or sBody[1]) and SDownTrend[1] and redBar[2] and (nBody[2] or lBody[2]) and greenBar and (nBody or lBody) and Open[1] <= Close[2] and Close[1] <= Close[2] and Open >= Close[1] and Close >= ((Body[2] * 40 / 100) + bodyBottomLoc[2]));
+MStar = ((Ref(doji,-1) or Ref(sBody,-1)) and Ref(SDownTrend,-1) and Ref(redBar,-2) and (Ref(nBody,-2) or Ref(lBody,-2)) and greenBar and (nBody or lBody) and Ref(Open,-1) <= Ref(Close,-2) and Ref(Close,-1) <= Ref(Close,-2) and Open >= Ref(Close,-1) and Close >= ((Ref(Body,-2) * 40 / 100) + Ref(bodyBottomLoc,-2)));
 //BULLISH TRI STAR
-BullTriStar = (doji[1] and doji[2] and doji and LUpTrend[1] and Open[1] <= Close[2] and Close[1] <= Close[2] and Open >= Close[1]);
+BullTriStar = (Ref(doji,-1) and Ref(doji,-2) and doji and Ref(LUpTrend,-1) and Ref(Open,-1) <= Ref(Close,-2) and Ref(Close,-1) <= Ref(Close,-2) and Open >= Ref(Close,-1));
 //BULLISH DOWNSIDE GAP TWO RABBITS
-BullDownTwoRabb = (((LUpTrend and SDownTrend) OR (LDownTrend)) and redBar[2] and (nBody[2] or lBody[2]) and greenBar[1] and greenBar and (nBody[1] or sBody[1]) and (nBody or lBody) and (sGap(Close[2], Open[1]) or nGap(Close[2], Open[1])) and (sGap(Close[1], Open) or nGap(Close[1], Open)) and Close[2] > Open[1] and Close[1] > Open);
+BullDownTwoRabb = (((LUpTrend and SDownTrend) OR (LDownTrend)) and Ref(redBar,-2) and (Ref(nBody,-2) or Ref(lBody,-2)) and Ref(greenBar,-1) and greenBar and (Ref(nBody,-1) or Ref(sBody,-1)) and (nBody or lBody) and (sGap(Ref(Close,-2), Ref(Open,-1)) or nGap(Ref(Close,-2), Ref(Open,-1))) and (sGap(Ref(Close,-1), Open) or nGap(Ref(Close,-1), Open)) and Ref(Close,-2) > Ref(Open,-1) and Ref(Close,-1) > Open);
 //BULLISH UNIQUE THREE RIVER BOTTOM
-BullUnThreeRiver = (((LUpTrend and SDownTrend) OR (LDownTrend)) and (nBody[2] or lBody[2]) and redBar[2] and redBar[1] and greenBar and Open[1] > Close[2] and Close[1] < Close[2] and Low[1] > Low[2] and (nBody[1] or sBody[1]) and (sGap(Close[2], Open[1]) or nGap(Close[2], Open[1])) and not VSShadow(shadowBottom) and sBody and Open < Close[1] and (sGap(Close[1], Open) or nGap(Close[1], Open)));
+BullUnThreeRiver = (((LUpTrend and SDownTrend) OR (LDownTrend)) and (Ref(nBody,-2) or Ref(lBody,-2)) and Ref(redBar,-2) and Ref(redBar,-1) and greenBar and Ref(Open,-1) > Ref(Close,-2) and Ref(Close,-1) < Ref(Close,-2) and Ref(Low,-1) > Ref(Low,-2) and (Ref(nBody,-1) or Ref(sBody,-1)) and (sGap(Ref(Close,-2), Ref(Open,-1)) or nGap(Ref(Close,-2), Ref(Open,-1))) and not VSShadow(shadowBottom) and sBody and Open < Ref(Close,-1) and (sGap(Ref(Close,-1), Open) or nGap(Ref(Close,-1), Open)));
 //THREE WHITE SOLDIERS
-TGSol = ((nBody[2] or lBody[2]) and (nBody[1] or lBody[1]) and (nBody or lBody) and greenBar[2] and greenBar[1] and greenBar and Close[2] < Close[1] and Close[1] < Close and High[2] < High[1] and High[1] < High and Open[1] <= Close[2] and Open <= Close[1] and VSShadow(shadowTop[2]) and VSShadow(shadowTop[1]) and VSShadow(shadowTop));
+TGSol = (((LUpTrend and SDownTrend) OR (LDownTrend)) and (Ref(nBody,-2) or Ref(lBody,-2)) and (Ref(nBody,-1) or Ref(lBody,-1)) and (nBody or lBody) and Ref(greenBar,-2) and Ref(greenBar,-1) and greenBar and Ref(Close,-2) < Ref(Close,-1) and Ref(Close,-1) < Close and Ref(High,-2) < Ref(High,-1) and Ref(High,-1) < High and Ref(Open,-1) <= Ref(Close,-2) and Open <= Ref(Close,-1) and VSShadow(Ref(shadowTop,-2)) and VSShadow(Ref(shadowTop,-1)) and VSShadow(shadowTop));
 //BULLISH DESCENT BLOCK
-BullDescBlock = ((nBody[2] or lBody[2]) and (nBody[1] or lBody[1]) and (nBody or lBody) and redBar[2] and redBar[1] and redBar and Close[2] > Close[1] and Close[1] > Close and Open[1] >= Close[2] and Open >= Close[1] and (not VSShadow(shadowBottom[1]) or SShadow(shadowBottom[1])) and (not VSShadow(shadowBottom[1]) or SShadow(shadowBottom[1])) and Body < Body[1]);
+BullDescBlock = ((Ref(nBody,-2) or Ref(lBody,-2)) and (Ref(nBody,-1) or Ref(lBody,-1)) and (nBody or lBody) and Ref(redBar,-2) and Ref(redBar,-1) and redBar and Ref(Close,-2) > Ref(Close,-1) and Ref(Close,-1) > Close and Ref(Open,-1) >= Ref(Close,-2) and Open >= Ref(Close,-1) and (not VSShadow(Ref(shadowBottom,-1)) or SShadow(Ref(shadowBottom,-1))) and (not VSShadow(Ref(shadowBottom,-1)) or SShadow(Ref(shadowBottom,-1))) and Body < Ref(Body,-1));
 //BULLISH DELIBERATION BLOCK
-BullDeliBlock = (((LUpTrend and SDownTrend) OR (LDownTrend)) and (nBody[2] or lBody[2]) and (nBody[1] or lBody[1]) and (sBody or doji) and redBar[2] and redBar[1] and redBar and Close[2] > Close[1] and Close[1] > Close and Open[1] >= Close[2] and (sGap(Open, Close[1]) or nGap(Open, Close[1])) and Open < Close);
-// BULLISH DELIBERATION
-Deliberation = (NOT LDownTrend AND (nBody[2] OR lBody[2]) AND (nBody[1] OR lBody[1]) AND (sBody OR doji) AND greenBar[2] AND greenBar[1] AND greenBar AND close[2] < close[1] AND close[1] < close AND open[1] <= close[2] AND (sGap(open, close[1]) OR nGap(open, close[1])) AND open > close);
+BullDeliBlock = (((LUpTrend and SDownTrend) OR (LDownTrend)) and (Ref(nBody,-2) or Ref(lBody,-2)) and (Ref(nBody,-1) or Ref(lBody,-1)) and (sBody or doji) and Ref(redBar,-2) and Ref(redBar,-1) and redBar and Ref(Close,-2) > Ref(Close,-1) and Ref(Close,-1) > Close and Ref(Open,-1) >= Ref(Close,-2) and (sGap(Open, Ref(Close,-1)) or nGap(Open, Ref(Close,-1))) and Open < Close);
 // BULLISH TWO RABBITS
-TwoRabbits = (LUpTrend AND (nBody[2] OR lBody[2]) AND redBar[2] AND open[1] < close[2] AND greenBar[1] AND greenBar AND (nBody[1] OR sBody[1]) AND (nBody OR lBody) AND (sGap(open[1], close[2]) OR nGap(open[1], close[2]) OR lGap(open[1], close[2])) AND open <= close[1] AND close >= ((body[2] * 15 / 100) + bodyBottomLoc[2]));
+TwoRabbits = (LUpTrend AND (Ref(nBody,-2) OR Ref(lBody,-2)) AND Ref(redBar,-2) AND Ref(Open,-1) < Ref(Close,-2) AND Ref(greenBar,-1) AND greenBar AND (Ref(nBody,-1) OR Ref(sBody,-1)) AND (nBody OR lBody) AND (sGap(Ref(Open,-1), Ref(Close,-2)) OR nGap(Ref(Open,-1), Ref(Close,-2)) OR lGap(Ref(Open,-1), Ref(Close,-2))) AND open <= Ref(Close,-1) AND close >= ((Ref(body,-2) * 15 / 100) + Ref(bodyBottomLoc,-2)));
+// Up THREE LINE STRIKE
+Up_TLS = (Ref(Close,-1) < Ref(Close,-2) AND Ref(Close,-2) < Ref(Close,-3) AND Ref(Open,-3) > Ref(Close,-3) AND Close > Ref(High,-3) AND ((LUpTrend and SDownTrend) or (LDownTrend)));
+// SAN KU Pattern
+SanKuBull = (redBar AND Ref(Close,-1) < Ref(Open,-1) AND Ref(Close,-2) < Ref(Open,-2) AND Ref(Close,-2) - Ref(Open,-1) > vatr / 6 AND Ref(Close,-1) - Open > vatr / 6 AND ABS(Ref(Close,-2) - Ref(Open,-2)) > vatr / 7 AND ABS(Ref(Close,-1) - Ref(Open,-1)) > vatr / 7 AND Body > vatr / 7 AND ((LUpTrend and SDownTrend) or (LDownTrend)));
+// BULLISH HOOK REVERSAL
+BullHR = (greenBar AND Ref(redBar,-1) AND Open - Ref(Low,-1) < vatr / 6 AND Low > Ref(Low,-1) AND High < Ref(High,-1) AND Ref(High,-1) - High < vatr / 4 AND Volume >= MA(Volume, 50) / 2 AND Ref(SBottom,-1) == 0 AND ABS(Ref(Close,-1) - Ref(Open,-1)) > vatr / 3 AND Ref(Open,-1) - Close < vatr / 6 AND Open - Ref(Close,-1) < vatr / 6  AND ((LUpTrend and SDownTrend) or (LDownTrend)));
+// BULLISH ISLAND REVERSAL
+BullIR = (Ref(Low,-2) > Ref(Open,-1) AND Ref(Low,-2) - Ref(Open,-1) > Ref(vatr,-1) / 3 AND ABS(Ref(Close,-1) - Ref(Open,-1)) < Ref(vatr,-1) / 8 AND Ref(Close,-1) < Low AND High - Ref(Close,-1) > vatr / 3 AND Ref(Volume,-1) >= MA(Volume, 50) / 2 AND ((LUpTrend and SDownTrend) or (LDownTrend)));
 
 // B. BEARIST SIGNALS
+
+// BULLISH DELIBERATION
+Deliberation = (((LDownTrend and SUpTrend) or (LUpTrend)) AND (Ref(nBody,-2) OR Ref(lBody,-2)) AND (Ref(nBody,-1) OR Ref(lBody,-1)) AND (sBody OR doji) AND Ref(greenBar,-2) AND Ref(greenBar,-1) AND greenBar AND Ref(Close,-2) < Ref(Close,-1) AND Ref(Close,-1) < close AND Ref(Open,-1) <= Ref(Close,-2) AND (sGap(open, Ref(Close,-1)) OR nGap(open, Ref(Close,-1))) AND open > close);
 // INVERTED HAMMER
 //IHammer2 = (sBody AND LShadow(shadowTop) AND VSShadow(shadowBottom) AND total > LSizeBottom AND total < LSizeBottom*2 AND LDownTrend);
 IHammer2 = (sBody AND LShadow(shadowTop) AND VSShadow(shadowBottom) AND total > LSizeBottom AND total < LSizeBottom*2 AND ((LDownTrend and SUpTrend) or (LUpTrend)));
 // BULLISH DOJI STAR
-BDojiStar2 = (doji AND redBar[1] AND open < close[1] AND nGap(open, close[1]) AND ((LDownTrend and SUpTrend) or (LUpTrend)));
+BDojiStar2 = (doji AND Ref(redBar,-1) AND open < Ref(Close,-1) AND nGap(open, Ref(Close,-1)) AND ((LDownTrend and SUpTrend) or (LUpTrend)));
 // BULLISH MATCHING LOW
-BMatchLow2 = ((nBody[1] OR sBody[1]) AND (nBody OR sBody) AND redBar[1] AND redBar AND ABS(close[1] - close) < SizeBottom AND ((LDownTrend and SUpTrend) or (LUpTrend)) AND VSShadow(shadowTop[1]) AND VSShadow(shadowTop));
+BMatchLow2 = ((Ref(nBody,-1) OR Ref(sBody,-1)) AND (nBody OR sBody) AND Ref(redBar,-1) AND redBar AND ABS(Ref(Close,-1) - close) < SizeBottom AND ((LDownTrend and SUpTrend) or (LUpTrend)) AND VSShadow(shadowTop[1]) AND VSShadow(shadowTop));
 // BULLISH HOMING PIGEON
-HPigeon2 = (NOT doji AND redBar[1] AND redBar AND high < open[1] AND low > close[1] AND ((LDownTrend and SUpTrend) or (LUpTrend)) AND NOT (ABS(high - high[1]) < SSizeBottom AND ABS(low - low[1]) < SSizeBottom) AND NOT (VSShadow(shadowTop) OR VSShadow(shadowBottom)) AND (sGap(low, close[1]) OR nGap(low, close[1])));
+HPigeon2 = (NOT doji AND Ref(redBar,-1) AND redBar AND high < Ref(Open,-1) AND low > Ref(Close,-1) AND ((LDownTrend and SUpTrend) or (LUpTrend)) AND NOT (ABS(high - Ref(High,-1)) < SSizeBottom AND ABS(low - Ref(Low,-1)) < SSizeBottom) AND NOT (VSShadow(shadowTop) OR VSShadow(shadowBottom)) AND (sGap(low, Ref(Close,-1)) OR nGap(low, Ref(Close,-1))));
 // BULLISH UNIQUE THREE RIVER BOTTOM
-BullUnThreeRiver2 = (((LDownTrend and SUpTrend) or (LUpTrend)) AND (nBody[2] OR lBody[2]) AND redBar[2] AND redBar[1] AND greenBar AND open[1] > close[2] AND close[1] < close[2] AND low[1] > low[2] AND (nBody[1] OR sBody[1]) AND (sGap(close[2], open[1]) OR nGap(close[2], open[1])) AND NOT VSShadow(shadowBottom) AND sBody AND open < close[1] AND (sGap(close[1], open) OR nGap(close[1], open)));
+BullUnThreeRiver2 = (((LDownTrend and SUpTrend) or (LUpTrend)) AND (Ref(nBody,-2) OR Ref(lBody,-2)) AND Ref(redBar,-2) AND Ref(redBar,-1) AND greenBar AND Ref(Open,-1) > Ref(Close,-2) AND Ref(Close,-1) < Ref(Close,-2) AND Ref(Low,-1) > Ref(Low,-2) AND (Ref(nBody,-1) OR Ref(sBody,-1)) AND (sGap(Ref(Close,-2), Ref(Open,-1)) OR nGap(Ref(Close,-2), Ref(Open,-1))) AND NOT VSShadow(shadowBottom) AND sBody AND open < Ref(Close,-1) AND (sGap(Ref(Close,-1), open) OR nGap(Ref(Close,-1), open)));
 // BULLISH DELIBERATION BLOCK
-BullDeliBlock2 = (NOT LUpTrend AND (nBody[2] OR lBody[2]) AND (nBody[1] OR lBody[1]) AND (sBody OR doji) AND redBar[2] AND redBar[1] AND redBar AND close[2] > close[1] AND close[1] > close AND open[1] >= close[2] AND (sGap(open, close[1]) OR nGap(open, close[1])) AND open < close);
+BullDeliBlock2 = (NOT LUpTrend AND (Ref(nBody,-2) OR Ref(lBody,-2)) AND (Ref(nBody,-1) OR Ref(lBody,-1)) AND (sBody OR doji) AND Ref(redBar,-2) AND Ref(redBar,-1) AND redBar AND Ref(Close,-2) > Ref(Close,-1) AND Ref(Close,-1) > close AND Ref(Open,-1) >= Ref(Close,-2) AND (sGap(open, Ref(Close,-1)) OR nGap(open, Ref(Close,-1))) AND open < close);
 // DELIBERATION
-Deliberation2 = (((LDownTrend AND SUpTrend) or (LUpTrend)) AND (nBody[2] OR lBody[2]) AND (nBody[1] OR lBody[1]) AND (sBody OR doji) AND greenBar[2] AND greenBar[1] AND greenBar AND close[2] < close[1] AND close[1] < close AND open[1] <= close[2] AND (sGap(open, close[1]) OR nGap(open, close[1])) AND open > close);
-// THREE LINE STRIKE
-TLS = (Close[1] < Close[2] AND Close[2] < Close[3] AND Open[3] > Close[3] AND Close > High[3] AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
+Deliberation2 = (((LDownTrend AND SUpTrend) or (LUpTrend)) AND (Ref(nBody,-2) OR Ref(lBody,-2)) AND (Ref(nBody,-1) OR Ref(lBody,-1)) AND (sBody OR doji) AND Ref(greenBar,-2) AND Ref(greenBar,-1) AND greenBar AND Ref(Close,-2) < Ref(Close,-1) AND Ref(Close,-1) < close AND Ref(Open,-1) <= Ref(Close,-2) AND (sGap(open, Ref(Close,-1)) OR nGap(open, Ref(Close,-1))) AND open > close);
+// Down THREE LINE STRIKE
+Down_TLS = (Ref(Close,-1) > Ref(Close,-2) AND Ref(Close,-2) > Ref(Close,-3) AND Ref(Open,-3) < Ref(Close,-3) AND Close < Ref(Low,-3) AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
 // TWO BLACK GAPPING MODIFIED
-TwoBGap = (Close < Close[1] AND Close[1] < Close[2] AND Close[2] < Close[3] AND LPeak[3] == 0 AND High[2] < High[3] AND Open[2] - Close[1] > (Close[3] - Open[3]) * 3 AND Open[3] < Close[3] AND Close[3] - Open[3] > vatr[3]  AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
+TwoBGap = (Close < Ref(Close,-1) AND Ref(Close,-1) < Ref(Close,-2) AND Ref(Close,-2) < Ref(Close,-3) AND Ref(LPeak,-3) == 0 AND Ref(High,-2) < Ref(High,-3) AND Ref(Open,-2) - Ref(Close,-1) > (Ref(Close,-3) - Ref(Open,-3)) * 3 AND Ref(Open,-3) < Ref(Close,-3) AND Ref(Close,-3) - Ref(Open,-3) > Ref(vatr,-3)  AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
 // THREE BLACK CROWS
-TBC = (LPeak[2] >= -1 AND Close < Close[1] AND Close[1] < Close[2] AND Low < Low[1] AND Low[1] < Low[2] AND LowPercDiffFall < 45 AND LowPercDiffFall[1] < 45 AND LowPercDiffFall[2] < 45 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
+TBC = (Ref(LPeak,-2) >= -1 AND Close < Ref(Close,-1) AND Ref(Close,-1) < Ref(Close,-2) AND Low < Ref(Low,-1) AND Ref(Low,-1) < Ref(Low,-2) AND LowPercDiffFall < 45 AND LowPercDiffFall[1] < 45 AND Ref(LowPercDiffFall,-2) < 45 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
 // EVENING STAR
-EStar = ((Doji[1] OR sBody[1]) AND LPeak[1] == 0 AND (Close[2] - Open[2]) > vatr[2] * 1.25 AND ((redBar AND Open - Close < vatr / 2) OR HighPercDiffFall > 30 OR HighPercDiffRise > 50) AND Close < (Close[2] - ((Close[2] - Open[2]) * 34 / 100)) AND redBar AND High[1] - Low[1] < vatr / 1.5 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
+EStar = ((Ref(Doji,-1) OR Ref(sBody,-1)) AND Ref(LPeak,-1) == 0 AND (Ref(Close,-2) - Ref(Open,-2)) > Ref(vatr,-2) * 1.25 AND ((redBar AND Open - Close < vatr / 2) OR HighPercDiffFall > 30 OR HighPercDiffRise > 50) AND Close < (Ref(Close,-2) - ((Ref(Close,-2) - Ref(Open,-2)) * 34 / 100)) AND redBar AND Ref(High,-1) - Ref(Low,-1) < vatr / 1.5 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
 // BEARISH ISLAND REVERSAL
-BearIR = (High[2] < Open[1] AND Open[1] - High[2] > vatr[1] / 3 AND ABS(Close[1] - Open[1]) < vatr[1] / 8 AND Close[1] > High AND Close[1] - High > vatr / 3 AND Volume[1] >= MA(Volume, 50) / 2 AND ((LDownTrend AND SUpTrend) or (LUpTrend))); 
-// BULLISH ISLAND REVERSAL
-BullIR = (Low[2] > Open[1] AND Low[2] - Open[1] > vatr[1] / 3 AND ABS(Close[1] - Open[1]) < vatr[1] / 8 AND Close[1] < Low AND High - Close[1] > vatr / 3 AND Volume[1] >= MA(Volume, 50) / 2 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
+BearIR = (Ref(High,-2) < Ref(Open,-1) AND Ref(Open,-1) - Ref(High,-2) > Ref(vatr,-1) / 3 AND ABS(Ref(Close,-1) - Ref(Open,-1)) < Ref(vatr,-1) / 8 AND Ref(Close,-1) > High AND Ref(Close,-1) - High > vatr / 3 AND Ref(Volume,-1) >= MA(Volume, 50) / 2 AND ((LDownTrend AND SUpTrend) or (LUpTrend))); 
 // BEARISH HOOK REVERSAL
-BearHR = (redBar AND greenBar[1] AND High[1] - Open < vatr / 6 AND Low > Low[1] AND High < High[1] AND Low - Low[1] < vatr / 4 AND Volume >= MA(Volume, 50) / 2 AND SPeak[1] == 0 AND ABS(Close[1] - Open[1]) > vatr / 3 AND Close - Open[1] < vatr / 6 AND Close[1] - Open < vatr / 6 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
-// BULLISH HOOK REVERSAL
-BullHR = (greenBar AND redBar[1] AND Open - Low[1] < vatr / 6 AND Low > Low[1] AND High < High[1] AND High[1] - High < vatr / 4 AND Volume >= MA(Volume, 50) / 2 AND SBottom[1] == 0 AND ABS(Close[1] - Open[1]) > vatr / 3 AND Open[1] - Close < vatr / 6 AND Open - Close[1] < vatr / 6  AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
+BearHR = (redBar AND Ref(greenBar,-1) AND Ref(High,-1) - Open < vatr / 6 AND Low > Ref(Low,-1) AND High < Ref(High,-1) AND Low - Ref(Low,-1) < vatr / 4 AND Volume >= MA(Volume, 50) / 2 AND Ref(SPeak,-1) == 0 AND ABS(Ref(Close,-1) - Ref(Open,-1)) > vatr / 3 AND Close - Ref(Open,-1) < vatr / 6 AND Ref(Close,-1) - Open < vatr / 6 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
 // SAN KU Pattern
-SanKuBear = (greenBar AND Close[1] > Open[1] AND Close[2] > Open[2] AND Open[1] - Close[2] > vatr / 6 AND Open - Close[1] > vatr / 6 AND ABS(Close[2] - Open[2]) > vatr / 7 AND ABS(Close[1] - Open[1]) > vatr / 7 AND Body > vatr / 7 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
-SanKuBull = (redBar AND Close[1] < Open[1] AND Close[2] < Open[2] AND Close[2] - Open[1] > vatr / 6 AND Close[1] - Open > vatr / 6 AND ABS(Close[2] - Open[2]) > vatr / 7 AND ABS(Close[1] - Open[1]) > vatr / 7 AND Body > vatr / 7 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
+SanKuBear = (greenBar AND Ref(Close,-1) > Ref(Open,-1) AND Ref(Close,-2) > Ref(Open,-2) AND Ref(Open,-1) - Ref(Close,-2) > vatr / 6 AND Open - Ref(Close,-1) > vatr / 6 AND ABS(Ref(Close,-2) - Ref(Open,-2)) > vatr / 7 AND ABS(Ref(Close,-1) - Ref(Open,-1)) > vatr / 7 AND Body > vatr / 7 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
 // HARAMI CROSS BEARISH
-HCBear = (Doji AND High < Close[1] AND Low > Open[1] AND Close[1] > Open[1] AND SPeak[1] == 0 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
+HCBear = (Doji AND High < Ref(Close,-1) AND Low > Ref(Open,-1) AND Ref(Close,-1) > Ref(Open,-1) AND Ref(SPeak,-1) == 0 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
 // GRAVESTONE DOJI
 Gravestone = (Doji AND (Max(Open, Close) - Low) / (High - Low) < 0.25 AND High - Low > vatr / 2 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
 // SHOOTING STAR
-SStar = (sBody AND ShadowBottom / (High - Low) < 0.15 AND ShadowTop / (High - Low) > 0.7 AND SPeak[1] == 0 AND redBar AND High - Low > vatr * 1.25 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
+SStar = (sBody AND ShadowBottom / (High - Low) < 0.15 AND ShadowTop / (High - Low) > 0.7 AND Ref(SPeak,-1) == 0 AND redBar AND High - Low > vatr * 1.25 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
 // HANGING MAN
-Hanging = (sBody AND ShadowBottom / (High - Low) > 0.7 AND ShadowTop / (High - Low) < 0.15 AND SPeak[1] == 0 AND Open >= Close[1] AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
+Hanging = (sBody AND ShadowBottom / (High - Low) > 0.7 AND ShadowTop / (High - Low) < 0.15 AND Ref(SPeak,-1) == 0 AND Open >= Ref(Close,-1) AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
 // Upside Gap Two Crows
-UpsideGapTwoCrows = (greenBar[2] AND redBar[1] AND redBar AND Body[2] > vatr[2] AND Open[1] >= Close[2] AND sBody[1] AND Open >= Open[1] AND Close < Close[1] AND Close > Close[2] AND Body > vatr / 1.5 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
+UpsideGapTwoCrows = (Ref(greenBar,-2) AND Ref(redBar,-1) AND redBar AND Ref(Body,-2) > Ref(vatr,-2) AND Ref(Open,-1) >= Ref(Close,-2) AND Ref(sBody,-1) AND Open >= Ref(Open,-1) AND Close < Ref(Close,-1) AND Close > Ref(Close,-2) AND Body > vatr / 1.5 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
 // DARK CLOUD COVER
-DarkCC = (Body[1] > vatr[1] / 2 AND Body > vatr / 2 AND Open >= Close[1] AND Close < (Open[1] + Close[1]) / 2 AND Close > Open[1] AND redBar AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
+DarkCC = (Ref(Body,-1) > Ref(vatr,-1) / 2 AND Body > vatr / 2 AND Open >= Ref(Close,-1) AND Close < (Ref(Open,-1) + Ref(Close,-1)) / 2 AND Close > Ref(Open,-1) AND redBar AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
 // BEARISH ENGULFING
-BearEngulf = ((sBody[1] OR Doji[1]) AND LPeak[1] == 0 AND Body > vatr * 1.15 AND redBar AND Close < Low[1] AND ShadowBottom / (High - Low) < 0.1 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
+//BearEngulf = ((Ref(sBody,-1) OR Ref(Doji,-1)) AND Ref(LPeak,-1) == 0 AND Body > vatr * 1.15 AND redBar AND Close < Ref(Low,-1) AND ShadowBottom / (High - Low) < 0.1 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
+BearEngulf = ((Ref(sBody,-1) or Ref(nBody,-1)) and Ref(greenBar,-1) and Close < Ref(Low,-1) and Open > Ref(Close,-1) and redBar and ((LDownTrend AND SUpTrend) or (LUpTrend))); //
+
 // CANDLESTICK SANDWICH
-CSandwich = (((nBody[2] AND nBody[1] AND nBody) OR ((lBody[2] AND lBody[1] AND lBody))) AND redBar[2] AND greenBar[1] AND redBar AND ABS(Close - Close[2]) < vatr / 6 AND ABS(Open - Open[2]) < vatr / 6 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));
+CSandwich = (((Ref(nBody,-2) AND Ref(nBody,-1) AND nBody) OR ((Ref(lBody,-2) AND Ref(lBody,-1) AND lBody))) AND Ref(redBar,-2) AND Ref(greenBar,-1) AND redBar AND ABS(Close - Ref(Close,-2)) < vatr / 6 AND ABS(Open - Ref(Open,-2)) < vatr / 6 AND ((LDownTrend AND SUpTrend) or (LUpTrend)));

@@ -36,7 +36,7 @@ function CalculateAngle(x1, y1, x2, y2)
 	dy = y2 - y1;
 
 	// S? d?ng hàm atan2 d? tính toán d? góc
-	angle = atan2(dy, dx);
+	angle = atan2(dy,dx);
 
 	// Chuy?n d?i d? sang radian
 	angle = angle * 180 / PI;

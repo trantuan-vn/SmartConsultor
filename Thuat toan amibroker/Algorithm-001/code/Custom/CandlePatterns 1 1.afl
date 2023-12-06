@@ -73,12 +73,20 @@ _SECTION_BEGIN("CandlePatterns");
 	PlotShapes(IIf(BullDescBlock, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
 	//BULLISH DELIBERATION BLOCK
 	PlotShapes(IIf(BullDeliBlock, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
-	// BULLISH DELIBERATION
-	PlotShapes(IIf(Deliberation, shapeUpArrow, shapeNone) , colorGreen, 0,  Low,  Offset = -20);
 	// BULLISH TWO RABBITS
 	PlotShapes(IIf(TwoRabbits, shapeUpArrow, shapeNone) , colorGreen, 0,  Low,  Offset = -20);
+	// THREE LINE STRIKE
+	PlotShapes(IIf(Up_TLS, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);	
+	// Bull SAN KU Pattern
+	PlotShapes(IIf(SanKuBull, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	// BULLISH HOOK REVERSAL
+	PlotShapes(IIf(BullHR, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	// BULLISH ISLAND REVERSAL
+	PlotShapes(IIf(BullIR, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
 	
 	// B. BEARIST SIGNALS
+	// BULLISH DELIBERATION
+	PlotShapes(IIf(Deliberation, shapeDownArrow, shapeNone) , colorRed, 0,  High,  Offset = -20);
 	// INVERTED HAMMER
 	PlotShapes(IIf(IHammer2, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
 	// BULLISH DOJI STAR
@@ -94,7 +102,7 @@ _SECTION_BEGIN("CandlePatterns");
 	// DELIBERATION
 	PlotShapes(IIf(Deliberation2, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
 	// THREE LINE STRIKE
-	PlotShapes(IIf(TLS, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	PlotShapes(IIf(Down_TLS, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
 	// TWO BLACK GAPPING MODIFIED
 	PlotShapes(IIf(TwoBGap, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
 	// THREE BLACK CROWS
@@ -103,16 +111,10 @@ _SECTION_BEGIN("CandlePatterns");
 	PlotShapes(IIf(EStar, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
 	// BEARISH ISLAND REVERSAL
 	PlotShapes(IIf(BearIR, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
-	// BULLISH ISLAND REVERSAL
-	PlotShapes(IIf(BullIR, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
 	// BEARISH HOOK REVERSAL
 	PlotShapes(IIf(BearHR, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
-	// BULLISH HOOK REVERSAL
-	PlotShapes(IIf(BullHR, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
 	// Bear SAN KU Pattern
 	PlotShapes(IIf(SanKuBear, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
-	// Bull SAN KU Pattern
-	PlotShapes(IIf(SanKuBull, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
 	// HARAMI CROSS BEARISH
 	PlotShapes(IIf(HCBear, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
 	// GRAVESTONE DOJI
@@ -155,29 +157,31 @@ _SECTION_BEGIN("CandlePatterns");
 		if ( TGSol[i] )				PlotText( "Three\nWhite\nSoldiers", i, L[i], colorGreen, -1, -dist );		
 		if ( BullDescBlock[i] )		PlotText( "Bull\nDescent\nBlock", i, L[i], colorGreen, -1, -dist );		
 		if ( BullDeliBlock[i] )		PlotText( "Bull\nDeliberation\nBlock", i, L[i], colorGreen, -1, -dist );		
-		if ( Deliberation[i] )		PlotText( "Deliberation", i, L[i], colorGreen, -1, -dist );		
 		if ( TwoRabbits[i] )		PlotText( "Two\nRabbits", i, L[i], colorGreen, -1, -dist );		
+		if ( Up_TLS[i] )			PlotText( "Up Three\nLine\nStrike", i, L[i], colorGreen, -1, -dist );				
+		if ( SanKuBull[i] )			PlotText( "San Ku\nBull", i, L[i], colorGreen, -1, -dist );		
+		if ( BullHR[i] )			PlotText( "Bull\nHook\nReversal", i, L[i], colorGreen, -1, -dist );		
+		if ( BullIR[i] )			PlotText( "Bull\nIsland\nReversal", i, L[i], colorGreen, -1, -dist );		
+		
 		// B. BEARIST SIGNALS
+		if ( Deliberation[i] )		PlotText( "Deliberation", i, H[i], colorRed, -1, dist );		
 		if ( IHammer2[i] )			PlotText( "Inverted\nHammer", i, H[i], colorRed, -1, dist );		
-		if ( BDojiStar2[i] )		PlotText( "Bullish\nDoji\nStar", i, H[i], colorRed, -1, dist );				
-		if ( BMatchLow2[i] )		PlotText( "Bull\nMatching\nLow", i, H[i], colorRed, -1, dist );		
-		if ( HPigeon2[i] )			PlotText( "Bull\nHoming\nPigeon", i, H[i], colorRed, -1, dist );		
-		if ( BullUnThreeRiver2[i] )	PlotText( "Bull\nUnique\nThree\nRiver\nBottom", i, H[i], colorRed, -1, dist );		
-		if ( BullDeliBlock2[i] )	PlotText( "Bull\nDeliberation\nBlock", i, H[i], colorRed, -1, dist );		
+		if ( BDojiStar2[i] )		PlotText( "Bullish\nDoji\nStar", i, H[i], colorRed, -1, dist+20 );				
+		if ( BMatchLow2[i] )		PlotText( "Bull\nMatching\nLow", i, H[i], colorRed, -1, dist+20 );		
+		if ( HPigeon2[i] )			PlotText( "Bull\nHoming\nPigeon", i, H[i], colorRed, -1, dist+20 );		
+		if ( BullUnThreeRiver2[i] )	PlotText( "Bull\nUnique\nThree\nRiver\nBottom", i, H[i], colorRed, -1, dist+40 );		
+		if ( BullDeliBlock2[i] )	PlotText( "Bull\nDeliberation\nBlock", i, H[i], colorRed, -1, dist+20 );		
 		if ( Deliberation2[i] )		PlotText( "Deliberation", i, H[i], colorRed, -1, dist );		
-		if ( TLS[i] )				PlotText( "Three\nLine\nStrike", i, H[i], colorRed, -1, dist );		
+		if ( Down_TLS[i] )			PlotText( "Down Three\nLine\nStrike", i, H[i], colorRed, -1, dist+20 );		
 		if ( EStar[i] )				PlotText( "Evening\nStar", i, H[i], colorRed, -1, dist );		
-		if ( BearIR[i] )			PlotText( "Bear\nIsland\nReversal", i, H[i], colorRed, -1, dist );		
-		if ( BullIR[i] )			PlotText( "Bull\nIsland\nReversal", i, H[i], colorRed, -1, dist );		
-		if ( BearHR[i] )			PlotText( "Bear\nHook\nReversal", i, H[i], colorRed, -1, dist );		
-		if ( BullHR[i] )			PlotText( "Bull\nHook\nReversal", i, H[i], colorRed, -1, dist );		
+		if ( BearIR[i] )			PlotText( "Bear\nIsland\nReversal", i, H[i], colorRed, -1, dist+20 );		
+		if ( BearHR[i] )			PlotText( "Bear\nHook\nReversal", i, H[i], colorRed, -1, dist+20 );		
 		if ( SanKuBear[i] )			PlotText( "San Ku\nBear", i, H[i], colorRed, -1, dist );		
-		if ( SanKuBull[i] )			PlotText( "San Ku\nBull", i, H[i], colorRed, -1, dist );		
 		if ( HCBear[i] )			PlotText( "Harami\nCross", i, H[i], colorRed, -1, dist );		
 		if ( Gravestone[i] )		PlotText( "Gravestone\nDoji", i, H[i], colorRed, -1, dist );		
 		if ( Hanging[i] )			PlotText( "Hanging\nMan", i, H[i], colorRed, -1, dist );		
-		if ( UpsideGapTwoCrows[i] )	PlotText( "Upside\nGap\nTwo\nCrows", i, H[i], colorRed, -1, dist );		
-		if ( DarkCC[i] )			PlotText( "Dark\nCloud\nCover", i, H[i], colorRed, -1, dist );		
+		if ( UpsideGapTwoCrows[i] )	PlotText( "Upside\nGap\nTwo\nCrows", i, H[i], colorRed, -1, dist+20);		
+		if ( DarkCC[i] )			PlotText( "Dark\nCloud\nCover", i, H[i], colorRed, -1, dist+20 );		
 		if ( BearEngulf[i] )		PlotText( "Bear\nEngulf", i, H[i], colorRed, -1, dist );		
 		if ( CSandwich[i] )			PlotText( "CandleStick\nSandwich", i, H[i], colorRed, -1, dist );		
 	}
@@ -197,16 +201,16 @@ _SECTION_BEGIN("SupRes");
 	// fibo res_y[1] và sup_y[1]
 	DrawFibonacci(res_y[1], sup_y[1],colorGreen);
 	// ve fibo kenh gia : duong 1 noi sup2 voi sup1, duong 2 song song voi duong 1 noi tu res1
-	y= LineArray( res_x[1], res_y[1], BarCount - 1, (sup_y[1]-sup_y[2])*(BarCount - 1-res_x[1])/(sup_x[1]-sup_x[2]) + res_y[1] , 1 );
-	z= LineArray( sup_x[2], sup_y[2], sup_x[1], sup_y[1], 1 );
-	DrawFibonacci(y, z, colorGreen);
+	parallel_res1_sup2_sup1= LineArray( res_x[1], res_y[1], BarCount - 1, (sup_y[1]-sup_y[2])*(BarCount - 1-res_x[1])/(sup_x[1]-sup_x[2]) + res_y[1] , 1 );
+	sup2_sup1= LineArray( sup_x[2], sup_y[2], sup_x[1], sup_y[1], 1 );
+	DrawFibonacci(parallel_res1_sup2_sup1, sup2_sup1, colorGreen);
 	// ve fibo kenh gia : duong 1 noi res2 voi res1, duong 2 song song voi duong 1 noi tu sup1
-	y= LineArray( res_x[2], res_y[2], res_x[1], res_y[1], 1 );
-	z= LineArray( sup_x[1], sup_y[1], BarCount - 1, (res_y[1]-res_y[2])*(BarCount - 1-sup_x[1])/(res_x[1]-res_x[2]) + sup_y[1] , 1 );
-	DrawFibonacci(y, z,colorRed);	
+	res2_res1= LineArray( res_x[2], res_y[2], res_x[1], res_y[1], 1 );
+	parallel_sup1_res2_res1= LineArray( sup_x[1], sup_y[1], BarCount - 1, (res_y[1]-res_y[2])*(BarCount - 1-sup_x[1])/(res_x[1]-res_x[2]) + sup_y[1] , 1 );
+	DrawFibonacci(res2_res1, parallel_sup1_res2_res1,colorRed);	
 	
 _SECTION_END();
-/*
+
 _SECTION_BEGIN("Check Output");
 	Hor=Param("Horizontal Position",20,1,1200,1);
 	Ver=Param("Vertical Position",1,1,1,1);
@@ -214,6 +218,18 @@ _SECTION_BEGIN("Check Output");
 	GfxSetTextColor(ParamColor("Color",colorCustom6));
 	GfxSetBkMode(colorWhite);
 	GfxSelectFont("Times New Roman",12,600,bold=True,underline=False, True);
-	GfxTextOut("" , Hor, Ver+155); 
+	GfxTextOut("Goc up:" + up_angle + "(" + sup_x[2]  + "," +  sup_y[2] + "," +   sup_x[1] + "," +   sup_y[1] + ")", Hor, Ver+15); 
+	GfxTextOut("Goc down: " + down_angle + "(" + res_x[2] + "," +  res_y[2] + "," +   res_x[1] + "," +   res_y[1]	+ ")", Hor, Ver+35); 
+	GfxTextOut("Goc up level1:" + level1_up_angle , Hor, Ver+55); 
+	GfxTextOut("Goc down level1: " + level1_down_angle , Hor, Ver+75); 
+	GfxTextOut("Goc up level2:" + level2_up_angle , Hor, Ver+95); 
+	GfxTextOut("Goc down level2: " + level2_down_angle , Hor, Ver+115); 
+	GfxTextOut("Goc up level3:" + level3_up_angle, Hor, Ver+135); 
+	GfxTextOut("Goc down level3: " + level3_down_angle , Hor, Ver+155); 	
+	
+	GfxTextOut("test: " + sBody[1] , Hor, Ver+175); 	
 _SECTION_END();
-*/
+
+_SECTION_BEGIN("TT1");
+
+_SECTION_END();

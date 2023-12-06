@@ -32,6 +32,7 @@ level2_sup_x[2]=BarCount - 1 - LastValue(TroughBars(C,change,2));
 level2_up_angle = CalculateAngle(level2_sup_x[2], level2_sup_y[2], level2_sup_x[1], level2_sup_y[1]);
 level2_down_angle = CalculateAngle(level2_res_x[2], level2_res_y[2], level2_res_x[1], level2_res_y[1]);
 
+TimeFrameRestore();
 TimeFrameSet(level3);
 // Res 1
 level3_res_y[1]=LastValue(Peak(C,change,1));
@@ -50,7 +51,6 @@ level3_up_angle = CalculateAngle(level3_sup_x[2], level3_sup_y[2], level3_sup_x[
 level3_down_angle = CalculateAngle(level3_res_x[2], level3_res_y[2], level3_res_x[1], level3_res_y[1]);
 
 TimeFrameRestore();
-
 // Res 1
 res_y[1]=LastValue(Peak(C,change,1));
 res_x[1]=BarCount - 1 - LastValue(PeakBars(C,change,1));
