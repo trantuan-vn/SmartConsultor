@@ -227,9 +227,10 @@ _SECTION_BEGIN("Check Output");
 	GfxTextOut("Goc up level3:" + level3_up_angle, Hor, Ver+135); 
 	GfxTextOut("Goc down level3: " + level3_down_angle , Hor, Ver+155); 	
 	
-	GfxTextOut("test: " + sBody[1] , Hor, Ver+175); 	
+	GfxTextOut("test: " + (Ref(nBody,-2) or Ref(lBody,-2)) , Hor, Ver+175); 	
 _SECTION_END();
 
 _SECTION_BEGIN("TT1");
 
+	
 _SECTION_END();

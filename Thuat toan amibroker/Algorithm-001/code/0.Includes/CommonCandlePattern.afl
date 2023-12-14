@@ -79,7 +79,8 @@ Takuri = (sBody and LShadow(shadowBottom) and VSShadow(shadowTop) and total > LS
 //BULLISH BELT HOLD
 BBelt = ((nBody or lBody) and Open <= Ref(Low,-1) and Low == Open and (VSShadow(shadowTop) or SShadow(shadowTop)) and ((LUpTrend and SDownTrend) OR (LDownTrend))) ;
 //BULLISH ENGULFING
-BullEngulf = ((Ref(sBody,-1) or Ref(nBody,-1)) and Ref(redBar,-1) and Close > Ref(Open,-1) and Open < Ref(Close,-1) and not (VSShadow(shadowTop) or VSShadow(shadowBottom)) and greenBar and ((LUpTrend and SDownTrend) OR (LDownTrend))); //
+//BullEngulf = ((Ref(sBody,-1) or Ref(nBody,-1)) and Ref(redBar,-1) and Close > Ref(Open,-1) and Open < Ref(Close,-1) and not (VSShadow(shadowTop) or VSShadow(shadowBottom)) and greenBar and ((LUpTrend and SDownTrend) OR (LDownTrend))); //
+BullEngulf = ((Ref(sBody,-1) or Ref(nBody,-1)) and Ref(redBar,-1) and Close > Ref(Open,-1) and Open < Ref(Close,-1) and greenBar and ((LUpTrend and SDownTrend) OR (LDownTrend))); //
 //HARAMI CROSS BULLISH
 HCBull = (doji and Ref(redBar,-1) and High < Ref(Open,-1) and Low > Ref(Close,-1) and Ref(SBottom,-1) == 0 and LUpTrend and (sGap(Low, Ref(Close,-1)) or nGap(Low, Ref(Close,-1))));
 //HARAMI BULLISH
@@ -102,6 +103,7 @@ Kicker = (Ref(High,-1) < Open and lGap(Ref(High,-1), Open) and greenBar and lBod
 ABaby = ((Ref(doji,-1) or Ref(sBody,-1)) and Ref(SDownTrend,-1) and Ref(redBar,-2) and (Ref(nBody,-2) or Ref(lBody,-2)) and greenBar and (nBody or lBody) and Ref(High,-1) <= Ref(Low,-2) and Low >= Ref(High,-1) and Close >= ((Ref(Body,-2) * 40 / 100) + Ref(bodyBottomLoc,-2)) and (sGap(Ref(Low,-2), Ref(High,-1)) or nGap(Ref(Low,-2), Ref(High,-1)) or lGap(Ref(Low,-2), Ref(High,-1))) and (sGap(Low, Ref(High,-1)) or nGap(Low, Ref(High,-1)) or lGap(Low, Ref(High,-1))));
 //MORNING STAR
 MStar = ((Ref(doji,-1) or Ref(sBody,-1)) and Ref(SDownTrend,-1) and Ref(redBar,-2) and (Ref(nBody,-2) or Ref(lBody,-2)) and greenBar and (nBody or lBody) and Ref(Open,-1) <= Ref(Close,-2) and Ref(Close,-1) <= Ref(Close,-2) and Open >= Ref(Close,-1) and Close >= ((Ref(Body,-2) * 40 / 100) + Ref(bodyBottomLoc,-2)));
+
 //BULLISH TRI STAR
 BullTriStar = (Ref(doji,-1) and Ref(doji,-2) and doji and Ref(LUpTrend,-1) and Ref(Open,-1) <= Ref(Close,-2) and Ref(Close,-1) <= Ref(Close,-2) and Open >= Ref(Close,-1));
 //BULLISH DOWNSIDE GAP TWO RABBITS

@@ -1,4 +1,0 @@
-//DRAGONFLY DOJI
-DragonflyDoji = (doji and LShadow(shadowBottom) and VSShadow(shadowTop) and total > NSizeBottom and total < LSizeTop and ((LUpTrend and SDownTrend) or (LDownTrend)));
-
-
