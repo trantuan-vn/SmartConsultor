@@ -7,13 +7,13 @@ import 'package:smartconsultor/features/login/domain/entities/user.dart';
 import 'package:smartconsultor/features/login/domain/repositories/auth_repository.dart';
 
 class AuthUseCase implements UseCase<User, Params>{
-  final AuthRepository auth_repository;
+  final AuthRepository authRepository;
 
-  AuthUseCase(this.auth_repository);
+  AuthUseCase(this.authRepository);
 
   @override
   Future<Either<Failure, User>> call(Params params) async {
-    return await auth_repository.login(params.username, params.password);
+    return await authRepository.login(params.username, params.password);
   }
 }
 
