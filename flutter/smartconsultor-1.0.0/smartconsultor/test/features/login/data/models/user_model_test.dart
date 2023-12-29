@@ -28,7 +28,7 @@ void main() {
         // act
         final result = UserModel.fromJson(jsonMap);
         // assert
-        expect(result, userModel);
+        expect(result.toJson(), userModel.toJson());
       },
     );
   });
