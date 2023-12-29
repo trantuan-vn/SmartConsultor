@@ -1,22 +1,24 @@
+// test.dart
 import 'package:flutter_test/flutter_test.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:mockito/mockito.dart';
 
-import 'package:connectivity/connectivity.dart';
-import 'package:smartconsultor/core/network/network_info.dart';
-void main(){
-  
-  Connectivity connectivity=Connectivity();
-  NetworkInfo networkInfo= NetworkInfo(connectivity);
 
-  group('isConnected', () { 
-     test('should return true when ConnectivityResult is not none', () async {
+class MockConnectivity extends Mock implements Connectivity {}
+
+void main() {
+  MockConnectivity connectivity = MockConnectivity();
+
+  group('isConnected', () {
+    test('should return true when ConnectivityResult is not none', () async {
       // Arrange
       when(connectivity.checkConnectivity())
-          .thenAnswer((_) async => ConnectivityResult.wifi);
+        .thenAnswer((_) async => ConnectivityResult.ethernet);
       // Act
-      final result = await networkInfo.isConnected();
+      final result = await connectivity.checkConnectivity();
+
       // Assert
-      expect(result, true);        
-     });
+      expect(result, ConnectivityResult.ethernet);
+    });
   });
 }

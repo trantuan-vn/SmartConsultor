@@ -1,13 +1,20 @@
-import 'package:connectivity/connectivity.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
-class NetworkInfo {
-  final Connectivity connectivity;
+// Define the NetworkInfo interface
+abstract class INetworkInfo {
+  Future<bool> isConnected();
+  Stream<bool> get onConnectivityChanged;
+}
 
-  NetworkInfo(this.connectivity);
+class NetworkInfo implements INetworkInfo {
+  final Connectivity _connectivity;
 
+  NetworkInfo(this._connectivity);
+
+  @override
   Future<bool> isConnected() async {
     try {
-      var result = await connectivity.checkConnectivity();
+      var result = await _connectivity.checkConnectivity();
       return result != ConnectivityResult.none;
     } catch (e) {
       // Handle exceptions if necessary
@@ -15,8 +22,9 @@ class NetworkInfo {
     }
   }
 
+  @override
   Stream<bool> get onConnectivityChanged {
-    return connectivity.onConnectivityChanged.map((result) {
+    return _connectivity.onConnectivityChanged.map((result) {
       return result != ConnectivityResult.none;
     });
   }
