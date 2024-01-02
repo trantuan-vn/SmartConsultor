@@ -13,3 +13,12 @@ class NetworkError extends Failure {
 }
 
 // Thêm các lớp lỗi khác nếu cần thiết
+class ServerFailure extends Failure {
+  ServerFailure(): super("Server error");
+}
+
+class CacheFailure extends Failure {
+  CacheFailure(): super("Cache error");
+}
+
+

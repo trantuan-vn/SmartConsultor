@@ -1,4 +1,4 @@
-import 'package:smartconsultor/features/login/domain/entities/User.dart';
+import 'package:smartconsultor/features/login/domain/entities/user.dart';
 
 class UserModel extends User {
   UserModel({
