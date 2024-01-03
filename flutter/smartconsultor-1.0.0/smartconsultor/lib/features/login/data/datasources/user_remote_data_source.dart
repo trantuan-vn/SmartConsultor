@@ -19,8 +19,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<UserModel> login(String username, String password) => _getUserFromUrl('http://numbersapi.com/random');
   
   Future<UserModel> _getUserFromUrl(String url) async {
+    final uri=Uri.parse(url);
     final response = await client.get(
-      url as Uri,
+      uri,
       headers: {
         'Content-Type': 'application/json',
       },
