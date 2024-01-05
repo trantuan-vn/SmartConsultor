@@ -6,19 +6,22 @@ import 'package:mocktail/mocktail.dart';
 import 'package:smartconsultor/core/error/exceptions.dart';
 import 'package:smartconsultor/core/error/failures.dart';
 import 'package:smartconsultor/core/network/network_info.dart';
+import 'package:smartconsultor/features/login/data/datasources/user_local_data_source.dart';
 import 'package:smartconsultor/features/login/data/datasources/user_remote_data_source.dart';
 import 'package:smartconsultor/features/login/data/models/user_model.dart';
 import 'package:smartconsultor/features/login/data/repositories/auth_repository_impl.dart';
 import 'package:smartconsultor/features/login/domain/entities/user.dart';
 
 class MockUserRemoteDataSource extends Mock implements UserRemoteDataSource {}
+class MockUserLocalDataSource extends Mock implements UserLocalDataSource {}
 class MockConnectivity extends Mock implements Connectivity {}
 
 void main() {
   MockConnectivity mockConnectivity= MockConnectivity();
   NetworkInfo networkInfo=NetworkInfo(mockConnectivity);  
   MockUserRemoteDataSource mockUserRemoteDataSource=MockUserRemoteDataSource();
-  AuthRepositoryImpl authRepositoryImpl=AuthRepositoryImpl(remoteDataSource: mockUserRemoteDataSource, networkInfo: networkInfo);
+  MockUserLocalDataSource mockUserLocalDataSource=MockUserLocalDataSource();
+  AuthRepositoryImpl authRepositoryImpl=AuthRepositoryImpl(localDataSource: mockUserLocalDataSource,remoteDataSource: mockUserRemoteDataSource, networkInfo: networkInfo);
   
   final userModel = UserModel(id: '1', username: 'tuanta', email: 'tuanta2021@gmail.com');
   

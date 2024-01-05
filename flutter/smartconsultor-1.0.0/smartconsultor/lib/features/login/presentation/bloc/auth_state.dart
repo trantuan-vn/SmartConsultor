@@ -1,43 +1,39 @@
-import 'package:equatable/equatable.dart';
-import 'package:smartconsultor/features/login/domain/entities/User.dart';
+part of 'auth_bloc.dart';
 
-abstract class AuthState extends Equatable {
+sealed class AuthState extends Equatable {
   const AuthState();
+  
+  @override
+  List<Object> get props => [];
+}
+@immutable
+class AuthInitialState extends AuthState {}
+@immutable
+class AuthLoadingState extends AuthState {}
+@immutable
+class AuthAuthenticatedState extends AuthState {
+  final String username;
+
+  AuthAuthenticatedState({required this.username});
 
   @override
-  List<Object?> get props => [];
+  List<Object> get props => [username];
 }
+@immutable
+class AuthUnauthenticatedState extends AuthState {
+  final String errorMessage;
 
-class AuthInitial extends AuthState {}
-
-class AuthLoading extends AuthState {}
-
-class AuthSuccess extends AuthState {
-  final User user;
-
-  const AuthSuccess(this.user);
+  AuthUnauthenticatedState({required this.errorMessage});
 
   @override
-  List<Object?> get props => [user];
+  List<Object> get props => [errorMessage];
 }
+@immutable
+class AuthErrorState extends AuthState {
+  final String errorMessage;
 
-class AuthFailure extends AuthState {
-  final AuthError error;
-
-  const AuthFailure(this.error);
+  AuthErrorState({required this.errorMessage});
 
   @override
-  List<Object?> get props => [error];
+  List<Object> get props => [errorMessage];
 }
-
-// Các lớp lỗi cụ thể
-abstract class AuthError extends Equatable {
-  const AuthError();
-
-  @override
-  List<Object?> get props => [];
-}
-
-class InvalidCredentials extends AuthError {}
-
-class NetworkError extends AuthError {}

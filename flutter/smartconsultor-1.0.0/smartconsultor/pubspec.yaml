@@ -15,19 +15,21 @@ dependencies:
   flutter_bloc: ^8.1.3
   # Value equality
   equatable: ^2.0.5
-  # Functional programing thingies
+  # Functional programing thingies 
   dartz: ^0.10.1
   # Remote API
   connectivity_plus: ^5.0.2
   http: ^1.1.2
   # Local cache
-  shared_preferences: ^2.2.2
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.1
   mocktail: ^1.0.2  
+  bloc_test: ^9.1.5
 
 flutter:
   uses-material-design: true
