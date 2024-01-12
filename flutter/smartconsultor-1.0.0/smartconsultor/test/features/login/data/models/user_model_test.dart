@@ -8,7 +8,7 @@ import '../../../../fixtures/fixtures_reader.dart';
 
 
 void main() {
-  final userModel = UserModel(id: '1', username: 'tuanta', email: 'tuanta2021@gmail.com');
+  const userModel = UserModel(id: '1', username: 'tuanta', email: 'tuanta2021@gmail.com');
 
   test(
     'should be a subclass of User entity',

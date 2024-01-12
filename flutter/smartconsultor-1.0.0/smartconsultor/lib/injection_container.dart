@@ -6,11 +6,12 @@ import 'package:smartconsultor/features/login/data/repositories/auth_repository_
 import 'package:smartconsultor/features/login/domain/repositories/auth_repository.dart';
 import 'package:smartconsultor/features/login/domain/usecases/auth_use_case.dart';
 import 'package:smartconsultor/features/login/presentation/bloc/auth_bloc.dart';
+import 'package:http/http.dart' as http;
 
 
 final sl = GetIt.instance;
 
-void init(){
+Future<void> init() async {
   // bloc
   sl.registerFactory(() => AuthBloc(authUseCase: sl()));
   // use case
@@ -23,6 +24,7 @@ void init(){
   //core
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfo(sl()));
   //external
- 
+  sl.registerLazySingleton(() => http.Client());
+
 }
 

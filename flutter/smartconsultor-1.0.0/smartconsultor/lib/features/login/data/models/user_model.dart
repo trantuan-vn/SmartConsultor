@@ -1,7 +1,7 @@
 import 'package:smartconsultor/features/login/domain/entities/user.dart';
 
 class UserModel extends User {
-  UserModel({
+  const UserModel({
     required super.id,
     required super.username,
     required super.email

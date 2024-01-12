@@ -45,7 +45,7 @@ void main() {
       //act
       final call= userRemoteDataSourceImpl.login;
       //assert
-      expect(() => call('tuanta','abcd1234'), throwsA(TypeMatcher<ServerException>()));
+      expect(() => call('tuanta','abcd1234'), throwsA(const TypeMatcher<ServerException>()));
     });
   });
 

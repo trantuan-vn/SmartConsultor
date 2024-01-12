@@ -15,7 +15,7 @@ void main() {
     const params = Params(username: 'tuanta2021@gmail.com', password: 'P@ssw0rd');
     const invalidEmailParams = Params(username: 'tuanta2021gmail.com', password: 'P@ssw0rd');
     const weakPassParams = Params(username: 'tuanta2021@gmail.com', password: 'Passw0rd');
-    final user = UserModel(id: '1', username: 'tuanta2021@gmail.com', email: 'tuanta2021@gmail.com');
+    const user = UserModel(id: '1', username: 'tuanta2021@gmail.com', email: 'tuanta2021@gmail.com');
     
     late AuthBloc authBloc;
     late MockAuthUseCase mockAuthUseCase;
@@ -37,13 +37,13 @@ void main() {
       'emits [AuthLoadingState, AuthAuthenticatedState] when SignInEvent is added successfully',
       build: () {
         when(() => mockAuthUseCase(params))
-            .thenAnswer((_) async => Right(user));
+            .thenAnswer((_) async => const Right(user));
         return authBloc;
       },
       act: (bloc) => bloc.add(SignInEvent(username: params.username, password: params.password)),
       expect: () => [
         AuthLoadingState(),
-        AuthAuthenticatedState(username: params.username),
+        const AuthAuthenticatedState(user: user),
       ],
     );
     blocTest<AuthBloc, AuthState>(
@@ -54,7 +54,7 @@ void main() {
       act: (bloc) => bloc.add(SignInEvent(username: invalidEmailParams.username, password: invalidEmailParams.password)),
       expect: () => [
         AuthLoadingState(),
-        AuthErrorState(errorMessage: 'Invalid email format'),
+        const AuthErrorState(errorMessage: 'Invalid email format'),
       ],
     );
     blocTest<AuthBloc, AuthState>(
@@ -65,7 +65,7 @@ void main() {
       act: (bloc) => bloc.add(SignInEvent(username: weakPassParams.username, password: weakPassParams.password)),
       expect: () => [
         AuthLoadingState(),
-        AuthErrorState(errorMessage: 'Weak password'),
+        const AuthErrorState(errorMessage: 'Weak password'),
       ],
     );        
 
@@ -79,7 +79,7 @@ void main() {
       act: (bloc) => bloc.add(SignInEvent(username: params.username, password: params.password)),
       expect: () => [
         AuthLoadingState(),
-        AuthUnauthenticatedState(errorMessage: 'Invalid credentials'),
+        const AuthUnauthenticatedState(errorMessage: 'Invalid credentials'),
       ],
     );
 

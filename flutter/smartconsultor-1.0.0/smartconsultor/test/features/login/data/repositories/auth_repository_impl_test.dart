@@ -23,7 +23,7 @@ void main() {
   MockUserLocalDataSource mockUserLocalDataSource=MockUserLocalDataSource();
   AuthRepositoryImpl authRepositoryImpl=AuthRepositoryImpl(localDataSource: mockUserLocalDataSource,remoteDataSource: mockUserRemoteDataSource, networkInfo: networkInfo);
   
-  final userModel = UserModel(id: '1', username: 'tuanta', email: 'tuanta2021@gmail.com');
+  const userModel = UserModel(id: '1', username: 'tuanta', email: 'tuanta2021@gmail.com');
   
   group('Auth', () {
     test("login successfully", () async {
@@ -34,7 +34,7 @@ void main() {
       final result=await authRepositoryImpl.login('tuanta2021@gmail.com','abcd@1234');
       // assert
       verify(() => networkInfo.isConnected());
-      expect(result, Right(userModel));
+      expect(result, const Right(userModel));
     });
     test("ServerException", () async {
       // arrange

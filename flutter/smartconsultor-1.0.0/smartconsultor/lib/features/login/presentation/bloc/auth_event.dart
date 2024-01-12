@@ -12,7 +12,7 @@ class SignInEvent extends AuthEvent {
   final String username;
   final String password;
 
-  SignInEvent({required this.username, required this.password});
+  const SignInEvent({required this.username, required this.password});
 
   @override
   List<Object> get props => [username, password];
@@ -26,7 +26,7 @@ class SignOutEvent extends AuthEvent {
 class RefreshTokenEvent extends AuthEvent {
   final String refreshToken;
 
-  RefreshTokenEvent({required this.refreshToken});
+  const RefreshTokenEvent({required this.refreshToken});
 
   @override
   List<Object> get props => [refreshToken];

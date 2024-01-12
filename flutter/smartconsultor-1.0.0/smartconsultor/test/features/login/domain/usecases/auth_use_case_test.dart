@@ -22,17 +22,17 @@ void main() {
     test('should return a User when login is successful', () async {
       // Arrange
       const params = Params(username: 'test_username', password: 'test_password');
-      final user = User(id: '1', username: 'test_username', email: 'test@example.com');
+      const user = User(id: '1', username: 'test_username', email: 'test@example.com');
 
       // Set up the mock behavior
       when(() => mockAuthRepository.login(params.username, params.password))
-          .thenAnswer((_) async => Right(user));
+          .thenAnswer((_) async => const Right(user));
 
       // Act
       final result = await authUseCase(params);
 
       // Assert
-      expect(result, Right(user));
+      expect(result, const Right(user));
 
       // Verify that the login method was called with the correct parameters
       verify(() => mockAuthRepository.login(params.username, params.password));

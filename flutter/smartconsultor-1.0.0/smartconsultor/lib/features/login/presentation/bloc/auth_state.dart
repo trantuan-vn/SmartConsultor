@@ -8,22 +8,24 @@ sealed class AuthState extends Equatable {
 }
 @immutable
 class AuthInitialState extends AuthState {}
+
 @immutable
 class AuthLoadingState extends AuthState {}
+
 @immutable
 class AuthAuthenticatedState extends AuthState {
-  final String username;
+  final User user;
 
-  AuthAuthenticatedState({required this.username});
+  const AuthAuthenticatedState({required this.user});
 
   @override
-  List<Object> get props => [username];
+  List<Object> get props => [user];
 }
 @immutable
 class AuthUnauthenticatedState extends AuthState {
   final String errorMessage;
 
-  AuthUnauthenticatedState({required this.errorMessage});
+  const AuthUnauthenticatedState({required this.errorMessage});
 
   @override
   List<Object> get props => [errorMessage];
@@ -32,8 +34,11 @@ class AuthUnauthenticatedState extends AuthState {
 class AuthErrorState extends AuthState {
   final String errorMessage;
 
-  AuthErrorState({required this.errorMessage});
+  const AuthErrorState({required this.errorMessage});
 
   @override
   List<Object> get props => [errorMessage];
+}
+@immutable
+class Empty extends AuthState{
 }

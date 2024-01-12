@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+
 enum ActiveTheme {
   light(ThemeMode.light),
   dark(ThemeMode.dark),
@@ -27,6 +28,7 @@ mixin class MainBoxMixin {
   static Future<void> initHive(String prefixBox) async {
     // Initialize hive (persistent database)
     await Hive.initFlutter();
+
     mainBox = await Hive.openBox("$prefixBox$_boxName");
   }
 

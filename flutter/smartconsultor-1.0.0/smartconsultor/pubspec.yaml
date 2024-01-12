@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter    
   # Service locator
   get_it: ^7.6.4
   # Bloc for state management
@@ -19,10 +21,13 @@ dependencies:
   dartz: ^0.10.1
   # Remote API
   connectivity_plus: ^5.0.2
-  http: ^1.1.2
+  http: ^0.13.6
   # Local cache
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+  responsive_framework: ^1.1.1 
+  flutter_dotenv: ^5.1.0
+  parse_server_sdk: ^6.3.0
 
 dev_dependencies:
   flutter_test:
@@ -33,3 +38,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/
