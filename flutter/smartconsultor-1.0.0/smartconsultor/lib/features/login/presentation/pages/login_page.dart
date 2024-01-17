@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smartconsultor/core/localization/app_localizations.dart';
 import 'package:smartconsultor/features/login/presentation/bloc/auth_bloc.dart';
 import 'package:smartconsultor/features/login/presentation/widgets/widgets.dart';
-import 'package:smartconsultor/injection_container.dart';
+import 'package:smartconsultor/core/di/injection_container.dart';
 
 class LoginPage extends StatelessWidget {
+  // ignore: constant_identifier_names
+  static const LOGIN_PAGE = '/login';
+
   const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppLocalizations.of(context);
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: Text(strings.loginTitle), 
       ),
       body: buildBody(context),
     );

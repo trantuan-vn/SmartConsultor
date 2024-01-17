@@ -21,13 +21,15 @@ dependencies:
   dartz: ^0.10.1
   # Remote API
   connectivity_plus: ^5.0.2
-  http: ^0.13.6
+  http: 
   # Local cache
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   responsive_framework: ^1.1.1 
   flutter_dotenv: ^5.1.0
-  parse_server_sdk: ^6.3.0
+  parse_server_sdk: 
+  google_fonts: 
+  url_launcher: ^6.2.3
 
 dev_dependencies:
   flutter_test:
@@ -40,3 +42,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    

@@ -6,21 +6,21 @@ class AppLocalizations {
   final Locale locale;
 
 
-  static AppLocalizations? of(BuildContext context) {
-    return Localizations.of<AppLocalizations>(context, AppLocalizations);
+  static AppLocalizations of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations) ?? AppLocalizations(const Locale('en'));
   }
 
   static final Map<String, Map<String, String>> _localizedValues = {
     'en': {
-      'login': 'Login',
+      'loginTitle': 'Login',
     },
     'vn': {
-      'login': 'Đăng nhập',
+      'loginTitle': 'Đăng nhập',
     },
   };
 
   String getText(String value) => _localizedValues[locale.languageCode]?[value] ?? '';
 
-  String? get login => _localizedValues[locale.languageCode]?['login'];
+  String get loginTitle => _localizedValues[locale.languageCode]?['loginTitle'] ?? '';
 
 }

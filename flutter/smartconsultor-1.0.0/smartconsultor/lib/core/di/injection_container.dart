@@ -12,19 +12,19 @@ import 'package:http/http.dart' as http;
 final sl = GetIt.instance;
 
 Future<void> init() async {
-  // bloc
-  sl.registerFactory(() => AuthBloc(authUseCase: sl()));
   // use case
   sl.registerLazySingleton(() => AuthUseCase(sl()));
-  // repository
-  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(localDataSource: sl(),remoteDataSource: sl(), networkInfo: sl()));
+  // bloc
+  sl.registerFactory(() => AuthBloc(authUseCase: sl()));
+
+  //external
+  sl.registerLazySingleton(() => http.Client());
   // datasource
   sl.registerLazySingleton<UserLocalDataSource>(() => UserLocalDataSourceImpl());
   sl.registerLazySingleton<UserRemoteDataSource>(() => UserRemoteDataSourceImpl(client: sl()));
   //core
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfo(sl()));
-  //external
-  sl.registerLazySingleton(() => http.Client());
-
+  // repository
+  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(localDataSource: sl(),remoteDataSource: sl(), networkInfo: sl()));
 }
 

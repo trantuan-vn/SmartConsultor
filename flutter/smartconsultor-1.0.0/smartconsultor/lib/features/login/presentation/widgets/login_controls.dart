@@ -28,7 +28,7 @@ final TextEditingController usernameController = TextEditingController();
           children: [
             ResponsiveRowColumnItem(
               rowFlex: 1,
-              child: Image.asset('assets/login_image.png'), // Thay đổi đường dẫn ảnh
+              child: Image.asset('assets/images/login_image.svg'), // Thay đổi đường dẫn ảnh
             ),
             ResponsiveRowColumnItem(
               rowFlex: 2,

@@ -8,7 +8,7 @@ class Validator {
     return emailRegex.hasMatch(value);
   }
 
-static bool isStrongPassword(String value) {
+  static bool isStrongPassword(String value) {
     // Kiểm tra xem giá trị có đủ mạnh không
     // Yêu cầu ít nhất 8 ký tự, chứa ít nhất một chữ cái hoa, một chữ cái thường, và một số
     return value.length >= 8 && // đô dài phải lớn hơn 8

@@ -15,7 +15,6 @@ class UserLocalDataSourceImpl with MainBoxMixin implements UserLocalDataSource {
   Future<UserModel?> getLoggedInUser() async {
     try {
       await MainBoxMixin.initHive(_userKey); // Thay đổi 'user_' thành tiền tố phù hợp
-
       final userJson = getData<Map<String, dynamic>>(MainBoxKeys.isLogin);
       await closeBox();
       
