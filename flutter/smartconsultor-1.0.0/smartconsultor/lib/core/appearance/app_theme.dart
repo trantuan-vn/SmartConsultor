@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../appearance/app_colors.dart';
 
 class AppTheme {
-  static ThemeData build() => ThemeData(
+  static ThemeData build(VisualDensity density) => ThemeData(
       primaryColor: const Color(0xffffffff),
       primaryColorDark: const Color(0xffffffff),
       primaryColorLight: const Color(0xffffffff),
@@ -31,13 +31,14 @@ class AppTheme {
         caption: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: const Color(0xffFFAC0C))
       ),
       //colorScheme: ColorScheme(background: Color(0xffffffff)),
+      visualDensity: density,
       );
 
   /// Wrap a widget to be affected for this theme
   ///
   /// Usage: AppTheme.darkTheme(child: Column(...))
-  static Theme darkTheme({required Widget child}) => Theme(
-        data: build().copyWith(),
+  static Theme darkTheme({required VisualDensity density,required Widget child}) => Theme(
+        data: build(density).copyWith(),
         child: child,
       );
 }

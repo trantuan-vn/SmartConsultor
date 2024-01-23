@@ -18,4 +18,10 @@ class Validator {
         value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]')) && // ít nhất 1 ký tự đặc biệt 
         true; // Thêm các yêu cầu khác nếu cần
   }
+  static bool validatePhoneNumber(String phoneNumber) {
+    // Sử dụng biểu thức chính quy để kiểm tra định dạng số điện thoại Việt Nam
+    // Định dạng cơ bản: Bắt đầu bằng +84 hoặc 0, sau đó là 9 hoặc 10 chữ số
+    RegExp regex = RegExp(r'^(0|\+84)\d{9,10}$');
+    return regex.hasMatch(phoneNumber);
+  }  
 }

@@ -7,7 +7,7 @@ import 'package:smartconsultor/features/dashboard/presentation/widgets/web_site_
 
 class Dashboard extends StatelessWidget {
   // ignore: constant_identifier_names
-  static const DASHBOARD = '/dashboard';
+  static const DASHBOARD_ROUTE = '/dashboard';
 
   const Dashboard({super.key});
 

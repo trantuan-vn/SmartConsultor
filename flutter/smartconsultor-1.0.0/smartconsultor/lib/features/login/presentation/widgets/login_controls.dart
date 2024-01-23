@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:responsive_framework/responsive_framework.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smartconsultor/features/login/presentation/bloc/auth_bloc.dart';
 
 
 class LoginControls extends StatefulWidget {
@@ -12,70 +13,143 @@ class LoginControls extends StatefulWidget {
 }
 
 class _LoginControlsState extends State<LoginControls> {
-  /// Controller
-final TextEditingController usernameController = TextEditingController();
+  
+  final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool isEmailValid = true;
+  bool isStrongPassword = true;
+  FocusNode emailFocusNode = FocusNode();
+  FocusNode passwordFocusNode = FocusNode();  
+  
+  
+  @override
+  void initState() {
+    super.initState();
 
+    // Listen to focus changes
+    emailFocusNode.addListener(_onFocusChange);
+    passwordFocusNode.addListener(_onFocusChange);
+  }
+  
+  // Callback function to handle focus change
+  void _onFocusChange() {
+    if (!emailFocusNode.hasFocus) {
+      // Validate data when focus moves to TextField 1
+      setState(() {
+        isEmailValid = validateEmailPhone(usernameController.text);
+      });
+    } 
+    
+    if (!passwordFocusNode.hasFocus) {
+      // Validate data when focus moves to TextField 2
+      setState(() {
+        isStrongPassword = validatePassword(passwordController.text);
+      });
+    }
+  }  
+  
+  @override
+  void dispose() {
+    emailFocusNode.dispose();
+    passwordFocusNode.dispose();
+    super.dispose();
+  }
+  
   @override
   Widget build(BuildContext context) {
+    String? emailErrorText = isEmailValid == true ? null : 'Email/SĐT không đúng';
+    String? passwordErrorText =
+        isStrongPassword == true ? null : 'Mật khẩu yếu (mật khẩu cần lớn hơn 8 ký tự, có chữ thường, chữ hoa và số)';
+
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Dynamic Flex Orientation Example'),
+      ),
       body: Center(
-        child: ResponsiveRowColumn(
-          rowMainAxisAlignment: MainAxisAlignment.center,
-          rowPadding: const EdgeInsets.all(30),
-          columnPadding: const EdgeInsets.all(30),
-          layout: ResponsiveBreakpoints.of(context).largerThan(MOBILE) ? ResponsiveRowColumnType.COLUMN: ResponsiveRowColumnType.ROW,
-          children: [
-            ResponsiveRowColumnItem(
-              rowFlex: 1,
-              child: Image.asset('assets/images/login_image.svg'), // Thay đổi đường dẫn ảnh
-            ),
-            ResponsiveRowColumnItem(
-              rowFlex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextField(
-                      controller: usernameController,
-                      decoration: const InputDecoration(labelText: 'Username (Email)'),
-                      keyboardType: TextInputType.emailAddress,
-                      // Add email validation logic if needed
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 450),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  TextField(
+                    controller: usernameController,
+                    focusNode: emailFocusNode,
+                    decoration: InputDecoration(
+                      labelText: 'Email/SĐT',
+                      errorText: emailErrorText,
                     ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: passwordController,
-                      decoration: const InputDecoration(labelText: 'Password'),
-                      obscureText: true,
-                      // Add strong password validation logic if needed
+                    keyboardType: TextInputType.emailAddress,
+                    onEditingComplete: () {
+                      // Add email validation logic here if needed
+                      setState(() {
+                        isEmailValid = validateEmailPhone(usernameController.text);
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: passwordController,
+                    focusNode: passwordFocusNode,
+                    decoration: InputDecoration(
+                      labelText: 'Mật khẩu',
+                      errorText: passwordErrorText,
                     ),
-                    const SizedBox(height: 32),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            // Add login logic here
-                          },
-                          child: const Text('OK'),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            usernameController.clear();
-                            passwordController.clear();
-                          },
-                          child: const Text('Cancel'),
-                        ),
-                      ],
+                    obscureText: true,
+                    onEditingComplete: () {
+                      // Add password validation logic here if needed
+                      setState(() {
+                        isStrongPassword = validatePassword(passwordController.text);
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  OutlinedButton(
+                    onPressed: () {
+                      // Add login logic here
+                      if (isEmailValid && isStrongPassword) {
+                        // Email and password are valid, proceed with login
+                        // Lấy thể hiện của AuthBloc từ BlocProvider
+                        AuthBloc authBloc = BlocProvider.of<AuthBloc>(context);
+                        // Thực hiện gửi sự kiện đăng nhập với email và password từ TextField
+                        authBloc.add(SignInEvent(username: usernameController.text, password: passwordController.text));                        
+                      }
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.all(16.0),
+                      child: const Text("Đăng nhập"),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
+  }     
+
+  bool validateEmailPhone(String email) {
+    // Use regular expression to check email address
+    final emailRegex = RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    );
+    final phoneRegex = RegExp(r'^(0|\+84)\d{9,10}$');
+    
+    return emailRegex.hasMatch(email) || phoneRegex.hasMatch(email);
+  }
+
+  bool validatePassword(String password) {
+    // Check if the value is strong enough
+    // Requires at least 8 characters, at least one uppercase letter, one lowercase letter, and one digit
+    return password.length >= 8 &&
+        password.contains(RegExp(r'[A-Z]')) &&
+        password.contains(RegExp(r'[a-z]')) &&
+        password.contains(RegExp(r'[0-9]')) &&
+        password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]')) &&
+        true;
   }
 }

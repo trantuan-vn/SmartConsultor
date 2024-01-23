@@ -47,13 +47,13 @@ class SplashPageState extends State<SplashPage> with TickerProviderStateMixin, M
   }
 
   onDoneLoading() async {
-      const userKey='user_';
-      await MainBoxMixin.initHive(userKey); // Thay đổi 'user_' thành tiền tố phù hợp
-      final userJson = getData<Map<String, dynamic>>(MainBoxKeys.isLogin);
-      await closeBox();
-
-    // ignore: unnecessary_null_comparison, use_build_context_synchronously
-    Navigator.popAndPushNamed(context, userJson == null ? LoginPage.LOGIN_PAGE : Dashboard.DASHBOARD);
+    const userKey='user_';
+    await MainBoxMixin.initHive(userKey); // Thay đổi 'user_' thành tiền tố phù hợp
+    final userJson = getData<Map<String, dynamic>>(MainBoxKeys.isLogin);
+    await closeBox();
+    
+    // ignore: use_build_context_synchronously
+    Navigator.popAndPushNamed(context, userJson == null ? LoginPage.LOGIN_ROUTE : Dashboard.DASHBOARD_ROUTE);
   }
 
   @override

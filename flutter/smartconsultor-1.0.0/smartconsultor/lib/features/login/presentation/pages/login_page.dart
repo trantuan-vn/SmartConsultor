@@ -7,13 +7,18 @@ import 'package:smartconsultor/core/di/injection_container.dart';
 
 class LoginPage extends StatelessWidget {
   // ignore: constant_identifier_names
-  static const LOGIN_PAGE = '/login';
+  static const LOGIN_ROUTE = '/login';
 
   const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
+    //Size screenSize = MediaQuery.of(context).size;
+    // Reflow from Row to Col when in Portrait mode
+    //bool useVerticalLayout = screenSize.width < screenSize.height;
+    // Hide an optional element if the screen gets too small.
+    //bool hideDetailPanel = screenSize.shortestSide < 250;    
     
     return Scaffold(
       appBar: AppBar(
@@ -25,11 +30,12 @@ class LoginPage extends StatelessWidget {
 
   BlocProvider<AuthBloc> buildBody(BuildContext context) {
     return BlocProvider(
-        create: (_) => sl<AuthBloc>(),
+        create: (context) => sl<AuthBloc>(),
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Column(
             children: <Widget>[
+              const LoginControls(),
               const SizedBox(height: 10),
               //top half
               BlocBuilder<AuthBloc, AuthState>(
@@ -56,10 +62,11 @@ class LoginPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               // bottom
-              const LoginControls(),
+              
             ],
           ),
-        ));
+        )
+    );
   }
 }
 

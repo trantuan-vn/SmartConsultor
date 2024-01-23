@@ -40,7 +40,7 @@ mixin class MainBoxMixin {
     await mainBox?.delete(key.name);
   }
 
-  T getData<T>(MainBoxKeys key) => mainBox?.get(key.name) as T;
+  T? getData<T>(MainBoxKeys key) => mainBox?.get(key.name) as T?;
 
   Future<void> logoutBox() async {
     /// Clear the box
