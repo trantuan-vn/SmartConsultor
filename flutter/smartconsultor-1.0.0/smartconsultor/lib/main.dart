@@ -6,12 +6,11 @@ import 'package:smartconsultor/core/env/environment_configuration.dart';
 import 'package:smartconsultor/core/localization/app_localizations_delegate.dart';
 import 'package:smartconsultor/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:smartconsultor/features/login/presentation/pages/login_page.dart';
-import 'package:smartconsultor/features/splash/presentation/papes/spash.dart';
+import 'package:smartconsultor/features/splash/presentation/papes/spash_page.dart';
 import 'core/di/injection_container.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await EnvironmentConfiguration.run(); // Init env configuration
   await di.init();
   runApp(const MainApp());
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smartconsultor/core/localization/app_localizations.dart';
 import 'package:smartconsultor/features/login/presentation/bloc/auth_bloc.dart';
 
 
@@ -57,18 +58,15 @@ class _LoginControlsState extends State<LoginControls> {
   
   @override
   Widget build(BuildContext context) {
-    String? emailErrorText = isEmailValid == true ? null : 'Email/SĐT không đúng';
+    final strings = AppLocalizations.of(context);
+    
+    String? emailPhoneErrorText = isEmailValid == true ? null : strings.emailPhoneInvalid;
     String? passwordErrorText =
-        isStrongPassword == true ? null : 'Mật khẩu yếu (mật khẩu cần lớn hơn 8 ký tự, có chữ thường, chữ hoa và số)';
+        isStrongPassword == true ? null : strings.strongPasswordInvalid;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dynamic Flex Orientation Example'),
-      ),
       body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 450),
-          child: SingleChildScrollView(
+        child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -77,8 +75,8 @@ class _LoginControlsState extends State<LoginControls> {
                     controller: usernameController,
                     focusNode: emailFocusNode,
                     decoration: InputDecoration(
-                      labelText: 'Email/SĐT',
-                      errorText: emailErrorText,
+                      labelText: strings.emailPhone,
+                      errorText: emailPhoneErrorText,
                     ),
                     keyboardType: TextInputType.emailAddress,
                     onEditingComplete: () {
@@ -93,7 +91,7 @@ class _LoginControlsState extends State<LoginControls> {
                     controller: passwordController,
                     focusNode: passwordFocusNode,
                     decoration: InputDecoration(
-                      labelText: 'Mật khẩu',
+                      labelText: strings.password,
                       errorText: passwordErrorText,
                     ),
                     obscureText: true,
@@ -110,24 +108,20 @@ class _LoginControlsState extends State<LoginControls> {
                       // Add login logic here
                       if (isEmailValid && isStrongPassword) {
                         // Email and password are valid, proceed with login
-                        // Lấy thể hiện của AuthBloc từ BlocProvider
-                        AuthBloc authBloc = BlocProvider.of<AuthBloc>(context);
-                        // Thực hiện gửi sự kiện đăng nhập với email và password từ TextField
-                        authBloc.add(SignInEvent(username: usernameController.text, password: passwordController.text));                        
+                        context.read<AuthBloc>().add(SignInEvent(username: usernameController.text, password: passwordController.text));                        
                       }
                     },
                     child: Container(
                       width: double.infinity,
                       alignment: Alignment.center,
                       padding: const EdgeInsets.all(16.0),
-                      child: const Text("Đăng nhập"),
+                      child: Text(strings.loginButtonTitle),
                     ),
                   ),
                 ],
               ),
             ),
           ),
-        ),
       ),
     );
   }     

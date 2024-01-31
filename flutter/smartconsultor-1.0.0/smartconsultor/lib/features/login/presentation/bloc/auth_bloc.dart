@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:smartconsultor/core/utils/validator.dart';
 import 'package:smartconsultor/features/login/domain/entities/user.dart';
 import 'package:smartconsultor/features/login/domain/usecases/auth_use_case.dart';
 
@@ -19,25 +18,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // Xử lý sự kiện đăng nhập
       
       try {
-        // Thực hiện kiểm tra username và password ở đây trước khi gọi use case
-        if (!Validator.isEmail(event.username)) {
-          emit(const AuthErrorState(errorMessage: 'Invalid email format'));
-          return;
-        }
-
-        if (!Validator.isStrongPassword(event.password)) {
-          emit(const AuthErrorState(errorMessage: 'Weak password'));
-          return;
-        }
-
         final result = await authUseCase(Params(username: event.username,password: event.password));
 
         result.fold(
-          (failure) {
+          (failure) async {
             // Handle the failure case
             emit(const AuthUnauthenticatedState(errorMessage: 'Invalid credentials'));
           },
-          (user) {
+          (user) async {
             // Handle the success case
             emit(AuthAuthenticatedState(user: user));
           },
