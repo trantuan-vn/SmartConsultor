@@ -1,6 +1,8 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:get_it/get_it.dart';
+import 'package:smartconsultor/core/env/environment_configuration.dart';
 import 'package:smartconsultor/core/hive/hive_manager.dart';
+import 'package:smartconsultor/core/log/log_manager.dart';
 import 'package:smartconsultor/core/network/network_info.dart';
 import 'package:smartconsultor/features/login/data/datasources/user_local_data_source.dart';
 import 'package:smartconsultor/features/login/data/datasources/user_remote_data_source.dart';
@@ -20,6 +22,10 @@ import 'package:smartconsultor/features/splash/presentation/bloc/splash_bloc.dar
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  // init log manager
+  LogManager.init();
+  // init environment variables
+  EnvironmentConfiguration.run();
   // init Hive
   HiveManager.initialize();
   HiveManager.registerAdapter();

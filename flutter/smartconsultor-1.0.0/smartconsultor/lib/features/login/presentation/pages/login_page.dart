@@ -31,7 +31,7 @@ class LoginForm extends StatelessWidget {
       listener: (context, state) {
         if (state is AuthAuthenticatedState) {
           // Navigate to the next page on successful login
-          Navigator.pushReplacementNamed(context, Dashboard.DASHBOARD_ROUTE);
+          Navigator.pushReplacementNamed(context, Dashboard.DASHBOARD_ROUTE);  
         } else if (state is AuthUnauthenticatedState) {
           // Show an error message if login fails
           ScaffoldMessenger.of(context).showSnackBar(

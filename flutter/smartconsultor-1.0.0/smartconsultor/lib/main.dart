@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:smartconsultor/core/appearance/app_theme.dart';
-import 'package:smartconsultor/core/appearance/device_type.dart';
-import 'package:smartconsultor/core/env/environment_configuration.dart';
 import 'package:smartconsultor/core/localization/app_localizations_delegate.dart';
 import 'package:smartconsultor/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:smartconsultor/features/login/presentation/pages/login_page.dart';
 import 'package:smartconsultor/features/splash/presentation/papes/spash_page.dart';
 import 'core/di/injection_container.dart' as di;
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,9 +21,9 @@ class MainApp extends StatelessWidget {
 
   @override
 Widget build(BuildContext context) {
-    bool touchMode = DeviceType.isMobile == true;
-    double densityAmt = touchMode ? 0.0 : -1.0;
-    VisualDensity density = VisualDensity(horizontal: densityAmt, vertical: densityAmt);    
+    //bool touchMode = DeviceType.isMobile == true;
+    //double densityAmt = touchMode ? 0.0 : -1.0;
+    //VisualDensity density = VisualDensity(horizontal: densityAmt, vertical: densityAmt);    
 
     return MaterialApp(
       supportedLocales: const [
@@ -37,7 +38,7 @@ Widget build(BuildContext context) {
         GlobalWidgetsLocalizations.delegate,
       ],
       
-      theme: AppTheme.build(density),
+      theme: AppTheme.build(VisualDensity.adaptivePlatformDensity),
       initialRoute: "/",
       onGenerateRoute: (settings) {
         // ignore: prefer_const_constructors
@@ -53,6 +54,7 @@ Widget build(BuildContext context) {
             destinationRoute = Dashboard();
             break;            
         }
+        
         return MaterialPageRoute(builder: (context) => destinationRoute, settings: settings);
       },
       routes: {

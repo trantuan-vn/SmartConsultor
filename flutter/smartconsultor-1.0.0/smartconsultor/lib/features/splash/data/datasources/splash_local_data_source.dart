@@ -13,6 +13,7 @@ class SplashLocalDataSourceImpl implements SplashLocalDataSource {
   @override
   Future<SplashUserModel?> getLoggedInUser() async {
     try {
+      await Hive.openBox(UserBox.USER_BOX);
       var userBox = Hive.box(UserBox.USER_BOX);
       if (userBox.isNotEmpty){
         UserBox user=userBox.getAt(0);

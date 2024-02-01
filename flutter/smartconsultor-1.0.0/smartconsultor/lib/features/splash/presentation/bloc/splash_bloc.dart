@@ -14,22 +14,23 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
   SplashBloc({required this.splashUseCase}) : super(SplashInitial()){
     on<SplashEvent>((event, emit) async {
       // Thực hiện logic load data ở đây
-      //await Future.delayed(const Duration(seconds: 3));
-      try {
-        final result = await splashUseCase(NoParams());
+      if (event is SplashLoadData) {
+        try {
+          final result = await splashUseCase(NoParams());
 
-        result.fold(
-          (failure) async {
-            // Handle the failure case
-            emit(const SplashLoadingError(errorMessage: 'An error occurred'));
-          },
-          (user) async {
-            // Khi hoàn tất, chuyển sang trạng thái đã hoàn thành
-            emit(SplashDoneLoading(splashUser: user));
-          },
-        );
-      } catch (e) {
-        emit(const SplashLoadingError(errorMessage: 'An error occurred'));
+          result.fold(
+            (failure) async {
+              // Handle the failure case
+              emit(const SplashLoadingError(errorMessage: 'An error occurred'));
+            },
+            (user) async {
+              // Khi hoàn tất, chuyển sang trạng thái đã hoàn thành
+              emit(SplashDoneLoading(splashUser: user));
+            },
+          );
+        } catch (e) {
+          emit(const SplashLoadingError(errorMessage: 'An error occurred'));
+        }
       }
     });
   }

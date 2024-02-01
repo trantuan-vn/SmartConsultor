@@ -5,9 +5,9 @@ import 'package:smartconsultor/features/dashboard/presentation/widgets/footer.da
 import 'package:smartconsultor/features/dashboard/presentation/widgets/get_started.dart';
 import 'package:smartconsultor/features/dashboard/presentation/widgets/web_site_menu_bar.dart';
 
-class Dashboard extends StatelessWidget {
+class Dashboard extends StatelessWidget { 
   // ignore: constant_identifier_names
-  static const DASHBOARD_ROUTE = '/dashboard';
+  static const DASHBOARD_ROUTE = '/dashboard'; 
 
   const Dashboard({super.key});
 
