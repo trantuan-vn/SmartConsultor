@@ -52,17 +52,18 @@ class LoginForm extends StatelessWidget {
       },
       child: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                LoginControls(),
-                if (state is AuthLoadingState) const LoadingWidget(),
-              ],
-            ),
-          );
+          return LoginControls();
+          // Padding(
+          //   padding: const EdgeInsets.all(16.0),
+          //   child: Column(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     mainAxisSize: MainAxisSize.min,
+          //     children: [
+          //       LoginControls(),
+          //       if (state is AuthLoadingState) LoadingWidget(),
+          //     ],
+          //   ),
+          // );
         },
       ),
     );

@@ -29,7 +29,6 @@ Future<void> init() async {
   // init Hive
   HiveManager.initialize();
   HiveManager.registerAdapter();
-  HiveManager.openBoxes();
   // 1. Splash feature
   // datasource
   sl.registerLazySingleton<SplashLocalDataSource>(() => SplashLocalDataSourceImpl());

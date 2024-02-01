@@ -11,6 +11,7 @@ class UserLocalDataSourceImpl implements UserLocalDataSource {
   @override
   Future<void> saveLoggedInUser(UserModel user) async {
     try {
+      await Hive.openBox(UserBox.USER_BOX);
       var userBox = Hive.box(UserBox.USER_BOX);
       var _user = UserBox()
       ..userId = user.userId

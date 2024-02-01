@@ -15,12 +15,6 @@ class HiveManager {
     // Register UserBoxAdapter
     Hive.registerAdapter(UserBoxAdapter()); 
   }
-  static Future<void> openBoxes() async {
-    // Register SettingsBoxAdapter
-    Hive.openBox(SettingsBox.SETTINGS_BOX);
-    // Register UserBoxAdapter
-    Hive.openBox(UserBox.USER_BOX);
-  }  
   
 
 }
