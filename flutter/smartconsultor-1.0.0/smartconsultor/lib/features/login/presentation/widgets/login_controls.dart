@@ -64,74 +64,79 @@ class _LoginControlsState extends State<LoginControls> {
     String? passwordErrorText =
         isStrongPassword == true ? null : strings.strongPasswordInvalid;
 
-    return Scaffold(
-      body: Center(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
+    return Container(
+          constraints: BoxConstraints(
+            maxWidth: 450,
+            maxHeight: 470,
+          ),          
           child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Container(
-                      height: 50,
-                      child: TextField(
-                        controller: usernameController,
-                        focusNode: emailFocusNode,
-                        decoration: InputDecoration(
-                          labelText: strings.emailPhone,
-                          errorText: emailPhoneErrorText,
-                        ),
-                        keyboardType: TextInputType.emailAddress,
-                        onEditingComplete: () {
-                          // Add email validation logic here if needed
-                          setState(() {
-                            isEmailValid = validateEmailPhone(usernameController.text);
-                          });
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      TextField(
+                          controller: usernameController,
+                          focusNode: emailFocusNode,
+                          decoration: InputDecoration(
+                            labelText: strings.emailPhone,
+                            errorText: emailPhoneErrorText,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0), // Điều chỉnh giá trị để thay đổi độ cong của góc
+                            ),                            
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                          onEditingComplete: () {
+                            // Add email validation logic here if needed
+                            setState(() {
+                              isEmailValid = validateEmailPhone(usernameController.text);
+                            });
+                          },
+                      ),
+                      const SizedBox(height: 16),
+                      TextField(
+                          controller: passwordController,
+                          focusNode: passwordFocusNode,
+                          decoration: InputDecoration(
+                            labelText: strings.password,
+                            errorText: passwordErrorText,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0), // Điều chỉnh giá trị để thay đổi độ cong của góc
+                            ),                            
+                          ),
+                          obscureText: true,
+                          onEditingComplete: () {
+                            // Add password validation logic here if needed
+                            setState(() {
+                              isStrongPassword = validatePassword(passwordController.text);
+                            });
+                          },
+                      ),
+                      const SizedBox(height: 16),
+                      OutlinedButton(
+                        onPressed: () {
+                          // Add login logic here
+                          if (isEmailValid && isStrongPassword) {
+                            // Email and password are valid, proceed with login
+                            context.read<AuthBloc>().add(SignInEvent(username: usernameController.text, password: passwordController.text));                        
+                          }
                         },
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Container(
-                      height: 50,
-                      child: TextField(
-                        controller: passwordController,
-                        focusNode: passwordFocusNode,
-                        decoration: InputDecoration(
-                          labelText: strings.password,
-                          errorText: passwordErrorText,
+                        style: OutlinedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0), // Adjust the value to change the corner radius
+                          ),
+                          side: BorderSide(color: Theme.of(context).primaryColor), // Customize border color
+                        ),                        
+                        child: Container(
+                          width: double.infinity,
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(strings.loginButtonTitle),
                         ),
-                        obscureText: true,
-                        onEditingComplete: () {
-                          // Add password validation logic here if needed
-                          setState(() {
-                            isStrongPassword = validatePassword(passwordController.text);
-                          });
-                        },
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    OutlinedButton(
-                      onPressed: () {
-                        // Add login logic here
-                        if (isEmailValid && isStrongPassword) {
-                          // Email and password are valid, proceed with login
-                          context.read<AuthBloc>().add(SignInEvent(username: usernameController.text, password: passwordController.text));                        
-                        }
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(strings.loginButtonTitle),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-        ),
-      ),
     );
   }     
 

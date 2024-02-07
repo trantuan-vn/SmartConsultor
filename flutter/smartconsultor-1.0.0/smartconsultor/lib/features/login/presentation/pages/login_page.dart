@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smartconsultor/core/appearance/device_size.dart';
 import 'package:smartconsultor/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:smartconsultor/features/login/presentation/bloc/auth_bloc.dart';
+import 'package:smartconsultor/features/login/presentation/widgets/quote_view.dart';
 import 'package:smartconsultor/features/login/presentation/widgets/widgets.dart';
 import 'package:smartconsultor/core/di/injection_container.dart';
 
@@ -27,6 +29,8 @@ class LoginForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isMobileLayout = DeviceSize.isMobileLayout(context);
+    
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthAuthenticatedState) {
@@ -52,18 +56,20 @@ class LoginForm extends StatelessWidget {
       },
       child: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
-          return LoginControls();
-          // Padding(
-          //   padding: const EdgeInsets.all(16.0),
-          //   child: Column(
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     mainAxisSize: MainAxisSize.min,
-          //     children: [
-          //       LoginControls(),
-          //       if (state is AuthLoadingState) LoadingWidget(),
-          //     ],
-          //   ),
-          // );
+          return Scaffold(
+            body: Center(
+                child: isMobileLayout ? 
+                  LoginControls()
+                  :
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      QuoteView(),
+                      LoginControls(),
+                    ],
+                  ),
+            ),
+          );
         },
       ),
     );

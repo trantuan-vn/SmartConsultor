@@ -33,7 +33,7 @@ class UserBoxAdapter extends TypeAdapter<UserBox> {
       ..recentDevices = (fields[13] as List).cast<String>()
       ..accessTokenExpiration = fields[14] as DateTime
       ..refreshTokenExpiration = fields[15] as DateTime
-      ..encryptionKey = (fields[16] as List).cast<int>();
+      ..encryptionKey = fields[16] as String;
   }
 
   @override

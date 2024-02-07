@@ -55,5 +55,5 @@ class UserBox extends HiveObject {
   late DateTime refreshTokenExpiration;
 
   @HiveField(16)
-  late List<int> encryptionKey;
+  late String encryptionKey;
 }

@@ -1,44 +1,121 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 
 import '../appearance/app_colors.dart';
 
 class AppTheme {
-  static ThemeData build(VisualDensity density) => ThemeData(
-      primaryColor: const Color(0xffffffff),
-      primaryColorDark: const Color(0xffffffff),
-      primaryColorLight: const Color(0xffffffff),
-      disabledColor: AppColors.greyMedium,
-      dividerColor: AppColors.divider,
-      brightness: Brightness.light,
-      fontFamily: GoogleFonts.roboto().fontFamily,
-      primaryIconTheme: const IconThemeData(size: 24),
-      //accentIconTheme: IconThemeData(size: 28),
-      textTheme: TextTheme(
-        headline1: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 16, color: const Color(0xff383838)),//title store en ListStore
-        headline2: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 16, color: const Color(0xff383838)),//title popUp
-        headline3: GoogleFonts.roboto(fontWeight: FontWeight.normal, fontSize: 16, color: const Color(0xFF3D9FE6)), //en buscador blue
-        headline4: GoogleFonts.roboto(fontWeight: FontWeight.normal, fontSize: 16, color: const Color(0xff383838)),//direcciones y resultados busqueda
-        headline5: GoogleFonts.roboto(fontWeight: FontWeight.normal, fontSize: 16, color: const Color(0xff868686)),//#resultados y sug busqueda
-        headline6: GoogleFonts.roboto(fontWeight: FontWeight.normal, fontSize: 16, color: const Color(0xffFFAC0C)), //edit y chance, adress payment
+    static ThemeData buildLightMaterialTheme(VisualDensity density) => ThemeData(
+        primaryColor: const Color(0xFFFFFFFF),
+        primaryColorDark: const Color(0xFFFFFFFF),
+        primaryColorLight: const Color(0xFFFFFFFF),
+        disabledColor: AppColors.greyMedium,
+        dividerColor: AppColors.divider,
+        brightness: Brightness.light,
+        fontFamily: GoogleFonts.roboto().fontFamily,
+        primaryIconTheme: const IconThemeData(size: 24),
+        textTheme: TextTheme(
+          headline1: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 18, color: const Color(0xff383838)),
+          headline2: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 16, color: const Color(0xff383838)),
+          headline3: GoogleFonts.roboto(fontWeight: FontWeight.normal, fontSize: 16, color: const Color(0xFF3D9FE6)),
+          headline4: GoogleFonts.roboto(fontWeight: FontWeight.normal, fontSize: 16, color: const Color(0xff383838)),
+          headline5: GoogleFonts.roboto(fontWeight: FontWeight.normal, fontSize: 16, color: const Color(0xff868686)),
+          headline6: GoogleFonts.roboto(fontWeight: FontWeight.normal, fontSize: 16, color: const Color(0xffFFAC0C)),
+          subtitle1: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 13, color: const Color(0xFF3D9FE6)),
+          subtitle2: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: const Color(0xFF3D9FE6)),
+          overline: GoogleFonts.roboto(fontWeight: FontWeight.normal, fontSize: 13, color: const Color(0xff383838)),
+          button: GoogleFonts.roboto(fontWeight: FontWeight.normal, fontSize: 13, color: const Color(0xff868686)),
+          caption: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: const Color(0xffFFAC0C)),
+        ),
+        visualDensity: density,
+    );
 
-        subtitle1:  GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 13, color: const Color(0xFF3D9FE6)),//envio gratis list_store
-        subtitle2: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: const Color(0xFF3D9FE6)),//botones en popUp
-        overline: GoogleFonts.roboto(fontWeight: FontWeight.normal, fontSize: 13, color: const Color(0xff383838)),//horario Store
-        button: GoogleFonts.roboto(fontWeight: FontWeight.normal, fontSize: 13, color: const Color(0xff868686)), //subtitle store
-        caption: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: const Color(0xffFFAC0C))
-      ),
-      //colorScheme: ColorScheme(background: Color(0xffffffff)),
-      visualDensity: density,
-      );
-
-  /// Wrap a widget to be affected for this theme
-  ///
+  
   /// Usage: AppTheme.darkTheme(child: Column(...))
-  static Theme darkTheme({required VisualDensity density,required Widget child}) => Theme(
-        data: build(density).copyWith(),
-        child: child,
-      );
+  static ThemeData buildDarkMaterialTheme(VisualDensity density) => ThemeData(
+        primaryColor: const Color(0xFF000000),
+        primaryColorDark: const Color(0xFF000000),
+        primaryColorLight: const Color(0xFF000000),
+        disabledColor: AppColors.greyMedium,
+        dividerColor: AppColors.divider,
+        brightness: Brightness.dark,
+        fontFamily: GoogleFonts.roboto().fontFamily,
+        primaryIconTheme: const IconThemeData(size: 24),
+        textTheme: TextTheme(
+          headline1: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 20, color: const Color(0xff383838)),
+          headline2: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 16, color: const Color(0xff383838)),
+          headline3: GoogleFonts.roboto(fontWeight: FontWeight.normal, fontSize: 16, color: const Color(0xFF3D9FE6)),
+          headline4: GoogleFonts.roboto(fontWeight: FontWeight.normal, fontSize: 16, color: const Color(0xff383838)),
+          headline5: GoogleFonts.roboto(fontWeight: FontWeight.normal, fontSize: 16, color: const Color(0xff868686)),
+          headline6: GoogleFonts.roboto(fontWeight: FontWeight.normal, fontSize: 16, color: const Color(0xffFFAC0C)),
+          subtitle1: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 13, color: const Color(0xFF3D9FE6)),
+          subtitle2: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: const Color(0xFF3D9FE6)),
+          overline: GoogleFonts.roboto(fontWeight: FontWeight.normal, fontSize: 13, color: const Color(0xff383838)),
+          button: GoogleFonts.roboto(fontWeight: FontWeight.normal, fontSize: 13, color: const Color(0xff868686)),
+          caption: GoogleFonts.roboto(fontWeight: FontWeight.w500, fontSize: 13, color: const Color(0xffFFAC0C)),
+        ),
+        visualDensity: density,
+  );
+  static Theme lightMaterialTheme({required VisualDensity density, required Widget child}) => Theme(
+    data: buildLightMaterialTheme(density),
+    child: child,
+  );
+
+  static Theme darkMaterialTheme({required VisualDensity density, required Widget child}) => Theme(
+    data: buildDarkMaterialTheme(density),
+    child: child,
+  );
+
+static CupertinoThemeData buildCupertinoTheme() => CupertinoThemeData(
+    primaryColor: const CupertinoDynamicColor.withBrightness(
+      color: Color(0xffffffff),
+      darkColor: Color(0xffffffff),
+    ),
+    scaffoldBackgroundColor: const CupertinoDynamicColor.withBrightness(
+      color: CupertinoColors.white,
+      darkColor: CupertinoColors.black,
+    ),
+    barBackgroundColor: const CupertinoDynamicColor.withBrightness(
+      color: CupertinoColors.white,
+      darkColor: CupertinoColors.black,
+    ),
+    primaryContrastingColor: CupertinoDynamicColor.withBrightness(
+      color: AppColors.greyMedium,
+      darkColor: AppColors.greyMedium,
+    ),
+    textTheme: CupertinoTextThemeData(
+      navTitleTextStyle: GoogleFonts.roboto(
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+        color: const Color(0xff383838),
+      ),
+      navLargeTitleTextStyle: GoogleFonts.roboto(
+        fontWeight: FontWeight.w500,
+        fontSize: 16,
+        color: const Color(0xff383838),
+      ),
+      actionTextStyle: const TextStyle(
+        fontSize: 16,
+        color: Color(0xff383838),
+        fontWeight: FontWeight.normal,
+      ),
+      tabLabelTextStyle: const TextStyle(
+        fontSize: 16,
+        color: Color(0xff868686),
+        fontWeight: FontWeight.normal,
+      ),
+      dateTimePickerTextStyle: const TextStyle(
+        fontSize: 16,
+        color: Color(0xffFFAC0C),
+        fontWeight: FontWeight.normal,
+      ),
+    ),
+  );
+
+  static CupertinoTheme darkCupertinoTheme({required Widget child,}) => CupertinoTheme(
+                                                                          data: buildCupertinoTheme(),
+                                                                          child: child,);
 }

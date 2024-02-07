@@ -1,10 +1,18 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+//import 'dart:io';
+//import 'package:path_provider/path_provider.dart';
+//import 'package:path/path.dart' as pathlib;
 //import 'package:parse_server_sdk/parse_server_sdk.dart'; 
 
 class EnvironmentConfiguration {
   static Future run() async {
-    const bool isProduction = bool.fromEnvironment('dart.vm.product');
-    const envFileName = isProduction ? "production.env" : "development.env";
+    //await dotenv.load(fileName: ".env");
+    bool isProduction = const bool.fromEnvironment('dart.vm.product', defaultValue: false);
+    String envFileName = isProduction ? "production.env" : "development.env";
+    
+    //Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
+    //String path=appDocumentsDirectory.path;
+    //String filePath = pathlib.join(path, envFileName);
     await DotEnv().load(fileName: envFileName);
     //final dotEnv = DotEnv();
     // Initialize parse for consuming API service

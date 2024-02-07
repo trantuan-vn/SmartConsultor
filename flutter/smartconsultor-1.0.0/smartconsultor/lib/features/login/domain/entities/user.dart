@@ -17,7 +17,7 @@ class User extends Equatable{
   late List<String> recentDevices; // List of recently used devices
   late DateTime accessTokenExpiration; // Access token expiration time
   late DateTime refreshTokenExpiration; // Refresh token expiration time
-  late List<int> encryptionKey;
+  late String encryptionKey;
 
   User({
     required this.accessToken,

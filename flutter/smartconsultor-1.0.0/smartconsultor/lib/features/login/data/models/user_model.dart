@@ -21,7 +21,7 @@ class UserModel extends User {
     required List<String> recentDevices,
     required DateTime accessTokenExpiration,
     required DateTime refreshTokenExpiration,
-    required List<int> encryptionKey,
+    required String encryptionKey,
   }) : super(
           accessToken: accessToken,
           refreshToken: refreshToken,
@@ -54,13 +54,13 @@ class UserModel extends User {
       gender: json['gender'] ?? '',
       country: json['country'] ?? '',
       address: json['address'] ?? '',
-      roles: List<String>.from(json['roles'] ?? []),
+      roles: (json['roles'] ?? '').split(','),
       emailVerified: json['email_verified'] ?? false,
       avatarUrl: json['avatar_url'] ?? '',
-      recentDevices: List<String>.from(json['recent_devices'] ?? []),
+      recentDevices: (json['recent_devices'] ?? '').split(','),
       accessTokenExpiration: DateTime.parse(json['access_token_expiration'] ?? ''),
       refreshTokenExpiration: DateTime.parse(json['refresh_token_expiration'] ?? ''),
-      encryptionKey: List<int>.from(json['encryption_key'] ?? []),
+      encryptionKey: json['encryption_key'] ?? '',
     );
   }
 

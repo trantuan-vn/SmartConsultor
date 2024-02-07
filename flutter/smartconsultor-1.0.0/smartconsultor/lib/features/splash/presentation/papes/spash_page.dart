@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 import 'package:smartconsultor/core/appearance/app_colors.dart';
+import 'package:smartconsultor/core/appearance/device_size.dart';
+import 'package:smartconsultor/core/appearance/device_type.dart';
 import 'package:smartconsultor/core/di/injection_container.dart';
 import 'package:smartconsultor/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:smartconsultor/features/login/presentation/pages/login_page.dart';
@@ -42,6 +44,9 @@ class _SplashPageContentState extends State<SplashPageContent>
 
   @override
   Widget build(BuildContext context) {
+    //bool isCupertinoStyle = DeviceType.isCupertinoStyle;
+    //bool isMobileLayout = DeviceSize.isMobileLayout(context);
+    
     return Scaffold(
       body: BlocListener<SplashBloc, SplashState>(
         listener: (context, state) {
@@ -55,7 +60,10 @@ class _SplashPageContentState extends State<SplashPageContent>
             );
           }
           if (state is SplashDoneLoading) {
-            onDoneLoading(context,state);
+            Navigator.popAndPushNamed(
+              context,
+              state.splashUser==null ? LoginPage.LOGIN_ROUTE : Dashboard.DASHBOARD_ROUTE,
+            );
           }
         },
         child: AnimatedBuilder(
@@ -67,7 +75,7 @@ class _SplashPageContentState extends State<SplashPageContent>
                 decoration: BoxDecoration(
                   color: AppColors.accentColor,
                   image: const DecorationImage(
-                    image: AssetImage('assets/images/app_logo.svg'),
+                    image: AssetImage('images/app_logo.svg'),
                     fit: BoxFit.scaleDown,
                   ),
                 ),
@@ -76,13 +84,6 @@ class _SplashPageContentState extends State<SplashPageContent>
           },
         ),
       ),
-    );
-  }
-
-  void onDoneLoading(BuildContext context, SplashDoneLoading state) {
-    Navigator.popAndPushNamed(
-      context,
-      state.splashUser==null ? LoginPage.LOGIN_ROUTE : Dashboard.DASHBOARD_ROUTE,
     );
   }
 
