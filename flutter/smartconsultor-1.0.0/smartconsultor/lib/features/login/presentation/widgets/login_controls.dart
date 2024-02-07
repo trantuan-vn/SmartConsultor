@@ -64,10 +64,18 @@ class _LoginControlsState extends State<LoginControls> {
     String? passwordErrorText =
         isStrongPassword == true ? null : strings.strongPasswordInvalid;
 
+    // Get the screen width and height
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    // Set the maximum width and height of the container
+    double containerWidth = screenWidth > 450 ? 450 : screenWidth;
+    double containerHeight = screenHeight > 470 ? 470 : screenHeight;
+
     return Container(
           constraints: BoxConstraints(
-            maxWidth: 450,
-            maxHeight: 470,
+            maxWidth: containerWidth,
+            maxHeight: containerHeight,
           ),          
           child: SingleChildScrollView(
                 child: Padding(
@@ -82,7 +90,7 @@ class _LoginControlsState extends State<LoginControls> {
                             errorText: emailPhoneErrorText,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.0), // Điều chỉnh giá trị để thay đổi độ cong của góc
-                            ),                            
+                            ), 
                           ),
                           keyboardType: TextInputType.emailAddress,
                           onEditingComplete: () {

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartconsultor/core/appearance/device_size.dart';
 import 'package:smartconsultor/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:smartconsultor/features/login/presentation/bloc/auth_bloc.dart';
-import 'package:smartconsultor/features/login/presentation/widgets/quote_view.dart';
 import 'package:smartconsultor/features/login/presentation/widgets/widgets.dart';
 import 'package:smartconsultor/core/di/injection_container.dart';
 
@@ -15,10 +14,28 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      body: BlocProvider(
-        create: (context) => sl<AuthBloc>(),
-        child: LoginForm(),
+      body: Stack(
+        children: [
+          // Background Image
+          Image.asset(
+            isDarkTheme
+                ? 'images/auth-background_dark.png'
+                : 'images/auth-background.png',
+            fit: BoxFit.cover,
+            //width: double.infinity,
+            //height: double.infinity,
+          ),
+          // Content
+          Center(
+            child: BlocProvider(
+              create: (context) => sl<AuthBloc>(),
+              child: LoginForm(),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -56,22 +73,25 @@ class LoginForm extends StatelessWidget {
       },
       child: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
-          return Scaffold(
-            body: Center(
-                child: isMobileLayout ? 
-                  LoginControls()
-                  :
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      QuoteView(),
-                      LoginControls(),
-                    ],
-                  ),
-            ),
-          );
+          return isMobileLayout ? LoginControls() : LoginControlsAndQuoteView();
         },
       ),
+    );
+  }
+}
+
+class LoginControlsAndQuoteView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool showQuoteView = screenWidth > 900.0;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (showQuoteView) QuoteView(),
+        LoginControls(),
+      ],
     );
   }
 }

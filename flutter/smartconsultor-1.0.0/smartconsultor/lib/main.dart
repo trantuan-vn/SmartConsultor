@@ -33,7 +33,7 @@ class MainApp extends StatelessWidget {
       ],
       theme: FlexThemeData.light(scheme: FlexScheme.aquaBlue, useMaterial3: true),
       darkTheme: FlexThemeData.dark(scheme: FlexScheme.aquaBlue, useMaterial3: true),
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.light,
       initialRoute: "/",
       onGenerateRoute: (settings) {
         Widget destinationRoute = getDestinationRoute(settings.name);

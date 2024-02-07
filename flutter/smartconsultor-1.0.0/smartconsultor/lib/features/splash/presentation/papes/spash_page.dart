@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-
-import 'package:smartconsultor/core/appearance/app_colors.dart';
-import 'package:smartconsultor/core/appearance/device_size.dart';
-import 'package:smartconsultor/core/appearance/device_type.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:smartconsultor/core/di/injection_container.dart';
 import 'package:smartconsultor/features/dashboard/presentation/pages/dashboard.dart';
 import 'package:smartconsultor/features/login/presentation/pages/login_page.dart';
@@ -66,22 +62,24 @@ class _SplashPageContentState extends State<SplashPageContent>
             );
           }
         },
-        child: AnimatedBuilder(
-          animation: controller,
-          builder: (context, child) {
-            return Transform.scale(
-              scale: Tween(begin: 0.5, end: 1.5).animate(controller).value,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.accentColor,
-                  image: const DecorationImage(
-                    image: AssetImage('images/app_logo.svg'),
+        child: Center(
+          child: AnimatedBuilder(
+            animation: controller,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: Tween(begin: 0.5, end: 1.5).animate(controller).value,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  child: SvgPicture.asset(
+                    'images/app_logo.svg',
                     fit: BoxFit.scaleDown,
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );

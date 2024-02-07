@@ -4,6 +4,8 @@ import 'package:flutter_svg/svg.dart';
 class QuoteView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+
     return Container(
       constraints: const BoxConstraints(
             maxWidth: 450,
@@ -28,14 +30,18 @@ class QuoteView extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),              
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                       '"Triết lý đầu tư của tôi là: đừng mất tiền"',
-                      style: TextStyle(fontSize: 16),
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: Colors.white,
+                      ),
                   ),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     "Jack Ma",
-                    style: TextStyle(fontSize: 16),
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                        color: Colors.white,
+                    ),
                   ),
                 ],
               ),
