@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  infinispan:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-03-14T13:05:12.8887307+07:00"
+    description: A Helm chart for Kubernetes
+    digest: dab13f777180705531d2b953fcb64e6b769ae9217abbac5115dc8fec0d13ffa1
+    name: infinispan
+    type: application
+    urls:
+    - infinispan-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-03-14T13:05:12.8823643+07:00"

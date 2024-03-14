@@ -1,0 +1,16 @@
+[id='disabling-authentication_{context}']
+= Disabling authentication
+
+[role="_abstract"]
+Allow users to access {brandname} clusters and manipulate data without providing credentials.
+
+[IMPORTANT]
+====
+Do not disable authentication if endpoints are accessible from outside the {k8s} cluster.
+You should disable authentication for development environments only.
+====
+
+.Procedure
+
+. Remove the `propertiesRealm` fields from the "default" security realm.
+. Install or upgrade your {brandname} Helm release.
