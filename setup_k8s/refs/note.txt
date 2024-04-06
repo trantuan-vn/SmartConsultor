@@ -103,3 +103,15 @@ export JAVA_OPTS_APPEND="-Djgroups.tcp.port=7600 -Djgroups.dns.query=keycloak"
 
 
 kubectl create clusterrolebinding cluster-system-anonymous --clusterrole=cluster-admin --user=system:anonymous
+
+kubectl exec -it ignite-0 -- bash
+apk update
+apk add nmap nmap-scripts
+apk add curl
+APISERVER=https://kubernetes.default.svc.cluster.local:443
+SERVICEACCOUNT=/var/run/secrets/kubernetes.io/serviceaccount
+NAMESPACE=$(cat ${SERVICEACCOUNT}/namespace)
+TOKEN=$(cat ${SERVICEACCOUNT}/token)
+CACERT=${SERVICEACCOUNT}/ca.crt
+SERVICE_NAME=ignite
+curl --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X GET ${APISERVER}/api/v1/namespaces/${NAMESPACE}/endpoints/${SERVICE_NAME}

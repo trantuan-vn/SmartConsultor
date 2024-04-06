@@ -3,7 +3,7 @@ replicaCount: 2
 
 image:
   repository: apacheignite/ignite
-  tag: latest
+  tag: 2.16.0-jdk11
   pullPolicy: IfNotPresent
 
 nameOverride: ""
@@ -19,6 +19,7 @@ serviceAccount:
 env:
   OPTION_LIBS: "ignite-kubernetes,ignite-rest-http"
   IGNITE_QUIET: "false"
+  #JVM_OPTS: "-server -Djavax.net.debug=all -Djava.net.preferIPv4Stack=true"
   JVM_OPTS: "-Djava.net.preferIPv4Stack=true"
 peerClassLoadingEnabled: false
 
