@@ -1,0 +1,12 @@
+# memsql-cluster.yaml
+
+apiVersion: memsql.com/v1alpha1
+kind: Cluster
+metadata:
+  name: memsql-cluster
+spec:
+  nodes: 3
+  licenseSecretName: memsql-license
+  memsqlOperatorImage: memsql/operator:latest
+  persistence:
+    enabled: true

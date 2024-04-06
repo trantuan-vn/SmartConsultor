@@ -1,3 +1,0 @@
-deploy:
-  security:
-    batch: 'user create admin -p changeme'

@@ -1,7 +1,0 @@
-# Various IDEs
-.project
-.idea/
-*.tmproj
-.vscode/
-documentation/**/*.html
-!documentation/**/*docinfo*.html

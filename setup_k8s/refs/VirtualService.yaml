@@ -1,0 +1,26 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: test
+  namespace: default
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - test-gateway
+  http:
+  - match:
+    - headers:
+        feature:
+          exact: v1
+    route:
+    - destination:
+        host: microservice-a-new
+        port:
+          number: 80
+  - name: default
+    route:
+    - destination:
+        host: microservice-a
+        port:
+          number: 80

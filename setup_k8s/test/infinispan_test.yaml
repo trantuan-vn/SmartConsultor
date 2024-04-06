@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: infinispan-cli-pod
+spec:
+  containers:
+  - name: infinispan-cli-container
+    image: quay.io/infinispan/cli:15.0.0.Final
+    command: ["/bin/bash"]
+    args: ["-c", "tail -f /dev/null"]  # Keep container running to prevent it from exiting

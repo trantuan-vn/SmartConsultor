@@ -1,0 +1,20 @@
+apiVersion: skaffold/v4beta9
+kind: Config
+metadata:
+  name: microservices
+build:
+  artifacts:
+    - image: tuantahp/backend
+      context: backend
+      jib:
+        project: io.vertx.howtos:clustering-kubernetes-backend
+    - image: tuantahp/frontend
+      context: frontend
+      jib:
+        project: io.vertx.howtos:clustering-kubernetes-frontend
+manifests:
+  rawYaml:
+    - backend/deployment.yml
+    - frontend/deployment.yml
+    - frontend/service.yml
+    - k8s/headless-service.yml

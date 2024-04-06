@@ -1,0 +1,117 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keycloak-secrets
+type: Opaque
+data:
+  admin-username: YWRtaW4= # base64-encoded value of "admin"
+  admin-password: YWRtaW4xMjM= # base64-encoded value of "admin123"
+  db-username: YXBw # base64-encoded value of "app"
+  db-password: c2VjcmV0OTk= # base64-encoded value of "secret99"
+  keystore-password: c2VjcmV0 # base64-encoded value of "secret"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  labels:
+    app: keycloak
+spec:
+  ports:
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: 8443
+  selector:
+    app: keycloak
+  clusterIP: None    
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: headless-kc-service
+spec:
+  selector:
+    cluster: headless-kc-service
+  ports:
+    - name: jgroups
+      port: 7600
+      protocol: TCP
+  publishNotReadyAddresses: true
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  labels:
+    app: keycloak
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+        cluster: headless-kc-service
+    spec:
+      containers:
+        - name: keycloak
+          image: tuantahp/keycloak:latest
+          args: ["start", "--cache=ispn","--cache-stack=kubernetes"]
+          env:
+            - name: KEYCLOAK_ADMIN
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-secrets
+                  key: admin-username
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-secrets
+                  key: admin-password
+            - name: KC_HTTPS_KEY_STORE_PASSWORD                  
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-secrets
+                  key: keystore-password
+            - name: KC_HEALTH_ENABLED
+              value: "true"
+            - name: KC_METRICS_ENABLED
+              value: "true"                        
+            - name: KC_HOSTNAME
+              value: localhost
+            - name: KC_PROXY
+              value: "reencrypt"
+            - name: KC_PROXY_HEADERS
+              value: forwarded
+            - name: KC_DB
+              value: postgres
+            - name: KC_DB_URL
+              value: "jdbc:postgresql://postgresql-rw/app"
+            - name: KC_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-secrets
+                  key: db-username
+            - name: KC_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-secrets
+                  key: db-password
+            - name: JAVA_OPTS_APPEND
+              value: '-Djgroups.tcp.port=7600 -Djgroups.dns.query=headless-kc-service'
+          ports:
+            - name: jgroups
+              containerPort: 7600
+            - name: https
+              containerPort: 8443
+          readinessProbe:
+            httpGet:
+              scheme: HTTPS
+              path: /health/ready
+              port: 8443
+            initialDelaySeconds: 60
+            periodSeconds: 1
