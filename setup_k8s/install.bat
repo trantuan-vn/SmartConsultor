@@ -7,11 +7,13 @@ minikube addons enable istio
 
 echo Waiting for CRDS to be installed...
 kubectl create -f .\olm\crds.yaml 
+kubectl create -f https://raw.githubusercontent.com/operator-framework/operator-lifecycle-manager/master/deploy/upstream/quickstart/crds.yaml
 echo Waiting for OLM to be installed...
 kubectl create -f .\olm\olm.yaml 
+kubectl create -f https://raw.githubusercontent.com/operator-framework/operator-lifecycle-manager/master/deploy/upstream/quickstart/olm.yaml
 
 echo Waiting for CNPG to be installed...
-kubectl create -f https://operatorhub.io/install/cloudnative-pg.yaml 
+kubectl create -f https://operatorhub.io/install/cloudnative-pg.yaml
 
 echo Waiting for POSTGRES to be installed...
 kubectl apply -f .\postgres\postgresql.yaml 
@@ -48,4 +50,9 @@ kubectl exec -n default ignite-0 -- /opt/ignite/apache-ignite/bin/control.sh --a
 kubectl exec -n default ignite-1 -- /opt/ignite/apache-ignite/bin/control.sh --activate
 kubectl exec -n default ignite-0 -- /opt/ignite/apache-ignite/bin/control.sh --state
 
-
+echo Waiting for kraft-kafka to be installed...
+docker build -t kraft-kafka .\kraft-kafka\docker
+docker tag kraft-kafka:latest tuantahp/kraft-kafka:latest
+docker login
+docker push tuantahp/kraft-kafka:latest
+kubectl apply -f .\kraft-kafka\kubernetes\kafka.yml
