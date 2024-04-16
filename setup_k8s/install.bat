@@ -56,3 +56,17 @@ docker tag kraft-kafka:latest tuantahp/kraft-kafka:latest
 docker login
 docker push tuantahp/kraft-kafka:latest
 kubectl apply -f .\kraft-kafka\kubernetes\kafka.yml
+
+echo Waiting for nginx flutter to be installed...
+cd C:\Users\tuant\SmartConsultor\flutter\smartconsultor-1.0.0\smartconsultor\build
+#copy 2 file default.conf và Dockerfile từ thư mục nginx-flutter vào thư mục build
+docker build . -t nginx-flutter
+docker login
+docker tag nginx-flutter tuantahp/nginx-flutter:latest
+docker push tuantahp/nginx-flutter:latest
+
+echo Waiting for mongodb to be installed...
+#https://www.mongodb.com/docs/kubernetes-operator/stable/tutorial/install-k8s-operator/#std-label-install-k8s-operator
+#https://www.mongodb.com/docs/kubernetes-operator/stable/tutorial/mdb-resources-arch/
+helm repo add mongodb https://mongodb.github.io/helm-charts
+helm install enterprise-operator mongodb/enterprise-operator
