@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: certbot-pod
+spec:
+  containers:
+  - name: certbot-container
+    image: certbot/certbot
+    command: ["/bin/sleep", "infinity"]

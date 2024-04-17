@@ -64,9 +64,10 @@ docker build . -t nginx-flutter
 docker login
 docker tag nginx-flutter tuantahp/nginx-flutter:latest
 docker push tuantahp/nginx-flutter:latest
+cd C:\Users\tuant\SmartConsultor\setup_k8s\nginx-flutter
+kubectl apply -f .\nginx.yaml
 
-echo Waiting for mongodb to be installed...
-#https://www.mongodb.com/docs/kubernetes-operator/stable/tutorial/install-k8s-operator/#std-label-install-k8s-operator
-#https://www.mongodb.com/docs/kubernetes-operator/stable/tutorial/mdb-resources-arch/
-helm repo add mongodb https://mongodb.github.io/helm-charts
-helm install enterprise-operator mongodb/enterprise-operator
+echo Waiting for istio to be installed...
+openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem -config "C:\Program Files\OpenSSL-Win64\bin\cnf\openssl.cnf"
+kubectl create -n istio-system secret tls istio-ca --key key.pem --cert cert.pem
+kubectl apply -f .\gateway.yaml
