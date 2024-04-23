@@ -1,5 +1,9 @@
-#dev environment: install minikube
+#dev environment: minikube v1.32.0, vs studio code 1.88.1, flutter 3.16.5, 
 #cd ..\setup_k8s
+minikube config set memory 8192
+#minikube config view
+minikube start
+minikube add node
 
 minikube addons enable metrics-server
 minikube addons enable istio-provisioner
@@ -68,6 +72,15 @@ cd C:\Users\tuant\SmartConsultor\setup_k8s\nginx-flutter
 kubectl apply -f .\nginx.yaml
 
 echo Waiting for istio to be installed...
-openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem -config "C:\Program Files\OpenSSL-Win64\bin\cnf\openssl.cnf"
-kubectl create -n istio-system secret tls istio-ca --key key.pem --cert cert.pem
+openssl genrsa -out ca.key 4096
+openssl req -new -key ca.key -out ca.csr -config ca.cnf
+openssl x509 -req -days 365 -in ca.csr -signkey ca.key -out ca.crt
+
+openssl genrsa -out ia.key 4096
+openssl req -new -key ia.key -out ia.csr -config ia.cnf
+openssl x509 -req -in ia.csr -out ia.crt -extfile ia.cnf -extensions v3_req -days 365 -CA ca.crt -CAkey ca.key -CAcreateserial
+#openssl x509 -in ia.crt -text -noout
+
+kubectl create -n istio-system secret tls istio-ca --key ia.key --cert ia.crt
+#kubectl delete -n istio-system secret istio-ca
 kubectl apply -f .\gateway.yaml

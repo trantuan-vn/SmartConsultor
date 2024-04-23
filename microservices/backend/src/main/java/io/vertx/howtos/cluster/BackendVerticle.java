@@ -21,7 +21,7 @@ public class BackendVerticle extends AbstractVerticle {
   private static final int HTTP_PORT = Integer.parseInt(System.getenv().getOrDefault("HTTP_PORT", "0"));
   private static final String POD_NAME = System.getenv().getOrDefault("POD_NAME", "unknown");
   // end::config[]
-
+  
   // tag::start[]
   @Override
   public void start() {

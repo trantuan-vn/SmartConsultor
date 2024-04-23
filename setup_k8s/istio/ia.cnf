@@ -1,0 +1,19 @@
+[req]
+default_bits       = 4096
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+prompt = no
+[req_distinguished_name]
+C = VN
+ST = HANOI
+L = 2706D1-6TH-XUANLA-TAYHO
+O = Smartconsultor Ltd
+OU = IT
+CN = www.smartconsultor.vn
+[v3_req]
+keyUsage = critical, digitalSignature, keyAgreement
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+[alt_names]
+DNS.1 = www.smartconsultor.vn
+DNS.2 = smartconsultor.vn

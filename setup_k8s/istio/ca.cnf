@@ -1,0 +1,19 @@
+[req]
+default_bits       = 4096
+distinguished_name = req_distinguished_name
+req_extensions     = req_ext
+x509_extensions    = v3_ca
+prompt = no
+[req_distinguished_name]
+C = US
+ST = California
+L = San Francisco
+O = Apple
+OU = IT
+CN = Apple Root CA
+[req_ext]
+basicConstraints = critical, CA:true
+[v3_ca]
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always, issuer
+basicConstraints       = critical, CA:true

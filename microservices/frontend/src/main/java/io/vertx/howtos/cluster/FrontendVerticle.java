@@ -40,8 +40,8 @@ public class FrontendVerticle extends AbstractVerticle {
   private void setupRouter(Router router) {
     router.get("/hello").handler(this::handleHelloRequest);
 
-    router.get("/health").handler(rc -> rc.response().end("OK"));
 
+    router.get("/health").handler(rc -> rc.response().end("OK"));
     Handler<Promise<Status>> procedure = ClusterHealthCheck.createProcedure(vertx, false);
     HealthChecks checks = HealthChecks.create(vertx).register("cluster-health", procedure);
     router.get("/readiness").handler(HealthCheckHandler.createWithHealthChecks(checks));

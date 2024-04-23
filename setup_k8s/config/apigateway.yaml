@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apigateway
+data:
+  app.properties: |
+    server.port=8080
