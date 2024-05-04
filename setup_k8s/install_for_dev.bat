@@ -3,21 +3,41 @@
 minikube config set memory 8192
 #minikube config view
 minikube start
-minikube add node
+minikube node add 
 
 minikube addons enable metrics-server
-minikube addons enable istio-provisioner
-minikube addons enable istio
+#minikube addons enable istio-provisioner
+#minikube addons enable istio
+cd C:\istioctl-1.17.2-win
+istioctl install --set profile=demo
+istioctl operator init
+kubectl label namespace default istio-injection=enabled
+#kubectl label namespace default istio-injection-
+
+
+echo Waiting for security to be installed...
+#kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/prometheus.yaml
+#kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/grafana.yaml
+#kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/jaeger.yaml
+#kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/kiali.yaml
+kubectl apply -f .\istio\skywalking.yaml 
+kubectl apply -f .\istio\podToSkywalking.yaml 
+cd C:\istioctl-1.17.2-win
+istioctl manifest apply --set profile=demo --set meshConfig.enableEnvoyAccessLogService=true --set meshConfig.defaultConfig.envoyAccessLogService.address=skywalking-oap.istio-system.svc.cluster.local:11800
+#kubectl apply -f .\istio\mTls.yaml 
+#kubectl port-forward service/skywalking-ui 8080:8080 -n istio-system
+#kubectl port-forward service/grafana 3000:3000 -n istio-system
 
 echo Waiting for CRDS to be installed...
-kubectl create -f .\olm\crds.yaml 
+#kubectl create -f .\olm\crds.yaml 
 kubectl create -f https://raw.githubusercontent.com/operator-framework/operator-lifecycle-manager/master/deploy/upstream/quickstart/crds.yaml
 echo Waiting for OLM to be installed...
-kubectl create -f .\olm\olm.yaml 
+#kubectl create -f .\olm\olm.yaml 
 kubectl create -f https://raw.githubusercontent.com/operator-framework/operator-lifecycle-manager/master/deploy/upstream/quickstart/olm.yaml
 
 echo Waiting for CNPG to be installed...
 kubectl create -f https://operatorhub.io/install/cloudnative-pg.yaml
+
 
 echo Waiting for POSTGRES to be installed...
 kubectl apply -f .\postgres\postgresql.yaml 
@@ -41,7 +61,7 @@ docker build . -t keycloak
 docker tag keycloak:latest tuantahp/keycloak:latest
 docker login
 docker push tuantahp/keycloak:latest
-kubectl apply -f keycloak.yaml 
+kubectl apply -f keycloak/keycloak.yaml 
 #helm repo add bitnami https://charts.bitnami.com/bitnami
 
 echo Waiting for ignite to be installed...
@@ -69,7 +89,7 @@ docker login
 docker tag nginx-flutter tuantahp/nginx-flutter:latest
 docker push tuantahp/nginx-flutter:latest
 cd C:\Users\tuant\SmartConsultor\setup_k8s\nginx-flutter
-kubectl apply -f .\nginx.yaml
+kubectl apply -f nginx-flutter\nginx.yaml
 
 echo Waiting for istio to be installed...
 openssl genrsa -out ca.key 4096
@@ -84,3 +104,10 @@ openssl x509 -req -in ia.csr -out ia.crt -extfile ia.cnf -extensions v3_req -day
 kubectl create -n istio-system secret tls istio-ca --key ia.key --cert ia.crt
 #kubectl delete -n istio-system secret istio-ca
 kubectl apply -f .\gateway.yaml
+
+echo Waiting for development service to be installed...
+cd microservices
+skaffold config set --global local-cluster true
+minikube docker-env | Invoke-Expression
+skaffold dev
+

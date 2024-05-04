@@ -117,3 +117,10 @@ SERVICE_NAME=ignite
 curl --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X GET ${APISERVER}/api/v1/namespaces/${NAMESPACE}/endpoints/${SERVICE_NAME}
 
 nmap --script ssl-enum-ciphers -p 443 kubernetes.default.svc.cluster.local
+
+istioctl ps frontend-deployment-685c4cc477-ngsq6
+istioctl proxy-config routes frontend-deployment-685c4cc477-ngsq6
+
+apt/yum  update 
+apt/yum  install net-tools
+netstat -tuln

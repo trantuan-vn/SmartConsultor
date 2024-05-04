@@ -1,0 +1,23 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  name: pod-to-skywalking  # Tên định danh cho tài nguyên IstioOperator
+spec:
+  meshConfig:
+    extensionProviders:
+      - skywalking:
+          service: tracing.istio-system.svc.cluster.local
+          port: 11800
+        name: skywalking
+    defaultProviders:
+        tracing:
+        - "skywalking"
+---
+apiVersion: telemetry.istio.io/v1alpha1
+kind: Telemetry
+metadata:
+  name: mesh-default
+  namespace: istio-system
+spec:
+  tracing:
+  - randomSamplingPercentage: 100.00

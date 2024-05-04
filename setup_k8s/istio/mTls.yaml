@@ -1,0 +1,57 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  name: mtls  # Tên định danh cho tài nguyên IstioOperator
+spec:
+  meshConfig:
+    defaultConfig:
+      mtls:
+        enabled: true
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: vs-cluster-app
+spec:
+  hosts:
+  - "clustered-app.default.svc.cluster.local"
+  tcp:
+  - match:
+    - port: 7800
+    route:
+    - destination:
+        host: clustered-app.default.svc.cluster.local
+        port:
+          number: 7800
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: dr-cluster-app
+spec:
+  host: clustered-app.default.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: DISABLE # Tắt TLS nếu không sử dụng
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: clustered-app-service-entry
+spec:
+  hosts:
+  - "*.clustered-app.namespace.svc.cluster.local"  # Sử dụng wildcard để chấp nhận tất cả các pod có nhãn cluster: clustered-app
+  ports:
+  - number: 7800
+    name: tcp
+    protocol: TCP
+  location: MESH_INTERNAL
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: WorkloadEntry
+metadata:
+  name: clustered-app-workload-entry
+spec:
+  workloadSelector:
+    labels:
+      cluster: clustered-app

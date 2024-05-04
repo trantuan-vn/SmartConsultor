@@ -62,6 +62,7 @@ public class BackendVerticle extends AbstractVerticle {
   public static void main(String[] args) {
     ClusterManager mgr = new InfinispanClusterManager();
     
+    
     Vertx.builder()
       .withClusterManager(mgr) 
       .buildClustered().onComplete(res -> {

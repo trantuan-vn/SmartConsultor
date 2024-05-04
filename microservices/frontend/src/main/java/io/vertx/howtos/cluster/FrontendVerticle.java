@@ -25,7 +25,8 @@ public class FrontendVerticle extends AbstractVerticle {
   // tag::start[]
   @Override
   public void start() {
-    Router router = Router.router(vertx);
+    Router router = Router.router(vertx); 
+
 
     setupRouter(router);
 
@@ -51,7 +52,7 @@ public class FrontendVerticle extends AbstractVerticle {
   // tag::handle-request[]
   private void handleHelloRequest(RoutingContext rc) {
     log.info("Name {}",rc.queryParams().get("name"));
-
+    
     vertx.eventBus().<String>request("greetings", rc.queryParams().get("name"))
       .map(Message::body)
       .onSuccess(reply -> {
@@ -62,6 +63,7 @@ public class FrontendVerticle extends AbstractVerticle {
         log.error("Failed to receive reply from EventBus", error);
         //rc.fail(error);
       });
+     
   }
   // end::handle-request[]
 

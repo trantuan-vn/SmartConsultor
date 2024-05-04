@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-flutter-config
+data:
+  deployment.yaml: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx-flutter-deployment
+      labels:
+        app: nginx-flutter
+    spec:
+      replicas: 2
+      selector:
+        matchLabels:
+          app: nginx-flutter
+      template:
+        metadata:
+          labels:
+            app: nginx-flutter
+        spec:
+          containers:
+            - name: nginx-flutter-container
+              image: tuantahp/nginx-flutter:latest
+              ports:
+                - containerPort: 80
+  service.yaml: |
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: nginx-svc
+    spec:
+      selector:
+        app: nginx-flutter
+      ports:
+        - protocol: TCP
+          port: 80
+          targetPort: 80
+  deployment-service.sh: |
+    #!/bin/sh
+    kubectl apply -f /tmp/deployment.yaml
+    kubectl wait --for=condition=available deployment/nginx-flutter-deployment --timeout=600s
+    kubectl wait --for=condition=ready pod -l app=nginx-flutter --timeout=600s
+    kubectl apply -f /tmp/service.yaml    
+    kubectl wait --for=condition=ready service/nginx-svc --timeout=600s
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nginx-flutter-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: nginx-flutter-applier
+        image: bitnami/kubectl:latest
+        command:
+          - /bin/sh
+          - -c
+          - chmod +x /tmp/deployment-service.sh && /tmp/deployment-service.sh
+        volumeMounts:
+        - name: config
+          mountPath: /tmp
+          readOnly: true
+      restartPolicy: Never
+      volumes:
+      - name: config
+        configMap:
+          name: nginx-flutter-config
+  backoffLimit: 4

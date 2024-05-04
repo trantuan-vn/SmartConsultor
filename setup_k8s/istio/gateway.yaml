@@ -1,7 +1,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: nginx-gateway
+  name: sc-gateway
 spec:
   selector:
     istio: ingressgateway
@@ -19,28 +19,28 @@ spec:
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: nginx-virtualservice
+  name: sc-virtualservice
 spec:
   hosts:
   - "*"
   gateways:
-  - nginx-gateway
+  - sc-gateway
   http:
   - match:
     - uri:
         prefix: /
     route:
     - destination:
-        host: nginx-svc.default.svc.cluster.local
+        host: frontend.default.svc.cluster.local
         port:
           number: 80
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: nginx-destinationrule
+  name: sc-destinationrule
 spec:
-  host: nginx-svc.default.svc.cluster.local
+  host: frontend.default.svc.cluster.local
   exportTo: ["."]
   trafficPolicy:
     loadBalancer:
@@ -48,3 +48,18 @@ spec:
     connectionPool:
       tcp:
         maxConnections: 100
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: allow-eventbus
+spec:
+  hosts:
+  - clustered-app.default.svc.cluster.local
+  location: MESH_INTERNAL
+  ports:
+  - number: 7800
+    name: tcp
+    protocol: TCP
+  resolution: NONE
+
