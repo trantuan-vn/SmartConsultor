@@ -1,7 +1,7 @@
 package io.vertx.howtos.cluster;
 
 import io.vertx.core.*;
-
+import io.vertx.core.logging.SLF4JLogDelegateFactory;
 import io.vertx.core.spi.cluster.ClusterManager;
 import io.vertx.ext.cluster.infinispan.ClusterHealthCheck;
 import io.vertx.ext.cluster.infinispan.InfinispanClusterManager;
@@ -10,6 +10,12 @@ import io.vertx.ext.healthchecks.HealthCheckHandler;
 import io.vertx.ext.healthchecks.HealthChecks;
 import io.vertx.ext.healthchecks.Status;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.BodyHandler;
+//import io.vertx.ext.web.handler.ErrorHandler;
+import io.vertx.ext.web.handler.LoggerFormat;
+import io.vertx.ext.web.handler.ResponseTimeHandler;
+import io.vertx.ext.web.handler.TimeoutHandler;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +31,12 @@ public class BackendVerticle extends AbstractVerticle {
   // tag::start[]
   @Override
   public void start() {
+    // set vertx logger delegate factory to slf4j
+    String logFactory = System.getProperty("org.vertx.logger-delegate-factory-class-name");
+    if (logFactory == null) {
+        System.setProperty("org.vertx.logger-delegate-factory-class-name", SLF4JLogDelegateFactory.class.getName());
+    } 
+
     registerConsumer();
 
     Router router = setupRouter();
@@ -48,6 +60,17 @@ public class BackendVerticle extends AbstractVerticle {
   // tag::router[]
   private Router setupRouter() {
     Router router = Router.router(vertx);
+    // set router options
+    router.route().handler(BodyHandler.create().setBodyLimit(10 * 1024 * 1024)); // 10MB max body size
+    router.route().handler(ResponseTimeHandler.create()); // add a response header: x-response-time: xyzms
+    router.route().handler(TimeoutHandler.create(500)); // request timeout in ms
+    //router.route().failureHandler(ErrorHandler.create(false)); // no exception details
+
+    // use customized request logger
+    // there are three logger format: DEFAULT, SHORT, TINY, see Slf4jRequestLogger.java for details
+    // you can make it configurable, e.g. dev using DEFAULT, prod using TINY
+    LoggerFormat loggerFormat = LoggerFormat.DEFAULT;
+    router.route().handler(RequestLogHandler.create(loggerFormat));
 
     router.get("/health").handler(rc -> rc.response().end("OK"));
 
@@ -60,9 +83,9 @@ public class BackendVerticle extends AbstractVerticle {
 
   // tag::main[]
   public static void main(String[] args) {
+
     ClusterManager mgr = new InfinispanClusterManager();
-    
-    
+       
     Vertx.builder()
       .withClusterManager(mgr) 
       .buildClustered().onComplete(res -> {

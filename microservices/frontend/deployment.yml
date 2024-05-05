@@ -21,12 +21,12 @@ spec:
         cluster: clustered-app
     spec:
       containers:
-        - name: frontendjib
+        - name: frontend
           image: tuantahp/frontend:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: JAVA_TOOL_OPTIONS
-              value: "-Djava.net.preferIPv4Stack=true -Dvertx.jgroups.config=default-configs/default-jgroups-kubernetes.xml -Djgroups.dns.query=clustered-app.default.svc.cluster.local"
+              value: "-Djava.net.preferIPv4Stack=true -Dvertx.jgroups.config=default-configs/default-jgroups-kubernetes.xml -Djgroups.dns.query=clustered-app.default.svc.cluster.local -Dorg.vertx.logger-delegate-factory-class-name=io.vertx.core.logging.SLF4JLogDelegateFactory"
             - name: HTTP_PORT
               value: "8080"
           ports:

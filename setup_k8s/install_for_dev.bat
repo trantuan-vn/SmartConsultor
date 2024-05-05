@@ -92,10 +92,11 @@ cd C:\Users\tuant\SmartConsultor\setup_k8s\nginx-flutter
 kubectl apply -f nginx-flutter\nginx.yaml
 
 echo Waiting for istio to be installed...
+#tao CA
 openssl genrsa -out ca.key 4096
 openssl req -new -key ca.key -out ca.csr -config ca.cnf
 openssl x509 -req -days 365 -in ca.csr -signkey ca.key -out ca.crt
-
+#tao cert từ CA cung cấp
 openssl genrsa -out ia.key 4096
 openssl req -new -key ia.key -out ia.csr -config ia.cnf
 openssl x509 -req -in ia.csr -out ia.crt -extfile ia.cnf -extensions v3_req -days 365 -CA ca.crt -CAkey ca.key -CAcreateserial
