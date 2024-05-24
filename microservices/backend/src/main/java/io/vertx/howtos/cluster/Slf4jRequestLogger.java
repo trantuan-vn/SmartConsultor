@@ -79,7 +79,12 @@ public class Slf4jRequestLogger implements RequestLogHandler {
       case DEFAULT:
         String referrer = headers.contains("referrer") ? headers.get("referrer") : headers.get("referer");
         String userAgent = headers.get("user-agent");
-        String body = context.getBodyAsString().replaceAll("(\\r|\\n)", "");
+        
+        String body = context.body().asString();
+        if (body != null){
+          body=body.replaceAll("(\\r|\\n)", "");
+        }
+
         referrer = referrer == null ? "-" : referrer;
         userAgent = userAgent == null ? "-" : userAgent;
         message = String.format("%s - - [%s] \"%s %s %s\" %d %d \"%s\" \"%s\" %dms %s",
@@ -155,7 +160,7 @@ public class Slf4jRequestLogger implements RequestLogHandler {
       this.log(context, timestamp, remoteClient, version, method, uri);
     } else {
       context.addBodyEndHandler((handler) -> {
-        this.log(context, timestamp, remoteClient, version, method, uri);
+          this.log(context, timestamp, remoteClient, version, method, uri);
       });
     }
 

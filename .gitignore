@@ -1,0 +1,5 @@
+microservices/backend/target
+microservices/frontend/target
+services/common/target
+services/gateway/target
+flutter/smartconsultor-1.0.0/smartconsultor/build

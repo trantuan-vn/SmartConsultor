@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "../../setup_k8s"
+		},
+		{
+			"path": "../../services"
 		}
 	],
 	"settings": {

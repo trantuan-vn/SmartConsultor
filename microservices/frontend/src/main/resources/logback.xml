@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
+<configuration debug="true">
 
     <!-- for production please use /var/log/xyz directory instead of /tmp/log/xyz -->
-    <property name="LOG_FILE" value="/var/log/server.log"/>
-    <property name="REQUEST_LOG_FILE" value="/var/log/request.log"/>
+    <property name="LOG_FILE" value="/tmp/log/server.log"/>
+    <property name="REQUEST_LOG_FILE" value="/tmp/log/request.log"/>
 
     <!-- console output -->
     <appender class="ch.qos.logback.core.ConsoleAppender" name="STDOUT">
@@ -64,7 +64,7 @@
     </logger>
 
     <!-- root logger -->
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
     </root>
 
