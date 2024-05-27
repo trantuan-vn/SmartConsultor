@@ -1,29 +1,16 @@
 package com.smart.consultor.gateway;
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.auth.User;
 import io.vertx.ext.auth.oauth2.OAuth2Auth;
-import io.vertx.ext.auth.oauth2.OAuth2Options;
-//import io.vertx.ext.auth.oauth2.OAuth2FlowType;
 import io.vertx.ext.auth.oauth2.providers.FacebookAuth;
 import io.vertx.ext.auth.oauth2.providers.GoogleAuth;
 import io.vertx.ext.auth.oauth2.providers.KeycloakAuth;
-/* 
-import io.vertx.ext.auth.oauth2.providers.KeycloakAuth;
-import io.vertx.ext.auth.webauthn.Attestation;
-import io.vertx.ext.auth.webauthn.AuthenticatorTransport;
-import io.vertx.ext.auth.webauthn.PublicKeyCredential;
-import io.vertx.ext.auth.webauthn.RelyingParty;
-import io.vertx.ext.auth.webauthn.UserVerification;
-import io.vertx.ext.auth.webauthn.WebAuthn;
-import io.vertx.ext.auth.webauthn.WebAuthnOptions;
-*/
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CSPHandler;
 import io.vertx.ext.web.handler.CSRFHandler;
@@ -33,7 +20,6 @@ import io.vertx.ext.web.handler.MultiTenantHandler;
 import io.vertx.ext.web.handler.OAuth2AuthHandler;
 import io.vertx.ext.web.handler.SessionHandler;
 import io.vertx.ext.web.handler.StaticHandler;
-//import io.vertx.ext.web.handler.WebAuthnHandler;
 import io.vertx.ext.web.handler.XFrameHandler;
 import io.vertx.ext.web.sstore.LocalSessionStore;
 
@@ -103,62 +89,41 @@ public class GatewayVerticle extends AbstractVerticle {
       vertx,
       facebookAuthProvider,
       baseUrl+"/facebook-callback");
-    /*   
-    // create the webauthn security object
-    InMemoryStore database = new InMemoryStore();
-    WebAuthn webAuthN = WebAuthn.create(
-      vertx,
-      new WebAuthnOptions()   // (1)
-        .setRelyingParty(new RelyingParty()
-          .setName("Vert.x FIDO2/webauthn"))
-        .setUserVerification(UserVerification.DISCOURAGED)  
-        .setAttestation(Attestation.NONE)   
-        .setRequireResidentKey(false)   
-        .setChallengeLength(64)   
-        .addPubKeyCredParam(PublicKeyCredential.ES256)    
-        .addPubKeyCredParam(PublicKeyCredential.RS256)
-        .addTransport(AuthenticatorTransport.USB)   
-        .addTransport(AuthenticatorTransport.NFC)
-        .addTransport(AuthenticatorTransport.BLE)
-        .addTransport(AuthenticatorTransport.INTERNAL))
-      // where to load/update authenticators data
-      .authenticatorFetcher(database::fetcher)
-      .authenticatorUpdater(database::updater);    
-    WebAuthnHandler webAuthnHandler = WebAuthnHandler.create(webAuthN)
-      // required callback
-      .setupCallback(router.post("/webauthn/callback"))
-      // optional register callback
-      .setupCredentialsCreateCallback(router.post("/webauthn/register"))
-      // optional login callback
-      .setupCredentialsGetCallback(router.post("/webauthn/login"));      
-    */
+    // create oath2 instance for keycloak
+    
+    OAuth2Auth keycloakAuthProvider = KeycloakAuth.create(vertx,config());
+
     router.route("/api/*").handler(
       MultiTenantHandler.create("X-Tenant")
         // tenants using facebook should go this way:
         .addTenantHandler("facebook", facebookOAuth2)
         // tenants using google should go this way:
         .addTenantHandler("google", googleOAuth2)
+        // tenants using google should go this way:
+        .addTenantHandler("keycloak", context -> protectByKeycloak(keycloakAuthProvider,context))        
         // tenants using webauthn should go this way:
         //.addTenantHandler("webauthn", webAuthnHandler)        
         // all other should be forbidden
         .addDefaultHandler(ctx -> ctx.fail(401)));    
 
     router.get("/uaa").handler(this::authUaaHandler);
+
+    String hostURI=buildHostURI();
+
     router.get("/login").handler(
       MultiTenantHandler.create("X-Tenant")
         // tenants using facebook should go this way:
-        .addTenantHandler("facebook", context -> loginEntryHandler(facebookAuthProvider,context))
+        .addTenantHandler("facebook", context -> loginEntryHandler(facebookAuthProvider,hostURI,context))
         // tenants using google should go this way:
-        .addTenantHandler("google", context -> loginEntryHandler(googleAuthProvider,context))
+        .addTenantHandler("google", context -> loginEntryHandler(googleAuthProvider,hostURI,context))
         // tenants using keycloak should go this way:
-        .addTenantHandler("keycloak", this::loginKeycloak)        
+        .addTenantHandler("keycloak", context -> loginByKeycloak(keycloakAuthProvider,context))             
         // tenants using webauthn should go this way:
         //.addTenantHandler("webauthn", webAuthnHandler)        
         // all other should be forbidden
         .addDefaultHandler(ctx -> ctx.fail(401)));
     router.post("/logout").handler(this::logoutHandler);  
     
-    String hostURI=buildHostURI();
     // set auth callback handler
     router.route("/facebook-callback").handler(context -> authCallback(facebookAuthProvider, hostURI, context));
     router.route("/google-callback").handler(context -> authCallback(googleAuthProvider, hostURI, context));    
@@ -178,32 +143,9 @@ public class GatewayVerticle extends AbstractVerticle {
         }
       });
   }
-  @SuppressWarnings("deprecation")
-  private void authCallback(OAuth2Auth oauth2, String hostURL, RoutingContext context) {
-    final String code = context.request().getParam("code");
-    // code is a require value
-    if (code == null) {
-      context.fail(400);
-      return;
-    }
-    final String redirectTo = context.request().getParam("redirect_uri");
-    final String redirectURI = hostURL + context.currentRoute().getPath() + "?redirect_uri=" + redirectTo;
 
-    oauth2.authenticate(new JsonObject().put("code", code).put("redirect_uri", redirectURI), ar -> {
-      if (ar.failed()) {
-        logger.warn("Auth fail");
-        context.fail(ar.cause());
-      } else {
-        logger.info("Auth success");
-        context.setUser(ar.result());
-        context.response()
-          .putHeader("Location", redirectTo)
-          .setStatusCode(302)
-          .end();
-      }
-    });
-  }
 
+  // Uaa
   private void authUaaHandler(RoutingContext context) {
     if (context.user() != null) {
       JsonObject principal = context.user().principal();
@@ -217,78 +159,116 @@ public class GatewayVerticle extends AbstractVerticle {
     }
   }
 
-  private void loginEntryHandler(OAuth2Auth oauth2, RoutingContext context) {
-    context.response()
-      .putHeader("Location", generateAuthRedirectURI(oauth2,buildHostURI()))
-      .setStatusCode(302)
-      .end();
-  }
+  // google, facebook
+  private void loginEntryHandler(OAuth2Auth oauth2, String hostURL, RoutingContext context) {
+    // Create the OAuth2 authorization URL
+    @SuppressWarnings("deprecation")
+    String authorizationURI = oauth2.authorizeURL(new JsonObject()
+        .put("redirect_uri", hostURL + context.request().path())
+        .put("scope", "profile email")
+        .put("state", "some_state_value"));
 
+    // Redirect the user to the OAuth2 authorization URL
+    context.response()
+        .putHeader("Location", authorizationURI)
+        .setStatusCode(302)
+        .end();
+  }
+  @SuppressWarnings("deprecation")
+  private void authCallback(OAuth2Auth oauth2, String hostURL, RoutingContext context) {
+    // Extract the authorization code from the callback
+    String code = context.request().getParam("code");
+
+    if (code == null) {
+        context.fail(400); // Bad Request
+        return;
+    }
+
+    // Prepare the token request payload
+    JsonObject tokenRequestPayload = new JsonObject()
+        .put("code", code)
+        .put("redirect_uri", hostURL + context.request().path())
+        .put("grant_type", "authorization_code");
+
+    // Exchange the authorization code for tokens
+    oauth2.authenticate(tokenRequestPayload, res -> {
+        if (res.succeeded()) {
+            User user = res.result();
+
+            // Here you can fetch user details using the user token if needed
+            // For example:
+            // String accessToken = user.principal().getString("access_token");
+
+            // Add user to the session
+            context.setUser(user);
+            // Fetch user details using the user token if needed
+            JsonObject userInfo = user.principal();
+            // Return user information as JSON response
+            context.response()
+                .putHeader("Content-Type", "application/json")
+                .end(userInfo.encode());
+        } else {
+            // Authentication failed
+            context.fail(res.cause());
+        }
+    });
+  }  
+  // logout
   private void logoutHandler(RoutingContext context) {
     context.clearUser();
     context.session().destroy();
     context.response().setStatusCode(204).end();
   }
-  
+
+  // keycloak
   @SuppressWarnings("deprecation")
-  private void loginKeycloak(RoutingContext ctx) {
-    OAuth2Options options = new OAuth2Options()
-        .setClientId("")
-        .setClientSecret("")
-        .setSite("https://keycloak:8080/auth/realms/master");    
-    KeycloakAuth.discover(vertx, options).onComplete(result -> {
-      JsonObject requestBody = ctx.getBodyAsJson();
-      String username = requestBody.getString("username");
-      String password = requestBody.getString("password");
-  
-      JsonObject keycloakRequest = new JsonObject()
-          .put("client_id", "")
-          .put("client_secret", "")
-          .put("grant_type", "password")
-          .put("username", username)
-          .put("password", password);
-      OAuth2Auth oauth2 = result.result();
-      oauth2.authenticate(keycloakRequest, ar -> {
-        if (ar.failed()) {
-            logger.warn("Auth fail");
-            ctx.fail(ar.cause());
+  private void loginByKeycloak(OAuth2Auth keycloakAuthProvider, RoutingContext context) {
+    JsonObject credentials = context.getBodyAsJson();
+    String username = credentials.getString("username");
+    String password = credentials.getString("password");
+
+    JsonObject authInfo = new JsonObject()
+        .put("username", username)
+        .put("password", password);
+
+    keycloakAuthProvider.authenticate(authInfo, res -> {
+        if (res.succeeded()) {
+            User user = res.result();
+            context.setUser(user);
+            // Fetch user details using the user token if needed
+            JsonObject userInfo = user.principal();
+            // Return user information as JSON response
+            context.response()
+                .putHeader("Content-Type", "application/json")
+                .end(userInfo.encode());
         } else {
-            logger.info("Auth success");
-            // Get the access token
-            String accessToken = ar.result().principal().getString("access_token");
-            // Use the access token to get user info
-            WebClient webClient = WebClient.create(vertx);
-            webClient.getAbs("https://keycloak:8080/auth/realms/your-realm/protocol/openid-connect/userinfo")
-                .putHeader("Authorization", "Bearer " + accessToken)
-                .send(userInfoResponse -> {
-                    if (userInfoResponse.failed()) {
-                        logger.warn("Failed to get user info");
-                        ctx.fail(userInfoResponse.cause());
-                    } else {
-                        JsonObject userInfo = userInfoResponse.result().bodyAsJsonObject();
-                        logger.info("User info: " + userInfo.encodePrettily());
-                        // Here you can save user info to a database or perform other actions
-                        // Set user context
-                        ctx.setUser(ar.result());
-                        // Redirect or respond with user info
-                        ctx.response()
-                            .putHeader("Content-Type", "application/json")
-                            .end(userInfo.encodePrettily());
-                    }
-                });
+            context.response().setStatusCode(401).end("Login failed");
         }
-      });
+    });        
+  }
+
+  @SuppressWarnings("deprecation")
+  private void protectByKeycloak(OAuth2Auth oauth2, RoutingContext ctx) {
+    String authHeader = ctx.request().getHeader("Authorization");
+    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        ctx.fail(401);
+        return;
+    }
+
+    String token = authHeader.substring("Bearer ".length());
+
+    oauth2.authenticate(new JsonObject().put("access_token", token), res -> {
+        if (res.succeeded()) {
+            User user = res.result();
+            ctx.setUser(user);
+            ctx.next();
+        } else {
+            ctx.fail(401);
+        }
     });
   }
-
-  @SuppressWarnings("deprecation")
-  private String generateAuthRedirectURI(OAuth2Auth oauth2,String from) {
-    return oauth2.authorizeURL(new JsonObject()
-      .put("redirect_uri", from + "/callback?redirect_uri=" + from)
-      .put("scope", "")
-      .put("state", ""));
-  }
-
+  
+  // utils
   private String buildHostURI() {
     int port = config().getInteger("api.gateway.http.port", DEFAULT_PORT);
     final String host = config().getString("api.gateway.http.address.external", "localhost");

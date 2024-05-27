@@ -112,3 +112,21 @@ skaffold config set --global local-cluster true
 minikube docker-env | Invoke-Expression
 skaffold dev
 
+echo Waiting for citus to be installed...
+kubectl apply -f citus/secrets.yaml
+kubectl apply -f citus/master.yaml #replicas=1
+kubectl apply -f citus/workers.yaml #replicas=2
+
+kubectl exec -it citus-master-0 -- bash
+su postgres
+psql
+SELECT citus_set_coordinator_host('citus-master-0', 5432);
+SELECT * from citus_add_node('citus-worker-0.citus-workers', 5432);
+SELECT * from citus_add_node('citus-worker-1.citus-workers', 5432);
+SELECT * FROM citus_get_active_worker_nodes();
+ALTER SYSTEM SET citus.shard_replication_factor TO 2;
+
+
+
+
+

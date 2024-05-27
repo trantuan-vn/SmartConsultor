@@ -1,0 +1,20 @@
+CREATE TABLE orders (
+    order_id bigserial PRIMARY KEY,
+    customer_id bigint,
+    order_date date,
+    amount numeric
+);
+
+SHOW citus.shard_replication_factor;
+ALTER SYSTEM SET citus.shard_replication_factor TO 2;
+
+SELECT create_distributed_table('orders', 'order_id');
+
+INSERT INTO orders (customer_id, order_date, amount) VALUES (1, '2024-05-27', 100.00);
+INSERT INTO orders (customer_id, order_date, amount) VALUES (2, '2024-05-28', 150.50);
+INSERT INTO orders (customer_id, order_date, amount) VALUES (3, '2024-05-29', 200.75);
+INSERT INTO orders (customer_id, order_date, amount) VALUES (4, '2024-05-29', 200.75);
+
+SELECT  a.order_id,b.shardid, c.nodename, c.nodeport, b.*
+FROM orders a, pg_dist_shard b, pg_dist_shard_placement c
+where hashint4(CAST(a.order_id AS integer)) BETWEEN CAST(b.shardminvalue AS integer) AND CAST(b.shardmaxvalue AS integer) and b.shardid=c.shardid;
