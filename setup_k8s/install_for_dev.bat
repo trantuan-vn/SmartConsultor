@@ -56,6 +56,7 @@ psql
 ALTER USER app WITH PASSWORD 'secret99';
 
 echo Waiting for KEYCLOAK to be installed...
+#https://keycloak.ch/keycloak-tutorials/
 cd keycloak
 docker build . -t keycloak
 docker tag keycloak:latest tuantahp/keycloak:latest
@@ -113,6 +114,7 @@ minikube docker-env | Invoke-Expression
 skaffold dev
 
 echo Waiting for citus to be installed...
+#https://docs.citusdata.com/en/v12.1/use_cases/realtime_analytics.html#data-model
 kubectl apply -f citus/secrets.yaml
 kubectl apply -f citus/master.yaml #replicas=1
 kubectl apply -f citus/workers.yaml #replicas=2
@@ -125,8 +127,19 @@ SELECT * from citus_add_node('citus-worker-0.citus-workers', 5432);
 SELECT * from citus_add_node('citus-worker-1.citus-workers', 5432);
 SELECT * FROM citus_get_active_worker_nodes();
 ALTER SYSTEM SET citus.shard_replication_factor TO 2;
+SELECT pg_reload_conf();
 
 
+echo Waiting for citus to be installed...
+git clone https://github.com/apache/pulsar-helm-chart
+cd .\pulsar-helm-chart\
+./scripts/pulsar/prepare_helm_release.sh -n pulsar -k pulsar-mini -c
 
-
-
+#https://streamnative.io/blog/wechat-using-apache-pulsar-support-high-throughput-real-time-recommendation-service
+# một số hiệu năng : 
+#   bỏ proxy; 
+#   sử dụng multidisk (Add useMultiVolumes option under .Values.bookkeeper.volumes.journal and .Values.bookkeeper.volumes.ledgers.);
+#   volume; use non persistence topic; 
+#   loadBalancerDistributeBundlesEvenlyEnabled = false
+#   Tăng tỷ lệ truy cập bộ nhớ cache
+#   Tạo bộ giảm tải COS bằng cách sử dụng lưu trữ theo tầng

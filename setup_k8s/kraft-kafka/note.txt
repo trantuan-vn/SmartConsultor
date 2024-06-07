@@ -1,0 +1,28 @@
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.common.config.SaslConfigs;
+import org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule;
+import java.util.Properties;
+
+public class KafkaClient {
+    public static void main(String[] args) {
+        String accessToken = "YOUR_ACCESS_TOKEN"; // Truyền access_token vào đây
+
+        Properties props = new Properties();
+        props.put("bootstrap.servers", "x.x.x.x:9770");
+        props.put("security.protocol", "SASL_SSL");
+        props.put("sasl.mechanism", "OAUTHBEARER");
+        props.put(SaslConfigs.SASL_JAAS_CONFIG,
+                OAuthBearerLoginModule.class.getName() + " required oauthbearer.token=\"" + accessToken + "\";");
+        props.put("ssl.truststore.location", "/path/to/truststore.jks");
+        props.put("ssl.truststore.password", "truststore-password");
+
+        // Consumer
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
+        // ... sử dụng consumer
+
+        // Producer
+        KafkaProducer<String, String> producer = new KafkaProducer<>(props);
+        // ... sử dụng producer
+    }
+}

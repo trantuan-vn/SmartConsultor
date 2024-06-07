@@ -13,14 +13,17 @@ import io.vertx.ext.healthchecks.Status;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 //import io.vertx.ext.web.handler.BodyHandler;
-import io.vertx.ext.web.handler.LoggerFormat;
-import io.vertx.ext.web.handler.LoggerHandler;
 //import io.vertx.ext.web.handler.ResponseTimeHandler;
-//import io.vertx.ext.web.handler.TimeoutHandler;
+//import io.vertx.ext.web.handler.TimeoutHandler; 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
+
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
+
+@SuppressWarnings("deprecation")
 public class FrontendVerticle extends AbstractVerticle {
 
   private static final Logger logger = LoggerFactory.getLogger(FrontendVerticle.class);
@@ -46,7 +49,7 @@ public class FrontendVerticle extends AbstractVerticle {
       .requestHandler(router)
       .listen(HTTP_PORT)
       .onSuccess(server -> {
-        System.out.println("Front Server started and listening on port " + server.actualPort());
+        //System.out.println("Front Server started and listening on port " + server.actualPort());
         logger.info("Front Server started and listening on port {}", server.actualPort());
       });
   }
@@ -54,18 +57,8 @@ public class FrontendVerticle extends AbstractVerticle {
 
   // tag::router[]
   private void setupRouter(Router router) {
-    // set router options
-    //router.route().handler(BodyHandler.create().setBodyLimit(10 * 1024 * 1024)); // 10MB max body size
-    //router.route().handler(ResponseTimeHandler.create()); // add a response header: x-response-time: xyzms
-    //router.route().handler(TimeoutHandler.create(500)); // request timeout in ms
-    //router.route().failureHandler(ErrorHandler.create(false)); // no exception details
-    // use customized request logger
-    // there are three logger format: DEFAULT, SHORT, TINY, see Slf4jRequestLogger.java for details
-    // you can make it configurable, e.g. dev using DEFAULT, prod using TINY
-    //LoggerFormat loggerFormat = LoggerFormat.DEFAULT;
-    //router.route().handler(RequestLogHandler.create(loggerFormat));
     
-    router.route().handler(LoggerHandler.create(LoggerFormat.DEFAULT));
+    //router.route().handler(LoggerHandler.create(LoggerFormat.DEFAULT));
 
     router.get("/hello").handler(this::handleHelloRequest);
 
@@ -80,7 +73,7 @@ public class FrontendVerticle extends AbstractVerticle {
   // tag::handle-request[]
   private void handleHelloRequest(RoutingContext rc) {
     
-    System.out.println("Name " + rc.queryParams().get("name"));
+    //System.out.println("Name " + rc.queryParams().get("name"));
 
     logger.info("Name {}",rc.queryParams().get("name"));
     
@@ -93,9 +86,9 @@ public class FrontendVerticle extends AbstractVerticle {
       .onFailure(error -> {
         logger.error("Failed to receive reply from EventBus", error);
         //rc.fail(error);
-      });
+      }); 
      
-  }
+  } 
   // end::handle-request[]
 
   // tag::main[]
@@ -103,9 +96,9 @@ public class FrontendVerticle extends AbstractVerticle {
     
     String classpath = System.getProperty("java.class.path");
     System.out.println("Classpath: " + classpath);
-
+     
     ClusterManager mgr = new InfinispanClusterManager();
-    
+        
     Vertx.builder()
       .withClusterManager(mgr)
       .buildClustered().onComplete(res -> {

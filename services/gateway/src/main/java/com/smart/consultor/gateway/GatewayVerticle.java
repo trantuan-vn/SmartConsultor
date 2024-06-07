@@ -3,14 +3,15 @@ package com.smart.consultor.gateway;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.json.JsonObject;
-import io.vertx.ext.auth.User;
+//import io.vertx.core.json.JsonObject;
+//import io.vertx.ext.auth.User;
 import io.vertx.ext.auth.oauth2.OAuth2Auth;
+//import io.vertx.ext.auth.oauth2.OAuth2FlowType;
 import io.vertx.ext.auth.oauth2.providers.FacebookAuth;
 import io.vertx.ext.auth.oauth2.providers.GoogleAuth;
-import io.vertx.ext.auth.oauth2.providers.KeycloakAuth;
+//import io.vertx.ext.auth.oauth2.providers.KeycloakAuth;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
+//import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CSPHandler;
 import io.vertx.ext.web.handler.CSRFHandler;
@@ -55,7 +56,7 @@ public class GatewayVerticle extends AbstractVerticle {
     // CSRF handler setup required for logout form
     String csrfSecret = generateCsrfSecret();
     router.route().handler(CSRFHandler.create(vertx,csrfSecret));
-    //HSTS Handler
+    // HSTS Handler
     router.route().handler(HSTSHandler.create());
     // CSP handler
     router.route().handler(
@@ -73,25 +74,25 @@ public class GatewayVerticle extends AbstractVerticle {
             "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");
 
     // create a oauth2 handler on our domain: "http://localhost:8080"
-    OAuth2AuthHandler googleOAuth2 = OAuth2AuthHandler.create(
-      vertx,
-      googleAuthProvider,
-      baseUrl+"/google-callback");
+    OAuth2AuthHandler googleOAuth2 = OAuth2AuthHandler
+      .create( vertx, googleAuthProvider, baseUrl+"/google-callback")
+      .setupCallback(router.route("/google-callback"));
+    
     // setup the callback handler for receiving the Google callback
-    googleOAuth2.setupCallback(router.route("/google-callback"));   
+    //googleOAuth2.setupCallback(router.route("/google-callback"));   
     
     // create oath2 instance for facebook
     OAuth2Auth facebookAuthProvider = FacebookAuth.create(vertx, 
             "745909260767468",
             "aa1a6de83dee32c55aa97da02305cc94");
     // Create an OAuth2 handler for Facebook
-    OAuth2AuthHandler facebookOAuth2 = OAuth2AuthHandler.create(
-      vertx,
-      facebookAuthProvider,
-      baseUrl+"/facebook-callback");
+    OAuth2AuthHandler facebookOAuth2 = OAuth2AuthHandler
+      .create(vertx, facebookAuthProvider, baseUrl+"/facebook-callback")
+      .setupCallback(router.route("/facebook-callback"));
     // create oath2 instance for keycloak
     
-    OAuth2Auth keycloakAuthProvider = KeycloakAuth.create(vertx,config());
+    //OAuth2Auth keycloakAuthProvider = KeycloakAuth.create(vertx,OAuth2FlowType.PASSWORD,config());
+
 
     router.route("/api/*").handler(
       MultiTenantHandler.create("X-Tenant")
@@ -100,16 +101,16 @@ public class GatewayVerticle extends AbstractVerticle {
         // tenants using google should go this way:
         .addTenantHandler("google", googleOAuth2)
         // tenants using google should go this way:
-        .addTenantHandler("keycloak", context -> protectByKeycloak(keycloakAuthProvider,context))        
+        //.addTenantHandler("keycloak", context -> protectByKeycloak(keycloakAuthProvider,context))        
         // tenants using webauthn should go this way:
         //.addTenantHandler("webauthn", webAuthnHandler)        
         // all other should be forbidden
         .addDefaultHandler(ctx -> ctx.fail(401)));    
 
-    router.get("/uaa").handler(this::authUaaHandler);
+    //router.get("/uaa").handler(this::authUaaHandler);
 
-    String hostURI=buildHostURI();
-
+    //String hostURI=buildHostURI();
+    /* 
     router.get("/login").handler(
       MultiTenantHandler.create("X-Tenant")
         // tenants using facebook should go this way:
@@ -123,10 +124,10 @@ public class GatewayVerticle extends AbstractVerticle {
         // all other should be forbidden
         .addDefaultHandler(ctx -> ctx.fail(401)));
     router.post("/logout").handler(this::logoutHandler);  
-    
+    */
     // set auth callback handler
-    router.route("/facebook-callback").handler(context -> authCallback(facebookAuthProvider, hostURI, context));
-    router.route("/google-callback").handler(context -> authCallback(googleAuthProvider, hostURI, context));    
+    //router.route("/facebook-callback").handler(context -> authCallback(facebookAuthProvider, hostURI, context));
+    //router.route("/google-callback").handler(context -> authCallback(googleAuthProvider, hostURI, context));    
 
     // create http server
     vertx.createHttpServer()
@@ -144,7 +145,7 @@ public class GatewayVerticle extends AbstractVerticle {
       });
   }
 
-
+  /* 
   // Uaa
   private void authUaaHandler(RoutingContext context) {
     if (context.user() != null) {
@@ -158,7 +159,9 @@ public class GatewayVerticle extends AbstractVerticle {
       context.fail(401);
     }
   }
+  */
 
+  /* 
   // google, facebook
   private void loginEntryHandler(OAuth2Auth oauth2, String hostURL, RoutingContext context) {
     // Create the OAuth2 authorization URL
@@ -174,6 +177,8 @@ public class GatewayVerticle extends AbstractVerticle {
         .setStatusCode(302)
         .end();
   }
+  */
+  /* 
   @SuppressWarnings("deprecation")
   private void authCallback(OAuth2Auth oauth2, String hostURL, RoutingContext context) {
     // Extract the authorization code from the callback
@@ -213,6 +218,8 @@ public class GatewayVerticle extends AbstractVerticle {
         }
     });
   }  
+  */
+  /*
   // logout
   private void logoutHandler(RoutingContext context) {
     context.clearUser();
@@ -246,7 +253,8 @@ public class GatewayVerticle extends AbstractVerticle {
         }
     });        
   }
-
+  */
+  /* 
   @SuppressWarnings("deprecation")
   private void protectByKeycloak(OAuth2Auth oauth2, RoutingContext ctx) {
     String authHeader = ctx.request().getHeader("Authorization");
@@ -267,14 +275,15 @@ public class GatewayVerticle extends AbstractVerticle {
         }
     });
   }
-  
+  */
+  /* 
   // utils
   private String buildHostURI() {
     int port = config().getInteger("api.gateway.http.port", DEFAULT_PORT);
     final String host = config().getString("api.gateway.http.address.external", "localhost");
     return String.format("https://%s:%d", host, port);
   }  
-
+  */
   private static String generateCsrfSecret() {
       try {
           // Sử dụng SecureRandom để tạo một salt ngẫu nhiên

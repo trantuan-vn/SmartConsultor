@@ -124,3 +124,42 @@ istioctl proxy-config routes frontend-deployment-685c4cc477-ngsq6
 apt/yum  update 
 apt/yum  install net-tools
 netstat -tuln
+
+
+# google oauth2
+https://accounts.google.com/.well-known/openid-configuration
+
+#tạo client_id trên 
+https://console.cloud.google.com/
+
+#truy cap vao trình duyệt
+https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/userinfo.profile&access_type=offline&include_granted_scopes=true&response_type=code&state=state_parameter_passthrough_value&redirect_uri=http://localhost&client_id=533670103-3iajdsvqgl70ampdmslspn6268gedbq6.apps.googleusercontent.com
+https://accounts.google.com/o/oauth2/v2/auth?scope=openid&access_type=offline&include_granted_scopes=true&response_type=code&state=state_parameter_passthrough_value&redirect_uri=http://localhost&client_id=533670103-3iajdsvqgl70ampdmslspn6268gedbq6.apps.googleusercontent.com
+#lấy code dán vào 
+curl -X POST -d "client_id=533670103-3iajdsvqgl70ampdmslspn6268gedbq6.apps.googleusercontent.com&client_secret=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&redirect_uri=http://localhost&grant_type=authorization_code&code=4%2F0AdLIrYemyit1jCU4nVL9jb4nm-LmZ73W0nxaiTrMnlz60ReboGJEGHEdo7v9uB5x0QsacQ" https://oauth2.googleapis.com/token
+
+# lấy thông tin user dựa trên access token
+curl -H "Authorization: Bearer ya29.a0AXooCguVKiHbH56AoxPK_yN969H9D2BKSIufRS-FbiooN_JMAQiPGPn2LWJyszbqNIT_5hYmmNnRnipGZKunnS90ybPtvlVR-YSJRzbx3hU4mAr3_3j1xUHR-jPE5-mVUHvHXQ4ISQIKffUcP-meXoqYPRoeA-uMc8iqaCgYKARASARASFQHGX2Mi1-pt5Q7rMlGESZsT6UDPhg0171" https://www.googleapis.com/oauth2/v2/userinfo
+
+# xác thực access token
+curl -H "Authorization: Bearer ya29.a0AXooCguVKiHbH56AoxPK_yN969H9D2BKSIufRS-FbiooN_JMAQiPGPn2LWJyszbqNIT_5hYmmNnRnipGZKunnS90ybPtvlVR-YSJRzbx3hU4mAr3_3j1xUHR-jPE5-mVUHvHXQ4ISQIKffUcP-meXoqYPRoeA-uMc8iqaCgYKARASARASFQHGX2Mi1-pt5Q7rMlGESZsT6UDPhg0171" https://www.googleapis.com/oauth2/v3/certs
+# lay thong tin tu id_token
+https://oauth2.googleapis.com/tokeninfo?id_token=
+
+# Thay các giá trị dưới đây bằng các giá trị thực tế của bạn
+CLIENT_ID="your_client_id"
+CLIENT_SECRET="your_client_secret"
+REFRESH_TOKEN="your_refresh_token"
+
+# Gửi yêu cầu đổi refresh token thành access token
+curl -d "client_id=533670103-3iajdsvqgl70ampdmslspn6268gedbq6.apps.googleusercontent.com&client_secret=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&refresh_token=1//0e0egDRaBgaMpCgYIARAAGA4SNwF-L9Irqkggs5ftWRBVbfEHyD3aDjoHm0Eix6e353Si5922I2gITp3HU2-kQVoLxpqttAii59E&grant_type=refresh_token" https://oauth2.googleapis.com/token
+
+#https://www.googleapis.com/oauth2/v1/certs
+docker create --name pulsar apachepulsar/pulsar:3.2.3
+docker cp standalone.conf pulsar:/pulsar/conf/standalone.conf
+docker cp google_oauth2_certs.pem pulsar:/pulsar/conf/google_oauth2_certs.pem
+docker commit pulsar pulsar:latest
+docker rm pulsar
+docker run -it --name pulsar -p 6650:6650 -p 8080:8080 pulsar:latest bin/pulsar standalone
+
+openssl s_client -showcerts -connect www.googleapis.com:443 | openssl x509 -outform PEM | Out-File -FilePath google_certs.pem -Encoding ascii

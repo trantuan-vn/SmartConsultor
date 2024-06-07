@@ -1,0 +1,47 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: selfsigned-issuer
+  namespace: default
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ca-certificate
+  namespace: default
+spec:
+  secretName: ca-certificate-tls
+  duration: 8760h # 1 year
+  renewBefore: 360h # 15 days
+  commonName: my-ca
+  isCA: true
+  issuerRef:
+    name: selfsigned-issuer
+    kind: Issuer
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: ca-issuer
+  namespace: default
+spec:
+  ca:
+    secretName: ca-certificate-tls
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: my-app-certificate
+  namespace: default
+spec:
+  secretName: my-app-certificate-tls
+  duration: 24h # Thời gian hiệu lực của chứng chỉ
+  renewBefore: 12h # Thời gian trước khi hết hạn để gia hạn
+  commonName: my-app.example.com
+  dnsNames:
+  - my-app.example.com
+  issuerRef:
+    name: ca-issuer
+    kind: Issuer

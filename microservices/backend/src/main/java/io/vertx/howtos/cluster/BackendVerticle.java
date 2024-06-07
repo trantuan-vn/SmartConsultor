@@ -12,14 +12,18 @@ import io.vertx.ext.healthchecks.Status;
 import io.vertx.ext.web.Router;
 //import io.vertx.ext.web.handler.BodyHandler;
 //import io.vertx.ext.web.handler.ErrorHandler;
-import io.vertx.ext.web.handler.LoggerFormat;
-import io.vertx.ext.web.handler.LoggerHandler;
 //import io.vertx.ext.web.handler.ResponseTimeHandler;
 //import io.vertx.ext.web.handler.TimeoutHandler;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory; 
+
+
+
+@SuppressWarnings("deprecation")
 public class BackendVerticle extends AbstractVerticle {
 
   private static final Logger logger  = LoggerFactory.getLogger(BackendVerticle.class);
@@ -46,7 +50,7 @@ public class BackendVerticle extends AbstractVerticle {
       .requestHandler(router)
       .listen(HTTP_PORT)
       .onSuccess(server -> {
-        System.out.println("Backend Server started and listening on port " + server.actualPort());
+        //System.out.println("Backend Server started and listening on port " + server.actualPort());
 
         logger.info("Backend Server started and listening on port {}", server.actualPort());
 
@@ -66,27 +70,16 @@ public class BackendVerticle extends AbstractVerticle {
   // tag::router[]
   private Router setupRouter() {
     Router router = Router.router(vertx);
-    // set router options
-    //router.route().handler(BodyHandler.create().setBodyLimit(10 * 1024 * 1024)); // 10MB max body size
-    //router.route().handler(ResponseTimeHandler.create()); // add a response header: x-response-time: xyzms
-    //router.route().handler(TimeoutHandler.create(500)); // request timeout in ms
-    ////router.route().failureHandler(ErrorHandler.create(false)); // no exception details
 
-    // use customized request logger
-    // there are three logger format: DEFAULT, SHORT, TINY, see Slf4jRequestLogger.java for details
-    // you can make it configurable, e.g. dev using DEFAULT, prod using TINY
-    //LoggerFormat loggerFormat = LoggerFormat.DEFAULT;
-    //router.route().handler(RequestLogHandler.create(loggerFormat));
-
-    router.route().handler(LoggerHandler.create(LoggerFormat.DEFAULT));
+    //router.route().handler(LoggerHandler.create(LoggerFormat.DEFAULT));
 
     router.get("/health").handler(rc -> rc.response().end("OK"));
 
     Handler<Promise<Status>> procedure = ClusterHealthCheck.createProcedure(vertx, false);
     HealthChecks checks = HealthChecks.create(vertx).register("cluster-health", procedure);
     router.get("/readiness").handler(HealthCheckHandler.createWithHealthChecks(checks));
-    return router;
-  }
+    return router; 
+  } 
   // end::router[]
 
   // tag::main[]
