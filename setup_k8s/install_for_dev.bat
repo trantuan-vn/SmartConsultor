@@ -1,6 +1,9 @@
 #dev environment: minikube v1.32.0, vs studio code 1.88.1, flutter 3.16.5, 
 #cd ..\setup_k8s
 minikube config set memory 8192
+minikube config set disk-size 40g
+minikube config set cpus 4
+
 #minikube config view
 minikube start
 minikube node add 
@@ -143,3 +146,23 @@ cd .\pulsar-helm-chart\
 #   loadBalancerDistributeBundlesEvenlyEnabled = false
 #   Tăng tỷ lệ truy cập bộ nhớ cache
 #   Tạo bộ giảm tải COS bằng cách sử dụng lưu trữ theo tầng
+
+echo Waiting for ELK to be installed...
+minikube ssh
+sudo sysctl -w vm.max_map_count=524288
+cd C:\Users\tuant\SmartConsultor\setup_k8s\elk
+
+#helm search repo elastic/elasticsearch
+helm pull elastic/elasticsearch --version 8.5.1
+#unzip va sửa replicas thành 1, minimumMasterNodes thành 1
+helm install elasticsearch .\elasticsearch
+
+#helm search repo elastic/kibana
+helm pull elastic/kibana --version 8.5.1
+#unzip
+helm install kibana .\kibana
+
+#helm search repo elastic/logstash
+helm pull elastic/logstash --version 8.5.1
+#unzip
+helm install logstash .\logstash
