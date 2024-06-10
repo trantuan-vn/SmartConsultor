@@ -13,7 +13,7 @@ logstashConfig:
     xpack.monitoring.elasticsearch.username: '${ELASTICSEARCH_USERNAME}'
     xpack.monitoring.elasticsearch.password: '${ELASTICSEARCH_PASSWORD}'
     xpack.monitoring.elasticsearch.hosts: ["https://elasticsearch-master:9200"]
-    xpack.monitoring.elasticsearch.ssl.certificate_authority: /usr/share/logstash/config/certs/elastic-certificate.crt
+    xpack.monitoring.elasticsearch.ssl.certificate_authority: /usr/share/logstash/config/certs/ca.crt
 #  logstash.yml: |
 #    key:
 #      nestedkey: value
@@ -23,11 +23,11 @@ logstashConfig:
 # Allows you to add any pipeline files in /usr/share/logstash/pipeline/
 ### ***warn*** there is a hardcoded logstash.conf in the image, override it first
 logstashPipeline: 
-  gelf.conf: |
+  logstash.conf: |
     input { 
       gelf {
-        host => “0.0.0.0"
-        codec => “json”
+        host => "0.0.0.0"
+        codec => "json"
         port => 12201
       }
     }

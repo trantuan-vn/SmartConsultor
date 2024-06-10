@@ -6,7 +6,7 @@
           <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
         
-        <Gelf name="gelf" host="udp:logstash" port="12201">
+        <Gelf name="gelf" host="udp:logstash-logstash" port="12201">
             <Field name="facility" literal="frontend"/>
             <Field name="level" pattern="%level"/>
             <Field name="timestamp" pattern="%d{dd.MM.yyyy HH:mm:ss.SSS}"/>
