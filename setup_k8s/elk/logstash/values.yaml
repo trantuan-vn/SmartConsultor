@@ -31,13 +31,25 @@ logstashPipeline:
         port => 12201
       }
     }
+    filter {
+      if [index] {
+        mutate {
+          add_field => { "[@metadata][index]" => "%{index}" }
+          remove_field => [ "index" ]
+        }
+      } else {
+        mutate {
+          add_field => { "[@metadata][index]" => "default_index" }
+        }
+      }
+    }    
     output {
       elasticsearch {
         hosts => ["https://elasticsearch-master:9200"]
         user => '${ELASTICSEARCH_USERNAME}'
         cacert => '/usr/share/logstash/config/certs/ca.crt'
         password => '${ELASTICSEARCH_PASSWORD}'
-        index => "logstash"
+        index => "%{[@metadata][index]}"
       }
     }
 #  logstash.conf: |

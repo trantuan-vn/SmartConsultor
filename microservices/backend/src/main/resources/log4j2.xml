@@ -7,7 +7,7 @@
         </Console>
         
         <Gelf name="gelf" host="udp:logstash-logstash" port="12201">
-            <Field name="facility" literal="frontend"/>
+            <Field name="facility" literal="backend"/>
             <Field name="level" pattern="%level"/>
             <Field name="timestamp" pattern="%d{dd.MM.yyyy HH:mm:ss.SSS}"/>
             <Field name="thread" pattern="%t"/>
@@ -19,7 +19,9 @@
             <Field name="line" pattern="%L"/>
             <Field name="exception" pattern="%ex"/>
             <Field name="marker" pattern="%marker"/>
-            <Field name="mdc" pattern="%X"/>                    
+            <Field name="mdc" pattern="%X"/>    
+            <!-- Add custom field for index -->
+            <Field name="index" literal="backend"/>                            
         </Gelf>
 
         <Async name="gelf_async">

@@ -1,0 +1,21 @@
+GET /logstash/_search
+{
+  "query": {
+    "match_all": {}
+  },
+  "size": 10
+}
+
+DELETE /logstash
+
+GET /logstash/_search
+{
+  "query": {
+    "term": {
+      "level.keyword": {
+        "value": "INFO"
+      }
+    }
+  },
+  "size": 10
+}
