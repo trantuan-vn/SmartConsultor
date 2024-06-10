@@ -41,7 +41,7 @@ public class FrontendVerticle extends AbstractVerticle {
     //    System.setProperty("org.vertx.logger-delegate-factory-class-name", SLF4JLogDelegateFactory.class.getName());
     //}   
 
-    Router router = Router.router(vertx); 
+    Router router = Router.router(vertx);   
 
     setupRouter(router);
 

@@ -19,7 +19,7 @@ import io.vertx.ext.web.Router;
 //import org.slf4j.LoggerFactory;
 
 import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory; 
+import io.vertx.core.logging.LoggerFactory;    
 
 
 

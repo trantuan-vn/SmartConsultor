@@ -20,7 +20,6 @@
             <Field name="exception" pattern="%ex"/>
             <Field name="marker" pattern="%marker"/>
             <Field name="mdc" pattern="%X"/>                    
-            <!-- Add custom field for index -->
             <Field name="index" literal="frontend"/>    
         </Gelf>
 
