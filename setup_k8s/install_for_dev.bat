@@ -1,8 +1,8 @@
 #dev environment: minikube v1.32.0, vs studio code 1.88.1, flutter 3.16.5, 
 #cd ..\setup_k8s
-minikube config set memory 8192
+minikube config set memory 16384
 minikube config set disk-size 40g
-minikube config set cpus 4
+minikube config set cpus 6
 
 #minikube config view
 minikube start
@@ -166,3 +166,9 @@ helm install kibana .\kibana
 helm pull elastic/logstash --version 8.5.1
 #unzip
 helm install logstash .\logstash
+
+echo Waiting for ELK to be installed...
+helm repo add apache https://pulsar.apache.org/charts
+helm search repo pulsar
+helm repo update
+helm pull apache/pulsar --version 3.4.1

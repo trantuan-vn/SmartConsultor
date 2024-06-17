@@ -1,4 +1,4 @@
-CREATE TABLE orders (
+CREATE TABLE standing.orders (
     order_id bigserial PRIMARY KEY,
     customer_id bigint,
     order_date date,
@@ -8,7 +8,7 @@ CREATE TABLE orders (
 SHOW citus.shard_replication_factor;
 ALTER SYSTEM SET citus.shard_replication_factor TO 2;
 
-SELECT create_distributed_table('orders', 'order_id');
+SELECT create_distributed_table('standing.orders', 'order_id');
 
 INSERT INTO orders (customer_id, order_date, amount) VALUES (1, '2024-05-27', 100.00);
 INSERT INTO orders (customer_id, order_date, amount) VALUES (2, '2024-05-28', 150.50);

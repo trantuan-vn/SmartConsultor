@@ -5,7 +5,7 @@
         <Console name="console" target="SYSTEM_OUT">
           <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
-        
+        <!-- 
         <Gelf name="gelf" host="udp:logstash-logstash" port="12201">
             <Field name="facility" literal="frontend"/>
             <Field name="level" pattern="%level"/>
@@ -26,12 +26,12 @@
         <Async name="gelf_async">
             <AppenderRef ref="gelf"/>
         </Async>
-        
+        -->
     </Appenders>
     <Loggers>
         <Root level="INFO">
             <AppenderRef ref="console"/>
-            <AppenderRef ref="gelf_async"/>
+            <!--<AppenderRef ref="gelf_async"/>-->
         </Root>
     </Loggers>
 </Configuration>
