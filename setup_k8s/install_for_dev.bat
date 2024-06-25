@@ -67,12 +67,13 @@ docker login
 docker push tuantahp/keycloak:latest
 kubectl apply -f keycloak/keycloak.yaml 
 #helm repo add bitnami https://charts.bitnami.com/bitnami
+helm install  keycloak .\keycloak
 
 echo Waiting for ignite to be installed...
 #https://github.com/helm/charts/tree/master/stable/ignite, https://artifacthub.io/ install helm 
 #helm repo add cloudnativeapp https://cloudnativeapp.github.io/charts/curated/
 #helm fetch cloudnativeapp/ignite --version 1.0.0 
-helm install  ignite .\ignite --set persistence.persistenceVolume.size=2Gi --set persistence.walVolume.size=2Gi  
+helm install  ignite .\ignite --set persistence.persistenceVolume.size=50Gi --set persistence.walVolume.size=50Gi  
 #helm uninstall ignite
 kubectl exec -n default ignite-0 -- /opt/ignite/apache-ignite/bin/control.sh --activate
 kubectl exec -n default ignite-1 -- /opt/ignite/apache-ignite/bin/control.sh --activate
@@ -124,6 +125,8 @@ kubectl apply -f citus/workers.yaml #replicas=2
 
 kubectl exec -it citus-master-0 -- bash
 su postgres
+#pulsar manager
+psql -U smartconsultor -d smartconsultor -f postgresql-schema.sql 
 psql
 SELECT citus_set_coordinator_host('citus-master-0', 5432);
 SELECT * from citus_add_node('citus-worker-0.citus-workers', 5432);
@@ -167,8 +170,9 @@ helm pull elastic/logstash --version 8.5.1
 #unzip
 helm install logstash .\logstash
 
-echo Waiting for ELK to be installed...
+echo Waiting for pulsar to be installed...
 helm repo add apache https://pulsar.apache.org/charts
 helm search repo pulsar
 helm repo update
 helm pull apache/pulsar --version 3.4.1
+helm install  pulsar .\pulsar

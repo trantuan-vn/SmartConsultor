@@ -1298,9 +1298,9 @@ postgresql:
 externalDatabase:
   host: "citus-master"
   port: 5432
-  user: bn_keycloak
-  database: bitnami_keycloak
-  password: ""
+  user: smartconsultor
+  database: smartconsultor
+  password: "secret99"
   existingSecret: ""
   existingSecretHostKey: ""
   existingSecretPortKey: ""

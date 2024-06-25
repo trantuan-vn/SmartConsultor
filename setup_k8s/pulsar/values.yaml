@@ -281,7 +281,7 @@ zookeeper:
   # so the metrics are correctly rendered in grafana dashboard
   component: zookeeper
   # the number of zookeeper servers to run. it should be an odd number larger than or equal to 3.
-  replicaCount: 3
+  replicaCount: 1
   updateStrategy:
     type: RollingUpdate
   podManagementPolicy: Parallel
@@ -453,7 +453,7 @@ bookkeeper:
       # requests:
         # memory: 4Gi
         # cpu: 2
-  replicaCount: 4
+  replicaCount: 1
   updateStrategy:
     type: RollingUpdate
   podManagementPolicy: Parallel
@@ -752,7 +752,7 @@ broker:
   # use a component name that matches your grafana configuration
   # so the metrics are correctly rendered in grafana dashboard
   component: broker
-  replicaCount: 3
+  replicaCount: 1
   autoscaling:
     enabled: false
     minReplicas: 1
@@ -1279,11 +1279,11 @@ pulsar_manager:
       memory: 250Mi
       cpu: 0.1
   configData:
-    REDIRECT_HOST: "http://127.0.0.1"
+    REDIRECT_HOST: "http://pulsar-pulsar-manager"
     REDIRECT_PORT: "9527"
     LOG_LEVEL: "INFO"
     # DB
-    URL: "jdbc:postgresql://127.0.0.1:5432/pulsar_manager"
+    URL: "jdbc:postgresql://citus-master:5432/pulsar_manager"
     DRIVER_CLASS_NAME: "org.postgresql.Driver"
     # enables the "message peeking" feature
     PULSAR_PEEK_MESSAGE: "true"
@@ -1350,10 +1350,10 @@ pulsar_manager:
     ## UI_PASSWORD: <UI password>
     ## UI_USERNAME: <UI username>
     existingSecret: ""
-    ui_username: "pulsar"
-    ui_password: ""  # leave empty for random password
-    db_username: "pulsar"
-    db_password: ""  # leave empty for random password
+    ui_username: "admin"
+    ui_password: "admin123"  # leave empty for random password
+    db_username: "smartconsultor"
+    db_password: "secret99"  # leave empty for random password
 
 # These are jobs where job ttl configuration is used
 # pulsar-helm-chart/charts/pulsar/templates/pulsar-cluster-initialize.yaml
