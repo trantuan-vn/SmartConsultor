@@ -172,3 +172,22 @@ echo 'vm.max_map_count=262144' | sudo tee -a /etc/sysctl.conf
 #login kibana
 kubectl exec -it elasticsearch-d86b5b4b5-r2rfj -- bin/elasticsearch-create-enrollment-token -s kibana
 kubectl exec -it kibana-b6f9985c6-lfwtz -- bin/kibana-verification-code
+
+
+1. Lấy thông tin realm-public-key
+Đăng nhập vào giao diện quản trị của Keycloak.
+Chọn realm mà bạn muốn lấy thông tin (ví dụ: master).
+Chọn Realm Settings từ menu bên trái.
+Chọn tab Keys.
+Ở mục Active, bạn sẽ thấy danh sách các keys. Chọn RSA (thường là loại mặc định) và sao chép giá trị của Public Key. Đây là giá trị realm-public-key.
+2. Lấy thông tin resource (Client ID)
+Trong giao diện quản trị của Keycloak, chọn realm của bạn (ví dụ: master).
+Chọn Clients từ menu bên trái.
+Chọn client mà bạn muốn lấy thông tin (ví dụ: 06bd4e91fadb).
+Trong tab Settings, bạn sẽ thấy trường Client ID. Đây là giá trị resource.
+3. Lấy thông tin secret
+Trong giao diện quản trị của Keycloak, chọn realm của bạn (ví dụ: master).
+Chọn Clients từ menu bên trái.
+Chọn client mà bạn muốn lấy thông tin (ví dụ: 06bd4e91fadb).
+Chọn tab Credentials.
+Bạn sẽ thấy giá trị Secret. Đây là giá trị secret.

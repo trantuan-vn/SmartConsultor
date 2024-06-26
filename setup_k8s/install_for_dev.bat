@@ -116,6 +116,7 @@ cd microservices
 skaffold config set --global local-cluster true
 minikube docker-env | Invoke-Expression
 skaffold dev
+kubectl port-forward service/gateway 8080:80
 
 echo Waiting for citus to be installed...
 #https://docs.citusdata.com/en/v12.1/use_cases/realtime_analytics.html#data-model

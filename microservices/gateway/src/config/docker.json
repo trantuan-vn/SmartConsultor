@@ -1,0 +1,19 @@
+{
+    "api.gateway.http.port": 8787,
+    "api.gateway.http.address": "0.0.0.0",
+    
+    "google.clientID": "533670103-3iajdsvqgl70ampdmslspn6268gedbq6.apps.googleusercontent.com",
+    "google.clientSecret": "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",
+
+    "facebook.clientID": "745909260767468",
+    "facebook.clientSecret": "aa1a6de83dee32c55aa97da02305cc94",
+
+    "realm": "master",
+    "realm-public-key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2lGolAK8FxCZQ0jtTMcMseAfxrnEhZbUTIKglZl49Dt6iZ49Uvvnf9jaN7AplM9d1UqQVKTh/hfDt6Hh2hsrLblMnCPmcBgXf72mqwVoAEVevN8XqObbikM3J6vuNhCprakI0BaPN0wl7FuMli6IjUMDbix/quo3LHuEF+as6HVQOotaATCYK21H5ZjSaAvRdIa5dJULYhRezQrqwfxvjrvvRVTh/fcR9eLrTNRTuIdYtDVAqaySDBVN20ni8N+XGwaPHtDhTThbrLBBkm7b+rqIAB+udmFLKAw5TqD0qnAdSlh7+w+tGl9JnacbmGxs9ARWi7SnSF5B3LerRt5nPQIDAQAB",
+    "auth-server-url": "http://keycloak/realms/master",
+    "ssl-required": "none",
+    "resource": "broker",
+    "credentials": {
+      "secret": "lDbC0P9rlqYxITBm3pO8dYjOyuuxRPCw"
+    }
+}

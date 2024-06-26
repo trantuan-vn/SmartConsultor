@@ -4,17 +4,17 @@ metadata:
   name: microservices
 build:
   artifacts:
-    - image: tuantahp/backend
-      context: backend
+    - image: tuantahp/account
+      context: account
       jib:
-        project: io.vertx.howtos:clustering-kubernetes-backend
-    - image: tuantahp/frontend
-      context: frontend
+        project: com.smartconsultor:clustering-kubernetes-account
+    - image: tuantahp/gateway
+      context: gateway
       jib:
-        project: io.vertx.howtos:clustering-kubernetes-frontend
+        project: com.smartconsultor:clustering-kubernetes-gateway
 manifests:
   rawYaml:
-    - backend/deployment.yml
-    - frontend/deployment.yml
-    - frontend/service.yml
+    - account/deployment.yml
+    - gateway/deployment.yml
+    - gateway/service.yml
     - k8s/headless-service.yml

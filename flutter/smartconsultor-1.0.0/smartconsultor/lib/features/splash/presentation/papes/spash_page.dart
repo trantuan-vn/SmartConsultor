@@ -8,7 +8,7 @@ import 'package:smartconsultor/features/splash/presentation/bloc/splash_bloc.dar
 
 class SplashPage extends StatelessWidget {
   // ignore: constant_identifier_names
-  static const SPLASH_PAGE_ROUTE = '/splash_page';
+  static const SPLASH_PAGE_ROUTE = '/static/splash_page';
 
   @override
   Widget build(BuildContext context) {

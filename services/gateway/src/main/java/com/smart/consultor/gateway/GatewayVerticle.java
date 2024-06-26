@@ -6,9 +6,11 @@ import io.vertx.core.http.HttpMethod;
 //import io.vertx.core.json.JsonObject;
 //import io.vertx.ext.auth.User;
 import io.vertx.ext.auth.oauth2.OAuth2Auth;
+import io.vertx.ext.auth.oauth2.OAuth2FlowType;
 //import io.vertx.ext.auth.oauth2.OAuth2FlowType;
 import io.vertx.ext.auth.oauth2.providers.FacebookAuth;
 import io.vertx.ext.auth.oauth2.providers.GoogleAuth;
+import io.vertx.ext.auth.oauth2.providers.KeycloakAuth;
 //import io.vertx.ext.auth.oauth2.providers.KeycloakAuth;
 import io.vertx.ext.web.Router;
 //import io.vertx.ext.web.RoutingContext;
@@ -91,7 +93,7 @@ public class GatewayVerticle extends AbstractVerticle {
       .setupCallback(router.route("/facebook-callback"));
     // create oath2 instance for keycloak
     
-    //OAuth2Auth keycloakAuthProvider = KeycloakAuth.create(vertx,OAuth2FlowType.PASSWORD,config());
+    OAuth2Auth keycloakAuthProvider = KeycloakAuth.create(vertx,OAuth2FlowType.PASSWORD,config());
 
 
     router.route("/api/*").handler(

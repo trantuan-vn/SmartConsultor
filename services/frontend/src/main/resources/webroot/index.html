@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth2 Test with Vert.x</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>OAuth2 Test with Vert.x</h1>
+    <button onclick="login('keycloak')">Login with Keycloak</button>
+    <button onclick="login('facebook')">Login with Facebook</button>
+    <button onclick="login('google')">Login with Google</button>
+
+    <script>
+        function login(provider) {
+            const url = `/auth/${provider}`;
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>
