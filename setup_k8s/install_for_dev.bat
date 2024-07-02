@@ -87,14 +87,17 @@ docker push tuantahp/kraft-kafka:latest
 kubectl apply -f .\kraft-kafka\kubernetes\kafka.yml
 
 echo Waiting for nginx flutter to be installed...
-cd C:\Users\tuant\SmartConsultor\flutter\smartconsultor-1.0.0\smartconsultor\build
+C:\Users\tuant\SmartConsultor\flutter\smartconsultor-1.0.0\smartconsultor
+flutter build web
+cd build
 #copy 2 file default.conf và Dockerfile từ thư mục nginx-flutter vào thư mục build
 docker build . -t nginx-flutter
 docker login
 docker tag nginx-flutter tuantahp/nginx-flutter:latest
 docker push tuantahp/nginx-flutter:latest
 cd C:\Users\tuant\SmartConsultor\setup_k8s\nginx-flutter
-kubectl apply -f nginx-flutter\nginx.yaml
+kubectl apply -f nginx.yaml
+kubectl port-forward service/nginx-svc 8080:80
 
 echo Waiting for istio to be installed...
 #tao CA
@@ -177,3 +180,12 @@ helm search repo pulsar
 helm repo update
 helm pull apache/pulsar --version 3.4.1
 helm install  pulsar .\pulsar
+
+ echo Waiting for microservices to be installed...
+ C:\Users\tuant\SmartConsultor\flutter\smartconsultor-1.0.0\smartconsultor
+flutter build web
+#copy vào thư mục buid/web tới src/main/resources/webroot
+cd C:\Users\tuant\SmartConsultor\microservices
+skaffold dev
+#skaffold delete
+kubectl port-forward service/gateway 8080:80

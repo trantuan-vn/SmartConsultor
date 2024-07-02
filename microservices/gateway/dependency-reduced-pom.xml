@@ -37,12 +37,22 @@
               <arg>run</arg>
               <arg>${verticle}</arg>
               <arg>-cluster</arg>
+              <arg>-conf</arg>
+              <arg>/app/config/docker.json</arg>
             </args>
             <ports>
               <port>8080</port>
               <port>7800</port>
             </ports>
           </container>
+          <extraDirectories>
+            <paths>
+              <path>
+                <from>${project.basedir}/src/config</from>
+                <into>/app/config</into>
+              </path>
+            </paths>
+          </extraDirectories>
         </configuration>
       </plugin>
     </plugins>

@@ -191,3 +191,31 @@ Chọn Clients từ menu bên trái.
 Chọn client mà bạn muốn lấy thông tin (ví dụ: 06bd4e91fadb).
 Chọn tab Credentials.
 Bạn sẽ thấy giá trị Secret. Đây là giá trị secret.
+
+
+kubectl get pods --namespace kube-system -o json | jq '.items[] | {"name": .metadata.name, labels: .metadata.labels}'
+
+kubectl get pods --all-namespaces -o json | jq -r '.items[] | 
+{
+    namespace: .metadata.namespace, 
+    name: .metadata.name, 
+    containers: .spec.containers[]
+} | select(.namespace | contains(\"default\")) |
+{
+    name: .name,
+    requestsCpu: .containers.resources.requests.cpu,
+    requestsMemory: .containers.resources.requests.memory, 
+    limitsCpu: .containers.resources.limits.cpu,
+    limitsMemory: .containers.resources.limits.memory
+}'
+
+kubectl get pods --all-namespaces -o json | jq -r '.items[] | 
+                                                   select(.metadata.namespace==\"default\") |
+                                                   .metadata.namespace as $ns | 
+                                                   .metadata.name as $pod | 
+                                                   .spec.containers[] | 
+                                                   \"\($ns) \($pod) \(.resources.requests.cpu // \"0\") \(.resources.requests.memory // \"0\") \(.resources.limits.cpu // \"0\") \(.resources.limits.memory // \"0\")\"'
+
+kubectl top pods --all-namespaces --no-headers
+
+

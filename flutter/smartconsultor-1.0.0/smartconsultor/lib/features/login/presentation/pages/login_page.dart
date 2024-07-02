@@ -8,7 +8,7 @@ import 'package:smartconsultor/core/di/injection_container.dart';
 
 class LoginPage extends StatelessWidget {
   // ignore: constant_identifier_names
-  static const LOGIN_ROUTE = '/static/login';
+  static const LOGIN_ROUTE = '/login';
 
   const LoginPage({super.key});
 
