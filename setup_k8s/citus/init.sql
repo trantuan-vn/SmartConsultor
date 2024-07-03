@@ -4,11 +4,14 @@ CREATE USER smartconsultor WITH PASSWORD 'secret99';
 ALTER USER smartconsultor SUPERUSER;
 ALTER USER smartconsultor CREATEDB CREATEROLE;
 CREATE DATABASE smartconsultor;
-
+CREATE DATABASE superset;
 -- master, all worker
 psql -U smartconsultor -d smartconsultor
 CREATE SCHEMA standing;
 CREATE SCHEMA history;
+CREATE EXTENSION citus;
+
+psql -U smartconsultor -d superset
 CREATE EXTENSION citus;
 
 --master 

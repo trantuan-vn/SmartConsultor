@@ -189,3 +189,20 @@ cd C:\Users\tuant\SmartConsultor\microservices
 skaffold dev
 #skaffold delete
 kubectl port-forward service/gateway 8080:80
+
+echo Waiting for redis to be installed...
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+helm search repo bitnami/redis
+helm pull bitnami/redis
+helm install redis ./redis
+
+echo Waiting for superset to be installed...
+helm repo add superset https://apache.github.io/superset
+helm repo update
+helm search repo superset/superset
+helm pull superset/superset --version 0.12.11 
+helm install superset ./superset
+
+
+
