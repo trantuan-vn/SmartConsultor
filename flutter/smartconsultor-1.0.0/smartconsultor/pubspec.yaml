@@ -50,9 +50,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/development.env
-    - assets/production.env
-    - assets/images/ 
+    - development.env
+    - production.env
+    - images/ 
 
     
     

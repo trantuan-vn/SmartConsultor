@@ -85,6 +85,16 @@
       <version>4.5.7</version>
       <scope>compile</scope>
     </dependency>  
+    <dependency>
+        <groupId>io.vertx</groupId>
+        <artifactId>vertx-redis-client</artifactId>
+        <version>4.5.7</version>
+    </dependency>    
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-web-sstore-redis</artifactId>
+      <version>4.5.8</version>
+    </dependency>    
   </dependencies>
 
   <build>

@@ -185,6 +185,10 @@ helm install  pulsar .\pulsar
  C:\Users\tuant\SmartConsultor\flutter\smartconsultor-1.0.0\smartconsultor
 flutter build web
 #copy vào thư mục buid/web tới src/main/resources/webroot
+#vào main.dart.js thay :
+#https://www.gstatic.com/flutter-canvaskit/3f3e560236539b7e2702f5ac790b2a4691b32d49/ thay bằng canvaskit/
+#https://fonts.gstatic.com/s/roboto/v20/KFOmCnqEu92Fr1Me5WZLCzYlKw.ttf thành assets/fonts/KFOmCnqEu92Fr1Me5WZLCzYlKw.ttf (trc do download file va copy vào thu muc assets/fonts)
+
 cd C:\Users\tuant\SmartConsultor\microservices
 skaffold dev
 #skaffold delete

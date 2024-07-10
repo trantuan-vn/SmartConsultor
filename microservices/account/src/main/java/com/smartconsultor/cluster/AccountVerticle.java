@@ -1,27 +1,15 @@
 package com.smartconsultor.cluster;
 
 import io.vertx.core.*;
-//import io.vertx.core.logging.SLF4JLogDelegateFactory;
 import io.vertx.core.spi.cluster.ClusterManager;
 import io.vertx.ext.cluster.infinispan.ClusterHealthCheck;
 import io.vertx.ext.cluster.infinispan.InfinispanClusterManager;
-
 import io.vertx.ext.healthchecks.HealthCheckHandler;
 import io.vertx.ext.healthchecks.HealthChecks;
 import io.vertx.ext.healthchecks.Status;
 import io.vertx.ext.web.Router;
-//import io.vertx.ext.web.handler.BodyHandler;
-//import io.vertx.ext.web.handler.ErrorHandler;
-//import io.vertx.ext.web.handler.ResponseTimeHandler;
-//import io.vertx.ext.web.handler.TimeoutHandler;
-
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;    
-
-
 
 @SuppressWarnings("deprecation")
 public class AccountVerticle extends AbstractVerticle {

@@ -29978,7 +29978,7 @@ $1(a){var s=$.cA
 s=(s==null?$.cA=A.fD(self.window.flutterConfiguration):s).b
 if(s==null)s=null
 else{s=s.canvasKitBaseUrl
-if(s==null)s=null}return(s==null?"https://www.gstatic.com/flutter-canvaskit/3f3e560236539b7e2702f5ac790b2a4691b32d49/":s)+a},
+if(s==null)s=null}return(s==null?"canvaskit/":s)+a},
 $S:68}
 A.awa.prototype={
 $1(a){this.a.remove()
@@ -30359,7 +30359,7 @@ for(i=k.b,h=i.length,g=0;g<i.length;i.length===h||(0,A.F)(i),++g){f=i[g]
 e=$.xG
 e.toString
 d=f.a
-a6.push(p.pp(d,e.vU(d),j))}}if(!m)a6.push(p.pp("Roboto","https://fonts.gstatic.com/s/roboto/v20/KFOmCnqEu92Fr1Me5WZLCzYlKw.ttf","Roboto"))
+a6.push(p.pp(d,e.vU(d),j))}}if(!m)a6.push(p.pp("Roboto","assets/fonts/KFOmCnqEu92Fr1Me5WZLCzYlKw.ttf","Roboto"))
 c=A.x(t.N,t.FK)
 b=A.a([],t.Co)
 a7=J
