@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vert.x SockJS Client</title>
+    <!-- Include SockJS and EventBus client libraries -->
+    <script src="javascripts/sockjs.min.js"></script>
+    <script src="javascripts/vertx-eventbus.js"></script>
+</head>
+<body>
+    <h1>Vert.x SockJS Client</h1>
+    <div id="messages"></div>
+    <form id="messageForm">
+        <input type="text" id="messageInput" placeholder="Type your message...">
+        <button type="submit">Send</button>
+    </form>
+    <div id="status">Connecting...</div> <!-- Div for connection status -->
+
+    <script>
+        var eb = new EventBus('http://localhost:8080/eventbus');
+        eb.enableReconnect(true);		
+
+        // Handle connection status
+        var statusDiv = document.getElementById('status');
+        function updateStatus(connected) {
+            statusDiv.textContent = connected ? 'Connected' : 'Disconnected';
+        }
+
+        // Handle incoming messages from the server
+        eb.onopen = function () {
+            console.log('Connected to Vert.x Event Bus');
+            updateStatus(true);
+            eb.registerHandler('chat.to.client', function (error, message) {
+                var messageDiv = document.createElement('div');
+                messageDiv.textContent = message.body;
+                document.getElementById('messages').appendChild(messageDiv);
+            });
+        };
+
+        eb.onclose = function () {
+            console.log('Disconnected from Vert.x Event Bus');
+            updateStatus(false);
+        };
+
+        // Handle form submission to send messages to the server
+        document.getElementById('messageForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            var messageInput = document.getElementById('messageInput');
+            var messageText = messageInput.value.trim();
+            if (messageText !== '') {
+                eb.send('chat.to.server', { body: messageText });
+                messageInput.value = '';
+            }
+        });
+    </script>
+</body>
+</html>

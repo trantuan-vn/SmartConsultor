@@ -89,74 +89,37 @@ public class GatewayVerticle extends AbstractVerticle {
         .setConnectionString(redisConnectionString)
         .setPassword(config().getJsonObject("redis").getString("password"));
     Redis redisClient = Redis.createClient(vertx, options);
-    //RedisSessionStore redisSessionStore = RedisSessionStore.create(vertx, redisClient);    
-    //router.route().handler(SessionHandler.create(redisSessionStore));
-    router.route().handler(SessionHandler.create(LocalSessionStore.create(vertx)));
+    RedisSessionStore redisSessionStore = RedisSessionStore.create(vertx, redisClient);    
+    router.route().handler(SessionHandler.create(redisSessionStore));
+    //router.route().handler(SessionHandler.create(LocalSessionStore.create(vertx)));
 
     // CSRF handler setup required for logout form
-    //String csrfSecret = generateCsrfSecret();
-    //CSRFHandler csrfHandler = CSRFHandler.create(vertx,csrfSecret);
-    //router.route().handler(csrfHandler);
-    //router.route().handler(ctx -> {
-    //  String path = ctx.normalisedPath();
-    //  if (!path.equals("/csp-report-endpoint") && !path.equals("/eventbus")) {
-    //    csrfHandler.handle(ctx);
-    //  } else {
-    //    ctx.next();
-    //  }
-    //});   
-
+    String csrfSecret = generateCsrfSecret();
+    CSRFHandler csrfHandler = CSRFHandler.create(vertx,csrfSecret);
+    router.routeWithRegex("^(?!/csp-report-endpoint|/eventbus).*$").handler(csrfHandler);
+        
     // HSTS Handler
-    //router.route().handler(HSTSHandler.create());
+    router.route().handler(HSTSHandler.create());
 
     // CSP handler
-       
-    //router.route().handler(CSPHandler.create()
-    //  .addDirective("default-src", "'unsafe-inline'")
-    //  .addDirective("default-src", "'unsafe-eval'")
-    //  .addDirective("report-uri", "/csp-report-endpoint")
-    //);
+    router.route().handler(CSPHandler.create()
+      .addDirective("default-src", "'unsafe-inline'")
+      .addDirective("default-src", "'unsafe-eval'")
+      .addDirective("report-uri", "/csp-report-endpoint")
+    );
     
     // Endpoint để nhận báo cáo CSP
-    //router.post("/csp-report-endpoint").handler(this::handleCspReport);  
+    router.post("/csp-report-endpoint").handler(this::handleCspReport);  
 
     // XFrame handler
-    //router.route().handler(XFrameHandler.create(XFrameHandler.DENY));
+    router.route().handler(XFrameHandler.create(XFrameHandler.DENY));
 
     // Cors Handler
-    //enableCorsSupport(router); 
+    enableCorsSupport(router); 
 
     // static content
-    RedisAPI redisAPI = RedisAPI.api(redisClient);
-    router.route("/*").handler(routingContext -> {
-      String path = routingContext.normalisedPath();
-      // Kiểm tra cache trong Redis
-      redisAPI.get(path, redisResult -> {
-        if (redisResult.succeeded() && redisResult.result() != null) {
-            // Nếu có trong cache, trả về nội dung từ Redis
-            logger.info("{} đã tồn tại trong redis", path);
-            routingContext.response().end(redisResult.result().toString());
-        } else {
-            // Nếu không có trong cache, chuyển tiếp yêu cầu đến StaticHandler
-            routingContext.next();
-            // Lấy nội dung phản hồi
-            routingContext.response().bodyEndHandler(buffer -> {
-              if (buffer!=null) {
-                String body = buffer.toString();
-                // Lưu vào Redis 
-                redisAPI.setex(path, config().getJsonObject("redis").getString("TTL"), body, redisSetResult -> {
-                    if (redisSetResult.failed()) {
-                      logger.error(redisSetResult.cause().getMessage());
-                    }
-                });
-              }
-            });
-        }
-      });
-    });    
-    router.route("/*").handler(StaticHandler.create());
+    router.route("/*").handler(StaticHandler.create().setCachingEnabled(true));
     
-
     // errorHandler
     router.route().failureHandler(ErrorHandler.create(vertx));
 
@@ -175,92 +138,32 @@ public class GatewayVerticle extends AbstractVerticle {
     HealthChecks checks = HealthChecks.create(vertx).register("cluster-health", procedure);
     router.get("/readiness").handler(HealthCheckHandler.createWithHealthChecks(checks));
 
+
+    
     // websocket
-    router.route("/eventbus/*").handler(keycloakOAuth2);            
+    router.route("/eventbus*").handler(keycloakOAuth2);            
+    // Allow events for the designated addresses in/out of the event bus bridge
+    SockJSBridgeOptions opts = new SockJSBridgeOptions()
+      .addInboundPermitted(new PermittedOptions().setAddress("chat.to.server"))
+      .addOutboundPermitted(new PermittedOptions().setAddress("chat.to.client"));
 
-    SockJSHandlerOptions websocketOptions = new SockJSHandlerOptions()
-      .setHeartbeatInterval(3000)
-      .setRegisterWriteHandler(true);
-    SockJSHandler sockJSHandler = SockJSHandler.create(vertx, websocketOptions);  
-
-    //test
-    PermittedOptions inboundPermitted = new PermittedOptions().setAddress("chat.to.server");
-    //inboundPermitted.setRequiredAuthority("place_orders");
-    PermittedOptions outboundPermitted = new PermittedOptions().setAddress("chat.to.client");
+    // Create the event bus bridge and add it to the router.
+    SockJSHandler ebHandler = SockJSHandler.create(vertx);
+    router.route("/eventbus*").subRouter(ebHandler.bridge(opts));
     
-    SockJSBridgeOptions sockJSBridgeOptions = new SockJSBridgeOptions()
-      .addInboundPermitted(inboundPermitted)
-      .addOutboundPermitted(outboundPermitted);
-
-    router.route("/eventbus/*")
-    .subRouter(sockJSHandler.bridge(sockJSBridgeOptions, event -> {
-        if (event.socket().webUser() == null) {
-          // Người dùng chưa đăng nhập, không làm gì cả
-          event.complete(false);  // Hoặc bạn có thể gửi một phản hồi lỗi tùy thuộc vào trường hợp sử dụng của bạn
-          return;
-        }        
-        
-        String writeHandlerID = event.socket().writeHandlerID();     
-        String sessionID = event.socket().webSession().id(); 
-        String websocketSessionID = "websocket." + sessionID;
-
-        if (event.type() == BridgeEventType.SOCKET_CREATED) {
-          logger.info("SOCKET_CREATED writeHandlerID: {}", websocketSessionID);
-          // Store the writeHandlerID in Redis
-          redisAPI.setex(websocketSessionID, config().getJsonObject("redis").getString("TTL"), writeHandlerID, redisSetResult -> {
-              if (redisSetResult.failed()) {
-                  logger.error(redisSetResult.cause().getMessage());
-              }
-          });
-        } else if (event.type() == BridgeEventType.SOCKET_CLOSED) {
-            logger.info("SOCKET_CLOSED websocketSessionID: {}", websocketSessionID);
-            redisAPI.del(Collections.singletonList(websocketSessionID), redisDelResult -> {
-                if (redisDelResult.failed()) {
-                    logger.error(redisDelResult.cause().getMessage());
-                }
-            });
-        } else if (event.type() == BridgeEventType.SOCKET_PING) {
-          logger.info("SOCKET_PING websocketSessionID: {}", websocketSessionID);
-        } else if (event.type() == BridgeEventType.SEND || event.type() == BridgeEventType.PUBLISH) {
-          logger.info("{} websocketSessionID: {}",event.type().toString(), websocketSessionID);
-
-        }
-    
-        event.complete(true);
-    }));
-
     EventBus eb = vertx.eventBus();
 
     // Register to listen for messages coming IN to the server
     eb.consumer("chat.to.server").handler(message -> {
-        // Create a timestamp string
-        String timestamp = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM).format(Date.from(Instant.now()));
-        String receivedMessage = message.body().toString();
-        eb.send("chat.to.client", timestamp + ": " + receivedMessage);
-    });    
-
-    // test
-    router.get("/api/getWriteHandlerID").handler(rc -> {
       // Create a timestamp string
       String timestamp = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM).format(Date.from(Instant.now()));
-      String username = rc.user().principal().getString("preferred_username");       
-      String websocketUsername="websocket."+username;
-      redisAPI.get(websocketUsername, redisGetResult -> {
-        if (redisGetResult.succeeded()) {
-          // If the result is succeeded, pass the result to the resultHandler
-          if (redisGetResult.result()!=null){
-            vertx.eventBus().send(redisGetResult.result().toString(), Buffer.buffer(timestamp));
-          }
-        } else {
-          logger.error(redisGetResult.cause().getMessage());
-          rc.fail(redisGetResult.cause());
-        }
-      });     
+      // Send the message back out to all clients with the timestamp prepended.
+      eb.publish("chat.to.client", timestamp + ": " + message.body());
+    });          
 
-    });
+    // api test
+    router.get("/api/internal").handler(this::handleHelloRequest);  
 
-    router.get("/hello").handler(this::handleHelloRequest);    
-    
   }
   // end::router[]
 
