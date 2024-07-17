@@ -18,3 +18,12 @@ manifests:
     - gateway/deployment.yml
     - gateway/service.yml
     - k8s/headless-service.yml
+portForward:
+  - resourceType: deployment
+    resourceName: account-deployment
+    port: 5005
+    localPort: 5005
+  - resourceType: deployment
+    resourceName: gateway-deployment
+    port: 5006
+    localPort: 5006

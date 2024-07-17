@@ -43,6 +43,7 @@
             <ports>
               <port>8080</port>
               <port>7800</port>
+              <port>5006</port>
             </ports>
           </container>
           <extraDirectories>

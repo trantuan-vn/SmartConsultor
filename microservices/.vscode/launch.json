@@ -1,0 +1,19 @@
+{
+    "version": "0.1.0",
+    "configurations": [
+      {
+        "type": "java",
+        "name": "Debug Gateway Service",
+        "request": "attach",
+        "hostName": "localhost",
+        "port": 5006
+      },
+      {
+        "type": "java",
+        "name": "Debug Account Service",
+        "request": "attach",
+        "hostName": "localhost",
+        "port": 5005
+      }
+    ]
+}

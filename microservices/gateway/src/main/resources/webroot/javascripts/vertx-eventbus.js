@@ -67,6 +67,7 @@
    * @param options
    * @constructor
    */
+  
   var EventBus = function (url, options) {
     var self = this;
 

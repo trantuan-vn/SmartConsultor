@@ -13,6 +13,7 @@ import java.util.Set;
 
 import io.vertx.core.*;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
@@ -43,6 +44,7 @@ import io.vertx.ext.web.handler.XFrameHandler;
 import io.vertx.ext.web.handler.sockjs.SockJSBridgeOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions;
+import io.vertx.ext.web.sstore.LocalSessionStore;
 import io.vertx.ext.web.sstore.redis.RedisSessionStore;
 import io.vertx.redis.client.Redis;
 import io.vertx.redis.client.RedisAPI;
@@ -87,45 +89,42 @@ public class GatewayVerticle extends AbstractVerticle {
         .setConnectionString(redisConnectionString)
         .setPassword(config().getJsonObject("redis").getString("password"));
     Redis redisClient = Redis.createClient(vertx, options);
-    RedisSessionStore redisSessionStore = RedisSessionStore.create(vertx, redisClient);    
-    router.route().handler(SessionHandler.create(redisSessionStore));
+    //RedisSessionStore redisSessionStore = RedisSessionStore.create(vertx, redisClient);    
+    //router.route().handler(SessionHandler.create(redisSessionStore));
+    router.route().handler(SessionHandler.create(LocalSessionStore.create(vertx)));
 
     // CSRF handler setup required for logout form
     //String csrfSecret = generateCsrfSecret();
-    //router.route().handler(CSRFHandler.create(vertx,csrfSecret));
+    //CSRFHandler csrfHandler = CSRFHandler.create(vertx,csrfSecret);
+    //router.route().handler(csrfHandler);
+    //router.route().handler(ctx -> {
+    //  String path = ctx.normalisedPath();
+    //  if (!path.equals("/csp-report-endpoint") && !path.equals("/eventbus")) {
+    //    csrfHandler.handle(ctx);
+    //  } else {
+    //    ctx.next();
+    //  }
+    //});   
 
     // HSTS Handler
-    router.route().handler(HSTSHandler.create());
+    //router.route().handler(HSTSHandler.create());
 
     // CSP handler
        
-    router.route().handler(CSPHandler.create()
-      .addDirective("default-src", "'unsafe-inline'")
-      .addDirective("default-src", "'unsafe-eval'")
-      /* 
-      .addDirective("default-src", "*.gstatic.com")
-      .addDirective("default-src", "*.googleapis.com")
-      .addDirective("default-src", "*.unpkg.io")
-      .addDirective("script-src", "'self'")
-      .addDirective("script-src", "'unsafe-inline'")
-      .addDirective("script-src", "'unsafe-eval'")
-      .addDirective("script-src", "*.gstatic.com")
-      .addDirective("script-src", "*.googleapis.com")
-      .addDirective("script-src", "*.unpkg.io")      
-      .addDirective("script-src", "data")      
-      */
-      .addDirective("report-uri", "/csp-report-endpoint")
-    
-    );
+    //router.route().handler(CSPHandler.create()
+    //  .addDirective("default-src", "'unsafe-inline'")
+    //  .addDirective("default-src", "'unsafe-eval'")
+    //  .addDirective("report-uri", "/csp-report-endpoint")
+    //);
     
     // Endpoint để nhận báo cáo CSP
-    router.post("/csp-report-endpoint").handler(this::handleCspReport);  
+    //router.post("/csp-report-endpoint").handler(this::handleCspReport);  
 
     // XFrame handler
-    router.route().handler(XFrameHandler.create(XFrameHandler.DENY));
+    //router.route().handler(XFrameHandler.create(XFrameHandler.DENY));
 
     // Cors Handler
-    enableCorsSupport(router);
+    //enableCorsSupport(router); 
 
     // static content
     RedisAPI redisAPI = RedisAPI.api(redisClient);
@@ -224,12 +223,21 @@ public class GatewayVerticle extends AbstractVerticle {
           logger.info("SOCKET_PING websocketSessionID: {}", websocketSessionID);
         } else if (event.type() == BridgeEventType.SEND || event.type() == BridgeEventType.PUBLISH) {
           logger.info("{} websocketSessionID: {}",event.type().toString(), websocketSessionID);
+
         }
     
         event.complete(true);
     }));
-    
-  
+
+    EventBus eb = vertx.eventBus();
+
+    // Register to listen for messages coming IN to the server
+    eb.consumer("chat.to.server").handler(message -> {
+        // Create a timestamp string
+        String timestamp = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM).format(Date.from(Instant.now()));
+        String receivedMessage = message.body().toString();
+        eb.send("chat.to.client", timestamp + ": " + receivedMessage);
+    });    
 
     // test
     router.get("/api/getWriteHandlerID").handler(rc -> {
@@ -252,6 +260,7 @@ public class GatewayVerticle extends AbstractVerticle {
     });
 
     router.get("/hello").handler(this::handleHelloRequest);    
+    
   }
   // end::router[]
 

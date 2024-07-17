@@ -41,6 +41,7 @@
             <ports>
               <port>8080</port>
               <port>7800</port>
+              <port>5005</port>
             </ports>
           </container>
         </configuration>
