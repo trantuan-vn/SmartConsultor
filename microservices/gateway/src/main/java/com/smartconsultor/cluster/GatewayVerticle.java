@@ -6,21 +6,27 @@ import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.time.Instant;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.infinispan.configuration.cache.ConfigurationBuilder;
+import org.infinispan.configuration.global.GlobalConfigurationBuilder;
+import org.infinispan.configuration.global.GlobalJmxConfigurationBuilder;
+import org.infinispan.manager.DefaultCacheManager;
+import org.infinispan.manager.EmbeddedCacheManager;
+
 import io.vertx.core.*;
-import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.auth.User;
 import io.vertx.ext.auth.oauth2.OAuth2Auth;
 import io.vertx.ext.auth.oauth2.OAuth2FlowType;
+import io.vertx.ext.auth.oauth2.OAuth2Options;
+import io.vertx.ext.auth.oauth2.impl.OAuth2API;
 import io.vertx.ext.auth.oauth2.providers.KeycloakAuth;
-import io.vertx.ext.bridge.BridgeEventType;
 import io.vertx.ext.bridge.PermittedOptions;
 import io.vertx.ext.cluster.infinispan.ClusterHealthCheck;
 import io.vertx.ext.cluster.infinispan.InfinispanClusterManager;
@@ -43,8 +49,6 @@ import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.handler.XFrameHandler;
 import io.vertx.ext.web.handler.sockjs.SockJSBridgeOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
-import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions;
-import io.vertx.ext.web.sstore.LocalSessionStore;
 import io.vertx.ext.web.sstore.redis.RedisSessionStore;
 import io.vertx.redis.client.Redis;
 import io.vertx.redis.client.RedisAPI;
@@ -55,7 +59,7 @@ import io.vertx.core.logging.LoggerFactory;
 @SuppressWarnings("deprecation")
 public class GatewayVerticle extends AbstractVerticle {
   private static final Logger logger = LoggerFactory.getLogger(GatewayVerticle.class);
-
+  private OAuth2Auth keycloakAuthProvider;
   // tag::start[]
   @Override
   public void start() {
@@ -73,24 +77,26 @@ public class GatewayVerticle extends AbstractVerticle {
   // end::start[]
   // tag::router[]
   private void setupRouter(Router router) {
-    
+
     // get configuration
     String host = config().getJsonObject("server").getString("api.gateway.http.address");
     int port = config().getJsonObject("server").getInteger("api.gateway.http.port");
     String baseUrl = String.format("http://%s:%d", host, port);
     String redisConnectionString= "redis://"+ config().getJsonObject("redis").getString("host") 
                                       + ":" + config().getJsonObject("redis").getString("port");
-
+    
     // body handler
     router.route().handler(BodyHandler.create());
 
     // Store session information on the server side
+     
     RedisOptions options = new RedisOptions()
         .setConnectionString(redisConnectionString)
         .setPassword(config().getJsonObject("redis").getString("password"));
     Redis redisClient = Redis.createClient(vertx, options);
     RedisSessionStore redisSessionStore = RedisSessionStore.create(vertx, redisClient);    
     router.route().handler(SessionHandler.create(redisSessionStore));
+    
     //router.route().handler(SessionHandler.create(LocalSessionStore.create(vertx)));
 
     // CSRF handler setup required for logout form
@@ -124,14 +130,13 @@ public class GatewayVerticle extends AbstractVerticle {
     router.route().failureHandler(ErrorHandler.create(vertx));
 
     // create a oauth2 handler for Keycloak
-    OAuth2Auth keycloakAuthProvider = KeycloakAuth.create(vertx,OAuth2FlowType.AUTH_CODE,config().getJsonObject("keycloak"));
+    keycloakAuthProvider = KeycloakAuth.create(vertx,OAuth2FlowType.AUTH_CODE,config().getJsonObject("keycloak"));
     OAuth2AuthHandler keycloakOAuth2 = OAuth2AuthHandler
         .create(vertx, keycloakAuthProvider,baseUrl+"/callback")
         .setupCallback(router.route("/callback"));
 
     // protect "/api/*" by keycloakOAuth2
     router.route("/api/*").handler(keycloakOAuth2);    
-
     // check active
     router.get("/health").handler(rc -> rc.response().end("OK"));
     Handler<Promise<Status>> procedure = ClusterHealthCheck.createProcedure(vertx, false);
@@ -160,9 +165,14 @@ public class GatewayVerticle extends AbstractVerticle {
       // Send the message back out to all clients with the timestamp prepended.
       eb.publish("chat.to.client", timestamp + ": " + message.body());
     });          
-
+    // protect "/login" and redirect to home page after successful authentication
+    router.route("/login").handler(keycloakOAuth2).handler(ctx -> {
+      ctx.redirect("/"); // redirect to your desired URL after successful authentication
+    });    
+    // logout
+    router.post("/logout").handler(this::logoutHandler);    
     // api test
-    router.get("/api/internal").handler(this::handleHelloRequest);  
+    router.get("/api/hello").handler(this::handleHelloRequest);  
 
   }
   // end::router[]
@@ -185,7 +195,21 @@ public class GatewayVerticle extends AbstractVerticle {
   // end::handle-request[]
 
   // tag::main[]
-  public static void main(String[] args) {
+public static void main(String[] args) {
+    /*  
+    // Cấu hình toàn cục với domain JMX
+    GlobalJmxConfigurationBuilder globalConfigBuilder = GlobalConfigurationBuilder.defaultClusteredBuilder()
+            .globalJmxStatistics().enable()
+            .globalJmxStatistics().domain("my-infinispan-domain");
+
+    // Cấu hình cache
+    ConfigurationBuilder cacheConfigBuilder = new ConfigurationBuilder();
+    cacheConfigBuilder.jmxStatistics().enable();
+
+    // Tạo và cấu hình EmbeddedCacheManager
+    DefaultCacheManager cacheManager = new DefaultCacheManager(globalConfigBuilder.build(), cacheConfigBuilder.build());
+    ClusterManager mgr = new InfinispanClusterManager(cacheManager);
+     */
     ClusterManager mgr = new InfinispanClusterManager();
     Vertx.builder()
       .withClusterManager(mgr)
@@ -258,4 +282,39 @@ public class GatewayVerticle extends AbstractVerticle {
       .setStatusCode(200)
       .end();
   }  
+
+  private void logoutHandler(RoutingContext context) {
+    User user = context.user();
+    if (user == null || user.principal() == null) {
+        context.response().setStatusCode(401).end("Unauthorized");
+        return;
+    }
+
+    String accessToken = user.principal().getString("access_token");
+    String refreshToken = user.principal().getString("refresh_token");
+
+    if (accessToken == null || refreshToken == null) {
+        context.response().setStatusCode(400).end("Invalid tokens");
+        return;
+    }    
+    JsonObject configKeycloak=config().getJsonObject("keycloak");
+    OAuth2Options options = new OAuth2Options()
+    .setClientId(configKeycloak.getString("resource"))
+    .setClientSecret(configKeycloak.getJsonObject("credentials").getString("secret"))
+    .setSite(configKeycloak.getString("auth-server-url")) 
+    .setLogoutPath("/realms/" + configKeycloak.getString("realm") + "/protocol/openid-connect/logout");
+    
+    OAuth2API oauth2API = new OAuth2API(vertx,options);
+    oauth2API.logout(accessToken, refreshToken)
+      .onSuccess(v -> {
+        context.clearUser();
+        context.session().destroy();
+        context.response().setStatusCode(204).end();
+      })
+      .onFailure(err -> {
+        // Log error
+        logger.error(err.getMessage());
+        context.response().setStatusCode(500).end(); 
+      });
+  }
 }

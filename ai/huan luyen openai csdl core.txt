@@ -1,0 +1,53 @@
+Tôi có cơ sở dữ liệu oracle với các bảng quan hệ như sau: 
+
+rgii(
+	autoid: mã tự tăng ,
+	status: trạng thái thông tin nhà đầu tư (0 là hoạt động, khác 0 là không hoạt động), 
+	deleted: trạng thái xóa (0 là bình thường, 1 là xóa),	
+	iicode: mã nhà đầu tư,
+	card_no: số đăng ký sở hữu,
+	carddate: ngày cấp số đăng ký sở hữu
+);
+
+rgiiia(
+	autoid: mã tự tăng ,
+	status: trạng thái thông tin tài khoản nhà đầu tư (0 là hoạt động, khác 0 là không hoạt động), 
+	deleted: trạng thái xóa (0 là bình thường, 1 là xóa),
+	iicode: mã nhà đầu tư của bảng rgii,
+	tradeacctno: số tài khoản nhà đầu ở công ty chứng khoán.
+);
+
+rgsi (
+	autoid: mã tự tăng ,
+	status: trạng thái thông tin chứng khoán(0 là hoạt động, khác 0 là không hoạt động), 
+	deleted: trạng thái xóa (0 là bình thường, 1 là xóa),	
+	sicode: mã chứng khoán của tổ chức phát hành.
+);
+
+iamast(
+	autoid: mã tự tăng ,
+	status: trạng thái thông tin số dư chứng khoán của nhà đầu tư (0 là hoạt động, khác 0 là không hoạt động), 
+	deleted: trạng thái xóa (0 là bình thường, 1 là xóa),	
+	tradeacctno: số tài khoản nhà đầu ở công ty chứng khoán của bảng rgiiia,
+	sicode: mã chứng khoán của bảng rgsi
+	balance: số dư chứng khoán hiện tại.
+);
+
+camast(
+	autoid: mã tự tăng ,
+	status: trạng thái thông tin quyền lợi của nhà đầu tư khi tổ chức phát hành thực hiện nghĩa vụ hàng năm (0 là hoạt động, khác 0 là không hoạt động), 
+	deleted: trạng thái xóa (0 là bình thường, 1 là xóa),	
+	tradeacctno: số tài khoản nhà đầu ở công ty chứng khoán của bảng rgiiia,
+	sicode: mã chứng khoán của bảng rgsi,
+	type: phân loại tài khoản quyền lợi của nhà đầu tư (1: số dư vào ngày cuối cùng để tổ chức phát hành thực hiện nghĩa vụ với nhà đầu tư, 5: số dư được tổ chức phát hành tính toán để nhà đầu hưởng lợi),
+	balance: số dư quyền hiện tại.
+);
+
+EX1: kiểm tra thông tin 2 tài khoản chứng khoán 003C012040 và 003C016748 xem còn số dư chứng khoán và số dư quyền 
+
+kết quả kiểm tra số dư chứng khoán của tài khoản 003C012040 và 003C016748 là : 
+003C012040 | FPT | 0
+003C012040 | HPG | 1000
+003C016748 | FPT | 0
+003C016748 | HPG | 3000
+Đưa ra lý tại sao không đóng được tài khoản một cách dễ hiểu để người sử dụng phần mềm biết

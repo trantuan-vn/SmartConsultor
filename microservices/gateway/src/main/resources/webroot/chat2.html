@@ -18,11 +18,6 @@
     <div id="status">Connecting...</div> <!-- Div for connection status -->
 
     <script>
-        function getCookie(name) {
-            let value = `; ${document.cookie}`;
-            let parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-        }
 
         var eb = new EventBus('http://localhost:8080/eventbus');
         eb.enableReconnect(true);
@@ -37,8 +32,8 @@
         eb.onopen = function () {
             console.log('Connected to Vert.x Event Bus');
             updateStatus(true);
-            var csrfToken = getCookie('XSRF-TOKEN');
-            eb.registerHandler('chat.to.client', { headers: { 'X-XSRF-TOKEN': csrfToken } }, function (error, message) {
+            
+            eb.registerHandler('chat.to.client', function (error, message) {
                 var messageDiv = document.createElement('div');
                 messageDiv.textContent = message.body;
                 document.getElementById('messages').appendChild(messageDiv);
@@ -56,8 +51,8 @@
             var messageInput = document.getElementById('messageInput');
             var messageText = messageInput.value.trim();
             if (messageText !== '') {
-                var csrfToken = getCookie('XSRF-TOKEN');
-                eb.send('chat.to.server', { body: messageText }, { headers: { 'X-XSRF-TOKEN': csrfToken } });
+                
+                eb.send('chat.to.server', { body: messageText });
                 messageInput.value = '';
             }
         });

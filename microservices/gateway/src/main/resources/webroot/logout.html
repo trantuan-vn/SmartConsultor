@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout</title>
+</head>
+<body>
+    <form id="logoutForm" action="/logout" method="POST">
+        <button type="submit">Logout</button>
+    </form>
+
+    <script>
+        function getCsrfToken() {
+            const csrfToken = document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN')).split('=')[1];
+            return csrfToken;
+        }
+
+        document.getElementById('logoutForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Ngăn chặn mặc định submit form
+            // Thực hiện hành động logout ở đây
+            const csrfToken = getCsrfToken();
+            fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-XSRF-TOKEN': csrfToken
+                }
+            })
+            .then(function (response) {
+                if (response.status === 204) {
+                    console.info('Logout successfully: ', response.status);
+                } else {
+                    console.error('Logout failed with status:', response.status);
+                }
+            })
+            .catch(function (error) {
+                console.error('Error during logout:', error);
+            });
+        });
+    </script>
+
+</body>
+</html>

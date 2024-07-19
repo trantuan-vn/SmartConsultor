@@ -208,5 +208,7 @@ helm search repo superset/superset
 helm pull superset/superset --version 0.12.11 
 helm install superset ./superset
 
-
-
+echo Waiting for infinispan to be installed...
+git clone https://github.com/infinispan/infinispan-helm-charts.git
+helm install infinispan ./infinispan
+developer/7KDLCUR3

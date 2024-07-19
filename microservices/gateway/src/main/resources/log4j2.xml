@@ -3,7 +3,7 @@
     <Appenders>
 
         <Console name="console" target="SYSTEM_OUT">
-          <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+          <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss.SSS} [%t] %-5level %logger{36} - %C{1}.%M(%L) - %msg%n"/>
         </Console>
         <!-- 
         <Gelf name="gelf" host="udp:logstash-logstash" port="12201">
