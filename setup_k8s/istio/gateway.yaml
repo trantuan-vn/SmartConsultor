@@ -12,7 +12,7 @@ spec:
       protocol: HTTPS
     tls:
       mode: SIMPLE
-      credentialName: istio-ca
+      credentialName: smartconsultor-certificate-tls
     hosts:
     - "*"
 ---
@@ -31,23 +31,27 @@ spec:
         prefix: /
     route:
     - destination:
-        host: frontend.default.svc.cluster.local
+        host: gateway.default.svc.cluster.local
         port:
           number: 80
+  - match:
+    - uri:
+        prefix: /auth
+    route:
+    - destination:
+        host: keycloak.default.svc.cluster.local
+        port:
+          number: 80          
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
   name: sc-destinationrule
 spec:
-  host: frontend.default.svc.cluster.local
-  exportTo: ["."]
+  host: gateway.default.svc.cluster.local
   trafficPolicy:
     loadBalancer:
       simple: ROUND_ROBIN
-    connectionPool:
-      tcp:
-        maxConnections: 100
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry

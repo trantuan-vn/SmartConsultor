@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: infinispan-client-pod
+spec:
+  containers:
+  - name: infinispan-client
+    image: infinispan/cli:latest
+    command: ["sleep", "3600"]  # Pod sẽ ngủ trong 3600 giây
+

@@ -2,7 +2,7 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: selfsigned-issuer
-  namespace: default
+  namespace: istio-system
 spec:
   selfSigned: {}
 ---
@@ -10,7 +10,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: ca-certificate
-  namespace: default
+  namespace: istio-system
 spec:
   secretName: ca-certificate-tls
   duration: 8760h # 1 year
@@ -25,7 +25,7 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: ca-issuer
-  namespace: default
+  namespace: istio-system
 spec:
   ca:
     secretName: ca-certificate-tls
@@ -33,15 +33,16 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: my-app-certificate
-  namespace: default
+  name: smartconsultor-certificate
+  namespace: istio-system
 spec:
-  secretName: my-app-certificate-tls
+  secretName: smartconsultor-certificate-tls
   duration: 24h # Thời gian hiệu lực của chứng chỉ
   renewBefore: 12h # Thời gian trước khi hết hạn để gia hạn
-  commonName: my-app.example.com
+  commonName: smartconsultor.com
   dnsNames:
-  - my-app.example.com
+  - smartconsultor.com
+  - "*.smartconsultor.com"
   issuerRef:
     name: ca-issuer
     kind: Issuer

@@ -1,3 +1,6 @@
+Invoke-Expression -Command (minikube -p minikube docker-env | Out-String)
+docker system prune -a
+
 #dev environment: minikube v1.32.0, vs studio code 1.88.1, flutter 3.16.5, 
 #cd ..\setup_k8s
 minikube config set memory 16384
@@ -19,14 +22,25 @@ kubectl label namespace default istio-injection=enabled
 
 
 echo Waiting for security to be installed...
-#kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/prometheus.yaml
-#kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/grafana.yaml
-#kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/jaeger.yaml
-#kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/kiali.yaml
-kubectl apply -f .\istio\skywalking.yaml 
-kubectl apply -f .\istio\podToSkywalking.yaml 
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/prometheus.yaml
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/grafana.yaml
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/jaeger.yaml
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/kiali.yaml
+cd C:\Users\tuant\SmartConsultor\setup_k8s
+kubectl apply -f .\istio\cert-manager.io\cert.yaml
+kubectl apply -f .\istio\gateway.yaml
+$base64 = kubectl get secret smartconsultor-certificate-tls -n istio-system -o jsonpath="{.data['ca\.crt']}" | echo > input 
+base64 -d -i input -o ca.crt
+rm input
+# mở chrome 
+chrome://settings/security
+chọn chrome://settings/security và import ca.crt vào tab Trusted root
+
+
+#kubectl apply -f .\istio\skywalking.yaml 
+#kubectl apply -f .\istio\podToSkywalking.yaml 
 cd C:\istioctl-1.17.2-win
-istioctl manifest apply --set profile=demo --set meshConfig.enableEnvoyAccessLogService=true --set meshConfig.defaultConfig.envoyAccessLogService.address=skywalking-oap.istio-system.svc.cluster.local:11800
+#istioctl manifest apply --set profile=demo --set meshConfig.enableEnvoyAccessLogService=true --set meshConfig.defaultConfig.envoyAccessLogService.address=skywalking-oap.istio-system.svc.cluster.local:11800
 #kubectl apply -f .\istio\mTls.yaml 
 #kubectl port-forward service/skywalking-ui 8080:8080 -n istio-system
 #kubectl port-forward service/grafana 3000:3000 -n istio-system
@@ -212,3 +226,10 @@ echo Waiting for infinispan to be installed...
 git clone https://github.com/infinispan/infinispan-helm-charts.git
 helm install infinispan ./infinispan
 developer/7KDLCUR3
+
+echo Waiting for cert-manager to be installed...
+helm repo add jetstack https://charts.jetstack.io --force-update
+helm repo update
+helm search repo jetstack
+helm pull jetstack/cert-manager --version 1.15.1 
+helm install cert-manager ./cert-manager --namespace cert-manager --create-namespace --version v1.15.1 --set crds.enabled=true
