@@ -10,16 +10,12 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.infinispan.configuration.cache.ConfigurationBuilder;
-import org.infinispan.configuration.global.GlobalConfigurationBuilder;
-import org.infinispan.configuration.global.GlobalJmxConfigurationBuilder;
-import org.infinispan.manager.DefaultCacheManager;
-import org.infinispan.manager.EmbeddedCacheManager;
-
 import io.vertx.core.*;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
+import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.User;
 import io.vertx.ext.auth.oauth2.OAuth2Auth;
@@ -29,8 +25,6 @@ import io.vertx.ext.auth.oauth2.impl.OAuth2API;
 import io.vertx.ext.auth.oauth2.providers.KeycloakAuth;
 import io.vertx.ext.bridge.PermittedOptions;
 import io.vertx.ext.cluster.infinispan.ClusterHealthCheck;
-import io.vertx.ext.cluster.infinispan.InfinispanClusterManager;
-import io.vertx.core.spi.cluster.ClusterManager;
 
 import io.vertx.ext.healthchecks.HealthCheckHandler;
 import io.vertx.ext.healthchecks.HealthChecks;
@@ -49,66 +43,89 @@ import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.handler.XFrameHandler;
 import io.vertx.ext.web.handler.sockjs.SockJSBridgeOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
-import io.vertx.ext.web.sstore.redis.RedisSessionStore;
-import io.vertx.redis.client.Redis;
-import io.vertx.redis.client.RedisAPI;
-import io.vertx.redis.client.RedisOptions;
+import io.vertx.ext.web.sstore.SessionStore;
+import io.vertx.ext.web.sstore.infinispan.InfinispanSessionStore;
+import io.vertx.micrometer.PrometheusScrapingHandler;
+//import io.vertx.ext.web.sstore.redis.RedisSessionStore;
+//import io.vertx.redis.client.Redis;
+//import io.vertx.redis.client.RedisAPI;
+//import io.vertx.redis.client.RedisOptions;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.core.net.PemTrustOptions;
 
 @SuppressWarnings("deprecation")
 public class GatewayVerticle extends AbstractVerticle {
-  private static final Logger logger = LoggerFactory.getLogger(GatewayVerticle.class);
+  private static final Logger logger = LoggerFactory.getLogger(GatewayVerticle.class); 
   private OAuth2Auth keycloakAuthProvider;
+  
   // tag::start[]
   @Override
   public void start() {
     Router router = Router.router(vertx);   
-
     setupRouter(router);
-
     vertx.createHttpServer()
       .requestHandler(router)
       .listen(config().getJsonObject("server").getInteger("api.gateway.http.port"))
       .onSuccess(server -> {
-        logger.info("Gateway Server started and listening on port {}", server.actualPort());
-      });
+        logger.info("Gateway Server started and listening on port {}", server.actualPort()); 
+    });
   }
   // end::start[]
   // tag::router[]
-  private void setupRouter(Router router) {
-
+  private void setupRouter(Router router) { 
+        
     // get configuration
     String host = config().getJsonObject("server").getString("api.gateway.http.address");
     int port = config().getJsonObject("server").getInteger("api.gateway.http.port");
-    String baseUrl = String.format("http://%s:%d", host, port);
-    String redisConnectionString= "redis://"+ config().getJsonObject("redis").getString("host") 
-                                      + ":" + config().getJsonObject("redis").getString("port");
+    String baseUrl = String.format("https://%s:%d", host, port);
     
     // body handler
-    router.route().handler(BodyHandler.create());
+    router.route().handler(BodyHandler.create());  
 
     // Store session information on the server side
-     
+    /* 
+    String redisConnectionString= "redis://"+ config().getJsonObject("redis").getString("host") 
+                                      + ":" + config().getJsonObject("redis").getString("port");
     RedisOptions options = new RedisOptions()
         .setConnectionString(redisConnectionString)
         .setPassword(config().getJsonObject("redis").getString("password"));
     Redis redisClient = Redis.createClient(vertx, options);
     RedisSessionStore redisSessionStore = RedisSessionStore.create(vertx, redisClient);    
     router.route().handler(SessionHandler.create(redisSessionStore));
-    
-    //router.route().handler(SessionHandler.create(LocalSessionStore.create(vertx)));
+    */
+    JsonObject storeOptions = new JsonObject()
+      .put("servers", new JsonArray()
+        .add(new JsonObject()
+          .put("host",config().getJsonObject("infinispan").getString("host"))
+          .put("port", config().getJsonObject("infinispan").getInteger("port"))
+          //.put("username", System.getenv("INFINISPAN_USERNAME"))
+          //.put("password", System.getenv("INFINISPAN_PASSWORD"))
+          .put("username", config().getJsonObject("infinispan").getString("username"))
+          .put("password", config().getJsonObject("infinispan").getString("password"))          
+        )
+      );
+    SessionStore store = InfinispanSessionStore.create(vertx, storeOptions); 
+    router.route().handler(SessionHandler.create(store)
+                          .setCookieHttpOnlyFlag(true)
+                          .setCookieSecureFlag(true)
+                          );  
 
+    
     // CSRF handler setup required for logout form
     String csrfSecret = generateCsrfSecret();
     CSRFHandler csrfHandler = CSRFHandler.create(vertx,csrfSecret);
-    router.routeWithRegex("^(?!/csp-report-endpoint|/eventbus).*$").handler(csrfHandler);
+    //router.route().handler(csrfHandler);
+    //router.routeWithRegex("^(?!/csp-report-endpoint|/eventbus|/logout).*$").handler(csrfHandler);
+    router.routeWithRegex("^(?!/csp-report-endpoint).*$").handler(csrfHandler);
+    
         
     // HSTS Handler
     router.route().handler(HSTSHandler.create());
 
     // CSP handler
     router.route().handler(CSPHandler.create()
+      .addDirective("default-src", "auth.smartconsultor.com")
       .addDirective("default-src", "'unsafe-inline'")
       .addDirective("default-src", "'unsafe-eval'")
       .addDirective("report-uri", "/csp-report-endpoint")
@@ -122,15 +139,23 @@ public class GatewayVerticle extends AbstractVerticle {
 
     // Cors Handler
     enableCorsSupport(router); 
-
+    // add security header
+    addSecurityHeaders(router); 
     // static content
     router.route("/*").handler(StaticHandler.create().setCachingEnabled(true));
     
     // errorHandler
-    router.route().failureHandler(ErrorHandler.create(vertx));
+    router.route().failureHandler(ErrorHandler.create(vertx)); 
 
     // create a oauth2 handler for Keycloak
-    keycloakAuthProvider = KeycloakAuth.create(vertx,OAuth2FlowType.AUTH_CODE,config().getJsonObject("keycloak"));
+    // Tạo PemTrustOptions từ chứng chỉ CA
+    PemTrustOptions trustOptions = new PemTrustOptions().addCertPath("ca.crt");
+    // tạo client option
+    HttpClientOptions httpClientOptions = new HttpClientOptions()
+        .setSsl(true)
+        .setTrustOptions(trustOptions);    
+
+    keycloakAuthProvider = KeycloakAuth.create(vertx,OAuth2FlowType.AUTH_CODE, config().getJsonObject("keycloak"), httpClientOptions);
     OAuth2AuthHandler keycloakOAuth2 = OAuth2AuthHandler
         .create(vertx, keycloakAuthProvider,baseUrl+"/callback")
         .setupCallback(router.route("/callback"));
@@ -143,8 +168,6 @@ public class GatewayVerticle extends AbstractVerticle {
     HealthChecks checks = HealthChecks.create(vertx).register("cluster-health", procedure);
     router.get("/readiness").handler(HealthCheckHandler.createWithHealthChecks(checks));
 
-
-    
     // websocket
     router.route("/eventbus*").handler(keycloakOAuth2);            
     // Allow events for the designated addresses in/out of the event bus bridge
@@ -168,18 +191,33 @@ public class GatewayVerticle extends AbstractVerticle {
     // protect "/login" and redirect to home page after successful authentication
     router.route("/login").handler(keycloakOAuth2).handler(ctx -> {
       ctx.redirect("/"); // redirect to your desired URL after successful authentication
-    });    
+    });
+        // Đường dẫn để xuất khẩu các chỉ số Prometheus
+    router.route("/metrics").handler(PrometheusScrapingHandler.create());
     // logout
     router.post("/logout").handler(this::logoutHandler);    
     // api test
-    router.get("/api/hello").handler(this::handleHelloRequest);  
+    router.get("/api/*").handler(this::dispatchRequests);  
 
   }
   // end::router[]
 
-  // tag::handle-request[]
-  private void handleHelloRequest(RoutingContext rc) {
-    logger.info("Name {}",rc.queryParams().get("name"));
+  // tag::dispatchRequests[]
+  private void dispatchRequests(RoutingContext rc) {
+    int initialOffset = 5; // length of `/api/`
+    String path = rc.request().uri();
+    if (path.length() <= initialOffset) {
+      notFound(rc);
+      return;
+    }
+    logger.info(path);
+    String prefix = (path.substring(initialOffset)
+    .split("/"))[0];
+    logger.info(prefix);
+    // generate new relative path
+    String newPath = path.substring(initialOffset + prefix.length());
+    logger.info(newPath);
+
     vertx.eventBus().<String>request("greetings", rc.queryParams().get("name"))
       .map(Message::body)
       .onSuccess(reply -> {
@@ -190,39 +228,10 @@ public class GatewayVerticle extends AbstractVerticle {
         logger.error("Failed to receive reply from EventBus", error);
         rc.fail(error);
       }); 
-     
   } 
-  // end::handle-request[]
+  // end::dispatchRequests[]
 
-  // tag::main[]
-public static void main(String[] args) {
-    /*  
-    // Cấu hình toàn cục với domain JMX
-    GlobalJmxConfigurationBuilder globalConfigBuilder = GlobalConfigurationBuilder.defaultClusteredBuilder()
-            .globalJmxStatistics().enable()
-            .globalJmxStatistics().domain("my-infinispan-domain");
-
-    // Cấu hình cache
-    ConfigurationBuilder cacheConfigBuilder = new ConfigurationBuilder();
-    cacheConfigBuilder.jmxStatistics().enable();
-
-    // Tạo và cấu hình EmbeddedCacheManager
-    DefaultCacheManager cacheManager = new DefaultCacheManager(globalConfigBuilder.build(), cacheConfigBuilder.build());
-    ClusterManager mgr = new InfinispanClusterManager(cacheManager);
-     */
-    ClusterManager mgr = new InfinispanClusterManager();
-    Vertx.builder()
-      .withClusterManager(mgr)
-      .buildClustered().onComplete(res -> {
-        if (res.succeeded()) {
-          Vertx vertx = res.result();
-          vertx.deployVerticle(new GatewayVerticle());
-        } else {
-          logger.error(res.cause().getMessage());
-        }
-    });
-  }
-  // end::main[]
+  // CSRF code
   private static String generateCsrfSecret() {
       try {
           // Sử dụng SecureRandom để tạo một salt ngẫu nhiên
@@ -250,6 +259,7 @@ public static void main(String[] args) {
           return null;
       }
   } 
+  // CORS
   private void enableCorsSupport(Router router) {
     Set<String> allowHeaders = new HashSet<>();
     allowHeaders.add("x-requested-with");
@@ -270,7 +280,17 @@ public static void main(String[] args) {
       .allowedHeaders(allowHeaders)
       .allowedMethods(allowMethods));
   }      
-
+  private void addSecurityHeaders(Router router) {
+    router.route().handler(ctx -> { 
+      ctx.response()
+        .putHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload")
+        .putHeader("X-Content-Type-Options", "nosniff")
+        .putHeader("Referrer-Policy", "no-referrer-when-downgrade")
+        .putHeader("Feature-Policy", "geolocation 'self'; microphone 'none'; camera 'none'")
+        .putHeader("Permissions-Policy", "geolocation=(self), microphone=()");
+      ctx.next();
+    });
+  }  
   // Phương thức xử lý báo cáo CSP
   private void handleCspReport(RoutingContext rc) {
     // Extract the report body
@@ -282,7 +302,7 @@ public static void main(String[] args) {
       .setStatusCode(200)
       .end();
   }  
-
+  // logout
   private void logoutHandler(RoutingContext context) {
     User user = context.user();
     if (user == null || user.principal() == null) {
@@ -297,12 +317,20 @@ public static void main(String[] args) {
         context.response().setStatusCode(400).end("Invalid tokens");
         return;
     }    
+    // Tạo PemTrustOptions từ chứng chỉ CA
+    PemTrustOptions trustOptions = new PemTrustOptions().addCertPath("ca.crt");
+    // tạo client option
+    HttpClientOptions httpClientOptions = new HttpClientOptions()
+        .setSsl(true)
+        .setTrustOptions(trustOptions);    
+
     JsonObject configKeycloak=config().getJsonObject("keycloak");
     OAuth2Options options = new OAuth2Options()
     .setClientId(configKeycloak.getString("resource"))
     .setClientSecret(configKeycloak.getJsonObject("credentials").getString("secret"))
     .setSite(configKeycloak.getString("auth-server-url")) 
-    .setLogoutPath("/realms/" + configKeycloak.getString("realm") + "/protocol/openid-connect/logout");
+    .setLogoutPath("/realms/" + configKeycloak.getString("realm") + "/protocol/openid-connect/logout")
+    .setHttpClientOptions(httpClientOptions);
     
     OAuth2API oauth2API = new OAuth2API(vertx,options);
     oauth2API.logout(accessToken, refreshToken)
@@ -316,5 +344,11 @@ public static void main(String[] args) {
         logger.error(err.getMessage());
         context.response().setStatusCode(500).end(); 
       });
+  }
+  // not found
+  private void notFound(RoutingContext context) {
+    context.response().setStatusCode(404)
+      .putHeader("content-type", "application/json")
+      .end(new JsonObject().put("message", "not_found").encodePrettily());
   }
 }

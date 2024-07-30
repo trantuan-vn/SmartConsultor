@@ -32,7 +32,7 @@
             <image>tuantahp/gateway</image>
           </to>
           <container>
-            <mainClass>io.vertx.core.Launcher</mainClass>
+            <mainClass>com.smartconsultor.cluster.GatewayLauncher</mainClass>
             <args>
               <arg>run</arg>
               <arg>${verticle}</arg>
@@ -81,5 +81,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <verticle>com.smartconsultor.cluster.GatewayVerticle</verticle>
+    <version.infinispan>15.0.5.Final</version.infinispan>
   </properties>
 </project>

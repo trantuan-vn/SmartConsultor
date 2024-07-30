@@ -6,7 +6,8 @@ spec:
   selector:
     app: gateway
   ports:
-    - protocol: TCP
+    - name: main
+      protocol: TCP
       port: 80
-      targetPort: 8080
+      targetPort: 31862
 #  type: LoadBalancer

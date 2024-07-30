@@ -67,7 +67,11 @@
    * @param options
    * @constructor
    */
-  
+  function getCsrfToken() {
+    const csrfToken = document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN')).split('=')[1];
+    return csrfToken;
+  }
+
   var EventBus = function (url, options) {
     var self = this;
 
@@ -95,8 +99,11 @@
       }
       return Math.min(ms, self.reconnectDelayMax) | 0;
     };
-
-    this.defaultHeaders = null;
+    const csrfToken = getCsrfToken();
+    this.defaultHeaders = {
+      'X-XSRF-TOKEN': csrfToken
+    };
+    //this.defaultHeaders = null;
 
     // default event handlers
     this.onerror = function (err) {

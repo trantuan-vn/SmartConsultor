@@ -5,7 +5,7 @@ metadata:
   labels:
     app: gateway
 spec:
-  replicas: 2
+  replicas: 2  
   selector:
     matchLabels:
       app: gateway
@@ -27,27 +27,25 @@ spec:
           env:
             - name: JAVA_TOOL_OPTIONS
               value: "-Djava.net.preferIPv4Stack=true -Dvertx.jgroups.config=default-configs/default-jgroups-kubernetes.xml -Djgroups.dns.query=clustered-app.default.svc.cluster.local -Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.Log4j2LogDelegateFactory  -agentlib:jdwp=transport=dt_socket,server=y,address=5006,suspend=n,quiet=y"
-            - name: HTTP_PORT
-              value: "8080"
           ports:
-            - containerPort: 8080
+            - containerPort: 31862
             - containerPort: 7800
             - containerPort: 5006 # JDWP port
           livenessProbe:
             httpGet:
               path: /health
-              port: 8080
+              port: 31862
             failureThreshold: 1
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /readiness
-              port: 8080
+              port: 31862
             initialDelaySeconds: 5
             periodSeconds: 5
           startupProbe:
             httpGet:
               path: /readiness
-              port: 8080
+              port: 31862
             failureThreshold: 30
-            periodSeconds: 10
+            periodSeconds: 10          

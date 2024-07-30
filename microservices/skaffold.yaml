@@ -27,3 +27,47 @@ portForward:
     resourceName: gateway-deployment
     port: 5006
     localPort: 5006
+  - resourceType: service
+    resourceName: keycloak
+    namespace: istio-system    
+    port: 443 
+    localPort: 443    
+  - resourceType: service
+    resourceName: gateway
+    port: 80
+    localPort: 8080
+  - resourceType: service
+    resourceName: infinispan
+    port: 11222
+    localPort: 11222          
+  - resourceType: service
+    resourceName: superset
+    port: 8088
+    localPort: 8088
+  - resourceType: service
+    resourceName: pulsar-pulsar-manager
+    port: 9527
+    localPort: 9527    
+  - resourceType: service
+    resourceName: pulsar-grafana
+    port: 80
+    localPort: 9080        
+  - resourceType: service
+    resourceName: pulsar-kube-prometheus-sta-prometheus
+    port: 9090
+    localPort: 9090            
+  - resourceType: service
+    resourceName: grafana
+    namespace: istio-system
+    port: 3000
+    localPort: 3000                
+  - resourceType: service
+    resourceName: kiali
+    namespace: istio-system
+    port: 20001
+    localPort: 20001         
+  - resourceType: service
+    resourceName: tracing
+    namespace: istio-system
+    port: 80
+    localPort: 16686             

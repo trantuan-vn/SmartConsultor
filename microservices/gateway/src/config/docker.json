@@ -1,7 +1,7 @@
 {
     "server": {
-      "api.gateway.http.port": 8080,
-      "api.gateway.http.address": "localhost"
+      "api.gateway.http.port": 31862,
+      "api.gateway.http.address": "smartconsultor.com"
     },
 
     "websocket": {
@@ -15,10 +15,17 @@
       "TTL": "3600"
     },
 
+    "infinispan": {
+      "host": "infinispan",
+      "port": 11222,
+      "username":"developer",
+      "password":"7KDLCUR3"
+    },
+
     "keycloak": {
       "realm": "master",
       "realm-public-key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2lGolAK8FxCZQ0jtTMcMseAfxrnEhZbUTIKglZl49Dt6iZ49Uvvnf9jaN7AplM9d1UqQVKTh/hfDt6Hh2hsrLblMnCPmcBgXf72mqwVoAEVevN8XqObbikM3J6vuNhCprakI0BaPN0wl7FuMli6IjUMDbix/quo3LHuEF+as6HVQOotaATCYK21H5ZjSaAvRdIa5dJULYhRezQrqwfxvjrvvRVTh/fcR9eLrTNRTuIdYtDVAqaySDBVN20ni8N+XGwaPHtDhTThbrLBBkm7b+rqIAB+udmFLKAw5TqD0qnAdSlh7+w+tGl9JnacbmGxs9ARWi7SnSF5B3LerRt5nPQIDAQAB",
-      "auth-server-url": "http://keycloak",
+      "auth-server-url": "https://auth.smartconsultor.com", 
       "ssl-required": "external",
       "resource": "test",
       "credentials": {

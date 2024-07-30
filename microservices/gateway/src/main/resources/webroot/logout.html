@@ -21,7 +21,8 @@
             // Thực hiện hành động logout ở đây
             const csrfToken = getCsrfToken();
             fetch('/logout', {
-                method: 'POST',
+                method: 'POST'
+                ,
                 headers: {
                     'Content-Type': 'application/json',
                     'X-XSRF-TOKEN': csrfToken

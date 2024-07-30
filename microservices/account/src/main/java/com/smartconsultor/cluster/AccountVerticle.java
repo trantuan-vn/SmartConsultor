@@ -1,9 +1,7 @@
 package com.smartconsultor.cluster;
 
 import io.vertx.core.*;
-import io.vertx.core.spi.cluster.ClusterManager;
 import io.vertx.ext.cluster.infinispan.ClusterHealthCheck;
-import io.vertx.ext.cluster.infinispan.InfinispanClusterManager;
 import io.vertx.ext.healthchecks.HealthCheckHandler;
 import io.vertx.ext.healthchecks.HealthChecks;
 import io.vertx.ext.healthchecks.Status;
@@ -24,24 +22,13 @@ public class AccountVerticle extends AbstractVerticle {
   // tag::start[]
   @Override
   public void start() {
-    // set vertx logger delegate factory to slf4j
-    //String logFactory = System.getProperty("org.vertx.logger-delegate-factory-class-name");
-    //if (logFactory == null) {
-    //    System.setProperty("org.vertx.logger-delegate-factory-class-name", SLF4JLogDelegateFactory.class.getName());
-    //} 
-
     registerConsumer();
-
     Router router = setupRouter();
-
     vertx.createHttpServer()
       .requestHandler(router)
       .listen(HTTP_PORT)
       .onSuccess(server -> {
-        //System.out.println("Backend Server started and listening on port " + server.actualPort());
-
         logger.info("Backend Server started and listening on port {}", server.actualPort());
-
       });
   }
   // end::start[]
@@ -58,33 +45,12 @@ public class AccountVerticle extends AbstractVerticle {
   // tag::router[]
   private Router setupRouter() {
     Router router = Router.router(vertx);
-
     //router.route().handler(LoggerHandler.create(LoggerFormat.DEFAULT));
-
     router.get("/health").handler(rc -> rc.response().end("OK"));
-
     Handler<Promise<Status>> procedure = ClusterHealthCheck.createProcedure(vertx, false);
     HealthChecks checks = HealthChecks.create(vertx).register("cluster-health", procedure);
     router.get("/readiness").handler(HealthCheckHandler.createWithHealthChecks(checks));
     return router; 
   } 
   // end::router[]
-
-  // tag::main[]
-  public static void main(String[] args) {
-
-    ClusterManager mgr = new InfinispanClusterManager();
-       
-    Vertx.builder()
-      .withClusterManager(mgr) 
-      .buildClustered().onComplete(res -> {
-        if (res.succeeded()) {
-          Vertx vertx = res.result();
-          vertx.deployVerticle(new AccountVerticle());
-        } else {
-          res.cause().printStackTrace();
-        }
-    });    
-  }
-  // end::main[]
 }

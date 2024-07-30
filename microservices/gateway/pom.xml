@@ -13,6 +13,7 @@
     <!-- <maven.compiler.target>1.8</maven.compiler.target> -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <verticle>com.smartconsultor.cluster.GatewayVerticle</verticle>
+    <version.infinispan>15.0.5.Final</version.infinispan>
   </properties>
 
   <dependencyManagement>
@@ -26,7 +27,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
   <dependencies>
     <dependency>
         <groupId>io.vertx</groupId>
@@ -36,15 +36,12 @@
       <groupId>io.vertx</groupId> 
       <artifactId>vertx-web</artifactId>
     </dependency>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-infinispan</artifactId>
-      <version>4.5.4</version> 
-    </dependency>
+    <!-- health-check -->
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-health-check</artifactId>
     </dependency>
+    <!-- codegen -->
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-codegen</artifactId>
@@ -71,7 +68,7 @@
         <version>2.14.1</version>
         <scope>compile</scope>
     </dependency>
-    <!-- GELF Log4j2 Appender -->
+    <!-- GELF Log4j2 Appender -->    
     <dependency>
         <groupId>biz.paluch.logging</groupId>
         <artifactId>logstash-gelf</artifactId>
@@ -84,17 +81,28 @@
       <artifactId>vertx-auth-oauth2</artifactId>
       <version>4.5.7</version>
       <scope>compile</scope>
-    </dependency>  
-    <dependency>
-        <groupId>io.vertx</groupId>
-        <artifactId>vertx-redis-client</artifactId>
-        <version>4.5.7</version>
-    </dependency>    
+    </dependency>
+    <!-- infinispan -->
     <dependency>
       <groupId>io.vertx</groupId>
-      <artifactId>vertx-web-sstore-redis</artifactId>
-      <version>4.5.8</version>
+      <artifactId>vertx-infinispan</artifactId>
+      <version>4.5.4</version> 
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-web-sstore-infinispan</artifactId>
+      <version>4.5.9</version>
     </dependency>    
+    <!-- metrics-prometheus -->
+    <dependency>
+        <groupId>io.vertx</groupId>
+        <artifactId>vertx-micrometer-metrics</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>io.micrometer</groupId>
+        <artifactId>micrometer-registry-prometheus</artifactId>
+        <version>1.10.5</version>
+    </dependency>   
   </dependencies>
 
   <build>
@@ -126,7 +134,7 @@
             <image>tuantahp/gateway</image>
           </to>
           <container>
-            <mainClass>io.vertx.core.Launcher</mainClass>
+            <mainClass>com.smartconsultor.cluster.GatewayLauncher</mainClass>
             <args>
               <arg>run</arg>
               <arg>${verticle}</arg>
@@ -152,5 +160,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>
