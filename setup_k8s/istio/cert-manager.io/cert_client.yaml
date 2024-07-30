@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: smartconsultor-certificate
+  namespace: istio-system
+spec:
+  secretName: smartconsultor-certificate-tls
+  duration: 24h # Thời gian hiệu lực của chứng chỉ
+  renewBefore: 12h # Thời gian trước khi hết hạn để gia hạn
+  commonName: smartconsultor.com
+  dnsNames:
+  - smartconsultor.com
+  - "*.smartconsultor.com"
+  issuerRef:
+    name: ca-issuer
+    kind: Issuer

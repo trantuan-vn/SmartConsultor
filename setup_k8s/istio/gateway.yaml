@@ -1,7 +1,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: sc-gateway
+  name: gateway-gateway
 spec:
   selector:
     istio: ingressgateway
@@ -14,56 +14,61 @@ spec:
       mode: SIMPLE
       credentialName: smartconsultor-certificate-tls
     hosts:
-    - "*"
+    - "smartconsultor.com"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: sc-virtualservice
+  name: gateway-virtualservice
 spec:
   hosts:
-  - "*"
+  - "smartconsultor.com"
   gateways:
-  - sc-gateway
+  - gateway-gateway
   http:
   - match:
     - uri:
         prefix: /
     route:
     - destination:
-        host: gateway.default.svc.cluster.local
+        host: gateway
         port:
           number: 80
-  - match:
-    - uri:
-        prefix: /auth
-    route:
-    - destination:
-        host: keycloak.default.svc.cluster.local
-        port:
-          number: 80          
 ---
 apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
+kind: Gateway
 metadata:
-  name: sc-destinationrule
+  name: keycloak-gateway
 spec:
-  host: gateway.default.svc.cluster.local
-  trafficPolicy:
-    loadBalancer:
-      simple: ROUND_ROBIN
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      credentialName: smartconsultor-certificate-tls
+    hosts:
+    - "auth.smartconsultor.com"
 ---
 apiVersion: networking.istio.io/v1alpha3
-kind: ServiceEntry
+kind: VirtualService
 metadata:
-  name: allow-eventbus
+  name: keycloak-virtualservice
 spec:
   hosts:
-  - clustered-app.default.svc.cluster.local
-  location: MESH_INTERNAL
-  ports:
-  - number: 7800
-    name: tcp
-    protocol: TCP
-  resolution: NONE
+  - "auth.smartconsultor.com"
+  gateways:
+  - keycloak-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: keycloak.istio-system.svc.cluster.local
+        port:
+          number: 443
 

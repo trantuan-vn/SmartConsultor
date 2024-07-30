@@ -37,8 +37,8 @@ metadata:
   namespace: istio-system
 spec:
   secretName: smartconsultor-certificate-tls
-  duration: 24h # Thời gian hiệu lực của chứng chỉ
-  renewBefore: 12h # Thời gian trước khi hết hạn để gia hạn
+  duration: 8760h # Thời gian hiệu lực của chứng chỉ
+  renewBefore: 360h # Thời gian trước khi hết hạn để gia hạn
   commonName: smartconsultor.com
   dnsNames:
   - smartconsultor.com

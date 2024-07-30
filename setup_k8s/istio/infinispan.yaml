@@ -1,0 +1,31 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: infinispan-destination
+spec:
+  host: infinispan
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 100
+      http:
+        http2MaxRequests: 1000
+    outlierDetection:
+      consecutive5xxErrors: 1
+      interval: 1s
+      baseEjectionTime: 3m
+      maxEjectionPercent: 100
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: infinispan
+spec:
+  hosts:
+  - infinispan
+  http:
+  - route:
+    - destination:
+        host: infinispan
+        port:
+          number: 11222

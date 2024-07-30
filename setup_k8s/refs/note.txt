@@ -233,3 +233,17 @@ kubectl top pods --all-namespaces --no-headers
 [gateway]   "iat" : 1721357047,
 [gateway]   "exp" : 1721357107
 [gateway] }
+
+
+Port forwarding service/pulsar-grafana in namespace default, remote port 80 -> http://127.0.0.1:9080
+Port forwarding service/superset in namespace default, remote port 8088 -> http://127.0.0.1:8088
+Port forwarding service/gateway in namespace default, remote port 80 -> http://127.0.0.1:8080
+Port forwarding service/grafana in namespace istio-system, remote port 3000 -> http://127.0.0.1:3000
+Port forwarding service/kiali in namespace istio-system, remote port 20001 -> http://127.0.0.1:20001
+Port forwarding deployment/gateway-deployment in namespace default, remote port 5006 -> http://127.0.0.1:5006
+Port forwarding service/pulsar-pulsar-manager in namespace default, remote port 9527 -> http://127.0.0.1:9527
+Port forwarding deployment/account-deployment in namespace default, remote port 5005 -> http://127.0.0.1:5005
+Port forwarding service/pulsar-kube-prometheus-sta-prometheus in namespace default, remote port 9090 -> http://127.0.0.1:9090
+Port forwarding service/tracing in namespace istio-system, remote port 80 -> http://127.0.0.1:16686
+Port forwarding service/infinispan in namespace default, remote port 11222 -> http://127.0.0.1:11222
+Port forwarding service/keycloak in namespace default, remote port 80 -> http://127.0.0.1:80

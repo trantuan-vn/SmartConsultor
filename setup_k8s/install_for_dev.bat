@@ -14,7 +14,7 @@ minikube node add
 minikube addons enable metrics-server
 #minikube addons enable istio-provisioner
 #minikube addons enable istio
-cd C:\istioctl-1.17.2-win
+cd C:\istioctl-1.22.3-win
 istioctl install --set profile=demo
 istioctl operator init
 kubectl label namespace default istio-injection=enabled
@@ -81,7 +81,8 @@ docker login
 docker push tuantahp/keycloak:latest
 kubectl apply -f keycloak/keycloak.yaml 
 #helm repo add bitnami https://charts.bitnami.com/bitnami
-helm install  keycloak .\keycloak
+kubectl apply -f .\istio\cert-manager.io\copy_cert_to_default.yaml
+helm install keycloak .\keycloak --namespace istio-system
 
 echo Waiting for ignite to be installed...
 #https://github.com/helm/charts/tree/master/stable/ignite, https://artifacthub.io/ install helm 
@@ -233,3 +234,53 @@ helm repo update
 helm search repo jetstack
 helm pull jetstack/cert-manager --version 1.15.1 
 helm install cert-manager ./cert-manager --namespace cert-manager --create-namespace --version v1.15.1 --set crds.enabled=true
+
+echo Waiting for istio to be installed...
+helm repo add istio https://istio-release.storage.googleapis.com/charts
+helm repo update
+helm search repo istio
+
+helm pull istio/base --version 1.22.3 
+helm pull istio/istiod --version 1.22.3
+helm pull istio/gateway --version 1.22.3
+kubectl create namespace istio-system
+helm install istio-base ./base -n istio-system --set defaultRevision=default
+helm ls -n istio-system
+helm install istiod ./istiod -n istio-system --wait
+helm status istiod -n istio-system
+helm install istio-ingress ./gateway -n istio-system  --wait
+kubectl label namespace default istio-injection=enabled
+#kubectl label namespace default istio-injection-
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/prometheus.yaml
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/grafana.yaml
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/jaeger.yaml
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/kiali.yaml
+
+
+https://console.cloud.google.com/apis/credentials/oauthclient/533670103-3iajdsvqgl70ampdmslspn6268gedbq6.apps.googleusercontent.com?project=blissful-potion-423304-r4 (tuanta2021@gmail.com)
+Authorized JavaScript origins: https://auth.smartconsultor.com
+Authorized redirect URIs: https://auth.smartconsultor.com/realms/master/broker/google/endpoint (copy từ keycloak)
+
+# error: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2024-07-30T02:30:52Z is after 2024-07-29T15:13:16Z
+kubectl delete validatingwebhookconfigurations cert-manager-webhook
+kubectl delete mutatingwebhookconfigurations cert-manager-webhook
+kubectl rollout restart deployment cert-manager-webhook -n cert-manager
+
+#gia han chu ky
+kubectl delete -f .\istio\gateway.yaml
+kubectl apply -f .\istio\gateway.yaml
+kubectl rollout restart statefulset/keycloak -n istio-system
+
+#cau hinh gui email google trong keycloak
+đăng nhập gmail tuanta2021@gmail.com
+https://security.google.com/settings/security/apppasswords
+stmp gmail/"ccsl oaqt ukzn xgdy"
+trong tab email của realm setting (host: smtp.gmail.com, port: 587, email: tuanta2021@gmail.com  , pass: "ccsl oaqt ukzn xgdy" )
+
+#cau hinh gui email trong keycloak
+đăng nhập fb tran_anh_tuan2000@yahoo.com
+https://developers.facebook.com/apps/745909260767468/use_cases/customize/?use_case_enum=FB_LOGIN
+add permission email
+vào setting đặt: 
+
+

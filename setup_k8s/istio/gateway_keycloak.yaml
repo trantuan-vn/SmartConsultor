@@ -1,0 +1,64 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default ingress gateway
+  servers:
+  - port:
+      number: 443
+      name: gateway
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      credentialName: smartconsultor-certificate-tls
+    hosts:
+    - smartconsultor.com
+  - port:
+      number: 443
+      name: keycloak
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      credentialName: smartconsultor-certificate-tls
+    hosts:
+    - auth.smartconsultor.com
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: gateway
+spec:
+  hosts:
+  - smartconsultor.com
+  gateways:
+  - gateway
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: gateway
+        port:
+          number: 80
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: keycloak
+spec:
+  hosts:
+  - auth.smartconsultor.com
+  gateways:
+  - gateway
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: keycloak
+        port:
+          number: 443          
