@@ -241,5 +241,157 @@ spec:
         config:
           headers_to_add:
           - header:
-              key: "x-custom-header"
-              value: "custom-value"
+              key: "version"
+              value: "v1"
+---
+#1.5 Cấu hình retry policy cho các dịch vụ
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: retry-policy
+  namespace: istio-system
+spec:
+  configPatches:
+  - applyTo: ROUTE_CONFIGURATION
+    match:
+      context: SIDECAR_OUTBOUND
+    patch:
+      operation: MERGE
+      value:
+        name: local_route
+        virtual_hosts:
+        - name: my-service
+          routes:
+          - match:
+              prefix: "/"
+            route:
+              retry_policy:
+                retry_on: "5xx"
+                num_retries: 3
+                per_try_timeout: 2s   
+
+---
+#2.2.2.3 cho phép gateway truy cập vì gateway tao từ sa default và ns default, nếu bảo mật tạo ra sa mới và gán quyền lại
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: keycloak-authorizationpolicy
+  namespace: default
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals: ["cluster.local/ns/default/sa/default"]
+    - source:
+        namespaces: ["default"]
+    to:
+    - operation:
+        methods: ["GET"]
+        paths: ["/*"]
+    - operation:
+        methods: ["POST"]
+        paths: ["/"]                  
+
+  - resourceType: service
+    resourceName: keycloak
+    namespace: istio-system    
+    port: 443 
+    localPort: 443    
+  - resourceType: service
+    resourceName: gateway
+    port: 80
+    localPort: 8080
+  - resourceType: service
+    resourceName: infinispan
+    port: 11222
+    localPort: 11222          
+  - resourceType: service
+    resourceName: superset
+    port: 8088
+    localPort: 8088
+  - resourceType: service
+    resourceName: pulsar-pulsar-manager
+    port: 9527
+    localPort: 9527    
+  - resourceType: service
+    resourceName: pulsar-grafana
+    port: 80
+    localPort: 9080        
+  - resourceType: service
+    resourceName: pulsar-kube-prometheus-sta-prometheus
+    port: 9090
+    localPort: 9090            
+  - resourceType: service
+    resourceName: grafana
+    namespace: istio-system
+    port: 3000
+    localPort: 3000                
+  - resourceType: service
+    resourceName: kiali
+    namespace: istio-system
+    port: 20001
+    localPort: 20001         
+  - resourceType: service
+    resourceName: tracing
+    namespace: istio-system
+    port: 80
+    localPort: 16686              
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: infinispan-destinationrule
+spec:
+  host: infinispan
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: superset-destinationrule
+spec:
+  host: superset
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: pulsar-destinationrule
+spec:
+  host: pulsar-pulsar-manager
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: pulsarGrafana-destinationrule
+spec:
+  host: pulsar-grafana
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: pulsarPrometheus-destinationrule
+spec:
+  host: pulsar-kube-prometheus  
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: istioGrafana-destinationrule
+spec:
+  host: grafana.istio-system.svc.cluster.local 
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: kiali-destinationrule
+spec:
+  host: kiali.istio-system.svc.cluster.local
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: tracing-destinationrule
+spec:
+  host: tracing.istio-system.svc.cluster.local      
+
+  

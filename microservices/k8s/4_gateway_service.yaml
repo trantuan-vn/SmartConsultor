@@ -1,0 +1,153 @@
+#2. gateway service to pod
+apiVersion: v1
+kind: Service
+metadata:
+  name: clustered-app
+spec:
+  selector:
+    cluster: clustered-app
+  ports:
+    - name: jgroups
+      port: 7800
+      protocol: TCP
+  publishNotReadyAddresses: true
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+spec:
+  selector:
+    app: gateway
+  ports:
+    - name: main
+      protocol: TCP
+      port: 80
+      targetPort: 31862
+#  type: LoadBalancer
+---  
+#2.1 Gateway
+#2.1.1 Thử nghiệm version=v1
+#apiVersion: networking.istio.io/v1alpha3
+#kind: EnvoyFilter
+#metadata:
+#  name: gateway-add-headers-version
+#  namespace: default
+#spec:
+#  workloadSelector:
+#    labels:
+#      app: gateway
+#  configPatches:
+#  - applyTo: HTTP_FILTER
+#    match:
+#      context: SIDECAR_INBOUND
+#    patch:
+#      operation: INSERT_BEFORE
+#      value:
+#        name: envoy.filters.http.lua
+#        typed_config:
+#          "@type": "type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua"
+#          inlineCode: |
+#            function envoy_on_request(handle)
+#              handle:headers():add("version", "v1")
+#            end
+#---
+#2.1.2 Cấu hình timeout và retry
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: gateway-virtualservice
+spec:
+  hosts:
+  - "smartconsultor.com"
+  gateways:
+  - gateway-gateway
+  http:
+  - route:
+    - destination:
+        host: gateway
+        subset: v1
+      weight: 100
+    - destination:
+        host: gateway
+        subset: v2
+      weight: 0
+    retries:
+      attempts: 3
+      perTryTimeout: 2s
+    timeout: 10s         
+---
+#2.1.3 Sử dụng circuit breaker
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: gateway-destinationrule
+spec:
+  host: gateway.default.svc.cluster.local
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2
+    labels:
+      version: v2  
+  trafficPolicy:
+    outlierDetection:
+      consecutiveGatewayErrors: 5
+      interval: 5m
+      baseEjectionTime: 15m
+      maxEjectionPercent: 50
+    loadBalancer:
+      simple: LEAST_REQUEST #ROUND_ROBIN
+    connectionPool:
+      http:
+        http1MaxPendingRequests: 100
+        http2MaxRequests: 1000
+        maxRequestsPerConnection: 10
+        idleTimeout: 30s
+      tcp:
+        maxConnections: 100   
+        connectTimeout: 30ms
+        tcpKeepalive:
+          time: 7200s
+          interval: 75s       
+--- 
+#2.2 cluster-app
+#2.2.1 Cấu hình timeout và retry
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: cluster-app-virtualservice
+  namespace: default
+spec:
+  hosts:
+  - cluster-app
+  tcp:
+  - match:
+    - port: 7800
+    route:
+    - destination:
+        host: cluster-app
+        port:
+          number: 7800
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: cluster-app-destinationrule
+  namespace: default
+spec:
+  host: cluster-app
+  trafficPolicy:
+    outlierDetection:
+      consecutiveGatewayErrors: 5
+      interval: 5m
+      baseEjectionTime: 15m
+      maxEjectionPercent: 50  
+    connectionPool:
+      tcp:
+        maxConnections: 20
+        tcpKeepalive:
+          time: 7200s
+          interval: 75s         

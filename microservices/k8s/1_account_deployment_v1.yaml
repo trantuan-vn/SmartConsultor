@@ -1,14 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: account-deployment
+  name: account-deployment-v1
   labels:
     app: account
+    version: v1          
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: account
+      version: v1          
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -18,6 +20,7 @@ spec:
     metadata:
       labels:
         app: account
+        version: v1          
         cluster: clustered-app
     spec:
       containers:
@@ -26,7 +29,7 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: JAVA_TOOL_OPTIONS
-              value: "-Djava.net.preferIPv4Stack=true -Dvertx.jgroups.config=default-configs/default-jgroups-kubernetes.xml -Djgroups.dns.query=clustered-app.default.svc.cluster.local -Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.Log4j2LogDelegateFactory -agentlib:jdwp=transport=dt_socket,server=y,address=5005,suspend=n,quiet=y"
+              value: "-Djava.net.preferIPv4Stack=true -Dvertx.jgroups.config=default-configs/default-jgroups-kubernetes.xml -Djgroups.dns.query=clustered-app.default.svc.cluster.local -Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.Log4j2LogDelegateFactory"
             - name: HTTP_PORT
               value: "8080"
             - name: POD_NAME
@@ -36,7 +39,6 @@ spec:
           ports:
             - containerPort: 8080
             - containerPort: 7800
-            - containerPort: 5005 # JDWP port
           livenessProbe:
             httpGet:
               path: /health

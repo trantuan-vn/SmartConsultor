@@ -7,7 +7,7 @@ minikube config set memory 16384
 minikube config set disk-size 40g
 minikube config set cpus 6
 
-#minikube config view
+#minikube config view   
 minikube start
 minikube node add 
 
@@ -283,4 +283,15 @@ https://developers.facebook.com/apps/745909260767468/use_cases/customize/?use_ca
 add permission email
 vào setting đặt: 
 
+
+#load test 
+kubectl apply -f <(C:\istio-1.22.3\bin\istioctl kube-inject -f .\test\fortio.yaml)
+kubectl get pod
+kubectl exec [fortio_pod] -c fortio -- /usr/bin/fortio load -c 2 -qps 0 -n 20 -loglevel Warning http://gateway 
+kubectl exec istio-ingressgateway-858746c7cb-98lhm -c istio-proxy -n istio-system -- pilot-agent request GET stats 
+
+
+https://smartconsultor.com:31862
+https://auth.smartconsultor.com:31862
+https://monitor.smartconsultor.com:31862/kiali
 

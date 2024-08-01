@@ -15,6 +15,7 @@ spec:
       credentialName: smartconsultor-certificate-tls
     hosts:
     - "smartconsultor.com"
+    - "auth.smartconsultor.com"    
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -34,24 +35,10 @@ spec:
         host: gateway
         port:
           number: 80
----
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  name: keycloak-gateway
-spec:
-  selector:
-    istio: ingressgateway
-  servers:
-  - port:
-      number: 443
-      name: https
-      protocol: HTTPS
-    tls:
-      mode: SIMPLE
-      credentialName: smartconsultor-certificate-tls
-    hosts:
-    - "auth.smartconsultor.com"
+    retries:
+      attempts: 3
+      perTryTimeout: 2s
+    timeout: 10s          
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -71,4 +58,33 @@ spec:
         host: keycloak.istio-system.svc.cluster.local
         port:
           number: 443
-
+    retries:
+      attempts: 3
+      perTryTimeout: 2s
+    timeout: 10s              
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: gateway-destinationrule
+spec:
+  host: gateway
+  trafficPolicy:
+    outlierDetection:
+      consecutiveErrors: 5
+      interval: 10s
+      baseEjectionTime: 30s
+      maxEjectionPercent: 50
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: keycloak-destinationrule
+spec:
+  host: keycloak.istio-system.svc.cluster.local
+  trafficPolicy:
+    outlierDetection:
+      consecutiveErrors: 5
+      interval: 10s
+      baseEjectionTime: 30s
+      maxEjectionPercent: 50

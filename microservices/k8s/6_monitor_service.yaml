@@ -1,0 +1,19 @@
+#2.2.2 monitor
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: monitor-virtualservice
+spec:
+  hosts:
+  - "monitor.smartconsultor.com"
+  gateways:
+  - gateway-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /kiali
+    route:
+    - destination:
+        host: kiali.istio-system.svc.cluster.local
+        port:
+          number: 20001
