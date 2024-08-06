@@ -66,11 +66,11 @@ spec:
   http:
   - route:
     - destination:
-        host: gateway
+        host: gateway.default.svc.cluster.local
         subset: v1
       weight: 100
     - destination:
-        host: gateway
+        host: gateway.default.svc.cluster.local
         subset: v2
       weight: 0
     retries:
@@ -122,13 +122,13 @@ metadata:
   namespace: default
 spec:
   hosts:
-  - cluster-app
+  - clustered-app.default.svc.cluster.local
   tcp:
   - match:
     - port: 7800
     route:
     - destination:
-        host: cluster-app
+        host: clustered-app.default.svc.cluster.local
         port:
           number: 7800
 ---
@@ -138,7 +138,7 @@ metadata:
   name: cluster-app-destinationrule
   namespace: default
 spec:
-  host: cluster-app
+  host: clustered-app.default.svc.cluster.local
   trafficPolicy:
     outlierDetection:
       consecutiveGatewayErrors: 5

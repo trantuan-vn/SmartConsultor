@@ -1,0 +1,36 @@
+[id='network-services_{context}']
+= Network services
+
+[role="_abstract"]
+The {brandname} chart creates default network services for internal access.
+
+[%header,%autowidth,cols="1,1,1,1",stripes=even]
+|===
+|Service |Port |Protocol |Description
+
+|`<helm_release_name>`
+|`11222`
+|TCP
+|Provides access to {brandname} Hot Rod and REST endpoints.
+
+|`<helm_release_name>`
+|`11223`
+|TCP
+|Provides access to {brandname} metrics.
+
+|`<helm_release_name>-ping`
+|`8888`
+|TCP
+|Allows {brandname} pods to discover each other and form clusters.
+|===
+
+You can retrieve details about internal network services as follows:
+
+[source,options="nowrap",subs=attributes+]
+----
+$ {oc_get_services}
+
+NAME              TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)
+infinispan        ClusterIP   192.0.2.0        <none>        11222/TCP,11223/TCP
+infinispan-ping   ClusterIP   None             <none>        8888/TCP
+----

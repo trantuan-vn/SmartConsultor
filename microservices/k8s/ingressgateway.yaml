@@ -1,0 +1,21 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: modify-envoy-config
+  namespace: istio-system
+spec:
+  workloadSelector:
+    labels:
+      istio: ingressgateway
+  configPatches:
+  - applyTo: NETWORK_FILTER
+    match:
+      cluster:
+        service: xds-grpc
+    patch:
+      operation: MERGE
+      value:
+        upstream_connection_options:
+          tcp_keepalive:
+            keepalive_time: 600  # Tăng thời gian giữ kết nối TCP
+        max_requests_per_connection: 100  # Tăng số yêu cầu tối đa trên mỗi kết nối

@@ -1,0 +1,74 @@
+[id='installing-chart-command-line_{context}']
+= Installing the {brandname} chart on the command line
+
+[role="_abstract"]
+Use the command line to install the {brandname} chart on {k8s} and instantiate a {brandname} cluster.
+Installing the chart creates a Helm release that deploys a {brandname} cluster.
+
+.Prerequisites
+
+* Install the `helm` client.
+* Add the link:{helm_chart_repo_readme}[{openshiftshort} Helm Charts repository].
+ifdef::community[]
+* Have access to an {openshiftshort} or {k8s} cluster.
+* Have a `kubectl` or `oc` client.
+endif::community[]
+ifdef::downstream[]
+* Have access to an {openshiftshort} cluster.
+* Have an `oc` client.
+endif::downstream[]
+
+.Procedure
+
+. Create a values file that configures your {brandname} cluster.
++
+For example, the following values file creates a cluster with two nodes:
++
+[source,options="nowrap",subs=attributes+]
+----
+$ cat > infinispan-values.yaml<<EOF
+include::yaml/infinispan_values.yaml[]
+EOF
+----
++
+ifdef::community[]
+[TIP]
+====
+You can find descriptions and values for each field in the link:{helm_chart_readme}[{brandname} chart README].
+====
++
+endif::community[]
+. Install the {brandname} chart and specify your values file.
++
+ifdef::community[]
+[source,options="nowrap",subs=attributes+]
+----
+$ helm install infinispan openshift-helm-charts/infinispan-infinispan --values infinispan-values.yaml
+----
+endif::community[]
+ifdef::downstream[]
+[source,options="nowrap",subs=attributes+]
+----
+$ helm install infinispan openshift-helm-charts/redhat-data-grid --values infinispan-values.yaml
+----
+endif::downstream[]
+
+[TIP]
+====
+Use the `--set` flag to override configuration values for the deployment.
+For example, to create a cluster with three nodes:
+
+[source,options="nowrap",subs=attributes+]
+----
+--set deploy.replicas=3
+----
+====
+
+.Verification
+
+Watch the pods to ensure all nodes in the {brandname} cluster are created successfully.
+
+[source,options="nowrap",subs=attributes+]
+----
+$ {oc_get_pods_w}
+----

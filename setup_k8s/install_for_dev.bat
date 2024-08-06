@@ -295,3 +295,52 @@ https://smartconsultor.com:31862
 https://auth.smartconsultor.com:31862
 https://monitor.smartconsultor.com:31862/kiali
 
+kubectl logs pod/account-deployment-v1-774f96fb98-5w4wz -c istio-proxy
+kubectl get virtualservices,destinationrules,gateway -A
+istioctl analyze
+kubectl logs -n istio-system -l istio=pilot
+C:\istio-1.22.3\bin\istioctl proxy-config listener account-deployment-v1-774f96fb98-5w4wz 
+C:\istio-1.22.3\bin\istioctl proxy-config clusters account-deployment-v1-774f96fb98-5w4wz 
+C:\istio-1.22.3\bin\istioctl proxy-config endpoints account-deployment-v1-774f96fb98-5w4wz 
+C:\istio-1.22.3\bin\istioctl proxy-config routes account-deployment-v1-774f96fb98-5w4wz 
+C:\istio-1.22.3\bin\istioctl proxy-status
+C:\istio-1.22.3\bin\istioctl experimental proxy-config log account-deployment-v1-774f96fb98-5w4wz  --level debug
+C:\istio-1.22.3\bin\istioctl authn tls-check account-deployment-v1-774f96fb98-5w4wz 
+C:\istio-1.22.3\bin\istioctl authn policy-check account-deployment-v1-774f96fb98-5w4wz
+C:\istio-1.22.3\bin\istioctl proxy-config log account-deployment-v1-774f96fb98-5w4wz --level debug
+C:\istio-1.22.3\bin\istioctl manifest generate
+C:\istio-1.22.3\bin\istioctl x describe svc <service-name>.<namespace>
+
+kubectl logs -n istio-system $(kubectl get pods -n istio-system -l app=istiod -o jsonpath='{.items[0].metadata.name}')
+kubectl logs -n istio-system <istiod-pod-name>
+kubectl logs <pod-name> -c istio-proxy
+
+kubectl logs -n istio-system $(kubectl get pods -n istio-system -l app=istio-ingressgateway -o jsonpath='{.items[0].metadata.name}')
+kubectl logs -n istio-system <ingress-gateway-pod-name>
+
+kubectl logs -n istio-system $(kubectl get pods -n istio-system -l app=istio-egressgateway -o jsonpath='{.items[0].metadata.name}')
+kubectl logs -n istio-system <egress-gateway-pod-name>
+
+kubectl logs -n istio-system $(kubectl get pods -n istio-system -l app=kiali -o jsonpath='{.items[0].metadata.name}')
+kubectl logs -n istio-system $(kubectl get pods -n istio-system -l app=prometheus -o jsonpath='{.items[0].metadata.name}')
+kubectl logs -n istio-system $(kubectl get pods -n istio-system -l app=grafana -o jsonpath='{.items[0].metadata.name}')
+kubectl logs -n istio-system $(kubectl get pods -n istio-system -l app=jaeger -o jsonpath='{.items[0].metadata.name}')
+
+kubectl logs -n istio-system --all-containers=true --max-log-requests=5
+
+kubectl logs <pod-name> -c istio-proxy | grep "error"
+kubectl logs <pod-name> -c istio-proxy --since=1h
+
+stern -n istio-system 
+
+Client --> Ingress Gateway (Gateway) 
+        --> VirtualService 
+        --> Service (port 80) 
+        --> Pod (Envoy Sidecar + Container chính) 
+        --> Envoy Sidecar 
+        --> Container chính (port 8080)
+
+
+
+
+

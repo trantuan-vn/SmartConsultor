@@ -1,0 +1,44 @@
+//
+// Conditional statements
+//
+:community:
+
+//
+// Attributes
+//
+
+:helm_chart_readme: https://github.com/infinispan/infinispan-helm-charts/blob/main/README.md
+
+:helm_chart_repo: https://github.com/openshift-helm-charts
+:helm_chart_repo_readme: https://github.com/openshift-helm-charts/charts/blob/main/README.md
+
+:server_image: quay.io/infinispan/server
+
+:ispn_version: 13.0
+:server_image_version: 13.0
+
+:native_cli: infinispan-cli
+
+:brandname: Infinispan
+:fullbrandname: Infinispan
+:ispn_operator: Infinispan Operator
+
+:openshift: Red Hat OpenShift
+:openshiftshort: OpenShift
+:openshiftplatform: Red Hat OpenShift Container Platform
+:ocp: OpenShift Container Platform
+:osweb: OpenShift Web Console
+:k8s: Kubernetes
+
+//Server Guide
+:server_docs: https://infinispan.org/docs/stable/titles/server/server.html
+//Security Guide
+:security_docs: https://infinispan.org/docs/stable/titles/security/security.html
+//CLI Guide
+:cli_docs: https://infinispan.org/docs/stable/titles/cli/cli.html
+//REST docs
+:rest_docs: https://infinispan.org/docs/stable/titles/rest/rest.html
+//Hot Rod Java Client Guide
+:hotrod_docs: https://infinispan.org/docs/stable/titles/hotrod_java/hotrod_java.html
+//
+:config_docs: https://infinispan.org/docs/stable/titles/configuring/configuring.html
