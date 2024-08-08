@@ -340,6 +340,55 @@ Client --> Ingress Gateway (Gateway)
         --> Envoy Sidecar 
         --> Container chính (port 8080)
 
+https://console.twilio.com/
+
+curl 'https://verify.twilio.com/v2/Services/VA70432cec771ac9af29ded3016f60fc34/Verifications' -X POST \
+--data-urlencode 'To=+84919358683' \
+--data-urlencode 'Channel=sms' \
+-u AC8aff867bf9767657477aa2e12c8ab094:48be4f8ce469d7a75dce80dba36d15bc
+{
+  "status": "pending",
+  "payee": null,
+  "date_updated": "2024-08-08T03:14:09Z",
+  "send_code_attempts": [
+    {
+      "attempt_sid": "VLfb62859df3d0cab69b015e084167caeb",
+      "channel": "sms",
+      "time": "2024-08-08T03:14:09.522Z"
+    }
+  ],
+  "account_sid": "AC8aff867bf9767657477aa2e12c8ab094",
+  "to": "+84919358683",
+  "amount": null,
+  "valid": false,
+  "lookup": {
+    "carrier": null
+  },
+  "url": "https://verify.twilio.com/v2/Services/VA2daad0858d96e2d514ca1a107c754b8e/Verifications/VE4b2c31fdd2aba61ea79feeb561219095",
+  "sid": "VE4b2c31fdd2aba61ea79feeb561219095",
+  "date_created": "2024-08-08T03:14:09Z",
+  "service_sid": "VA2daad0858d96e2d514ca1a107c754b8e",
+  "channel": "sms"
+}
+
+curl 'https://verify.twilio.com/v2/Services/VA2daad0858d96e2d514ca1a107c754b8e/VerificationCheck' -X POST \
+--data-urlencode 'To=+84919358683' \
+--data-urlencode 'Code=180312' \
+-u AC8aff867bf9767657477aa2e12c8ab094:48be4f8ce469d7a75dce80dba36d15bc
+{
+  "status": "approved",
+  "payee": null,
+  "date_updated": "2024-08-08T03:15:26Z",
+  "account_sid": "AC8aff867bf9767657477aa2e12c8ab094",
+  "to": "+84919358683",
+  "amount": null,
+  "valid": true,
+  "sid": "VE4b2c31fdd2aba61ea79feeb561219095",
+  "date_created": "2024-08-08T03:14:09Z",
+  "service_sid": "VA2daad0858d96e2d514ca1a107c754b8e",
+  "channel": "sms"
+}
+
 
 
 
