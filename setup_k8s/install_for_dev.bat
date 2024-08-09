@@ -389,7 +389,11 @@ curl 'https://verify.twilio.com/v2/Services/VA2daad0858d96e2d514ca1a107c754b8e/V
   "channel": "sms"
 }
 
-
+#erpnext
+helm repo add frappe https://helm.erpnext.com
+helm repo update
+helm search repo frappe
+helm pull frappe/erpnext --version 7.0.101
 
 
 
