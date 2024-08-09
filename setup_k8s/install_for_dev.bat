@@ -345,7 +345,7 @@ https://console.twilio.com/
 curl 'https://verify.twilio.com/v2/Services/VA70432cec771ac9af29ded3016f60fc34/Verifications' -X POST \
 --data-urlencode 'To=+84919358683' \
 --data-urlencode 'Channel=sms' \
--u [user]:[token]
+-u 
 {
   "status": "pending",
   "payee": null,
@@ -357,7 +357,7 @@ curl 'https://verify.twilio.com/v2/Services/VA70432cec771ac9af29ded3016f60fc34/V
       "time": "2024-08-08T03:14:09.522Z"
     }
   ],
-  "account_sid": "[user]",
+  "account_sid": "",
   "to": "+84919358683",
   "amount": null,
   "valid": false,
@@ -374,12 +374,12 @@ curl 'https://verify.twilio.com/v2/Services/VA70432cec771ac9af29ded3016f60fc34/V
 curl 'https://verify.twilio.com/v2/Services/VA2daad0858d96e2d514ca1a107c754b8e/VerificationCheck' -X POST \
 --data-urlencode 'To=+84919358683' \
 --data-urlencode 'Code=180312' \
--u [user]:[token]
+-u 
 {
   "status": "approved",
   "payee": null,
   "date_updated": "2024-08-08T03:15:26Z",
-  "account_sid": "[user]",
+  "account_sid": "",
   "to": "+84919358683",
   "amount": null,
   "valid": true,
