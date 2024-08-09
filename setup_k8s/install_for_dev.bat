@@ -347,6 +347,6 @@ helm repo add frappe https://helm.erpnext.com
 helm repo update
 helm search repo frappe
 helm pull frappe/erpnext --version 7.0.101
-
+ 
 
 
