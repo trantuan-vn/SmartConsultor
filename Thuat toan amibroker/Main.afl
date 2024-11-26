@@ -1,0 +1,331 @@
+#include "C:\Users\tuant\SmartConsultor\Thuat toan amibroker\Algorithm-001\code\1.Utilities\Common.afl"
+
+configFilePath="C:\\Users\\tuant\\SmartConsultor\\Thuat toan amibroker\\Algorithm-001\\code\\5.Config\\eod_config.txt";
+change = StrToNum(ReadConfig("change",configFilePath));
+level1 = StrToNum(ReadConfig("Level1",configFilePath));
+level2 = StrToNum(ReadConfig("Level2",configFilePath));
+level3 = StrToNum(ReadConfig("Level3",configFilePath));
+
+_SECTION_BEGIN("Price");
+	SetChartOptions(0,chartShowArrows|chartShowDates);
+	_N(Title = StrFormat("{{NAME}} - {{INTERVAL}} {{DATE}} Open %g, Hi %g, Lo %g, Close %g (%.1f%%) {{VALUES}}", O, H, L, C, SelectedValue( ROC( C, 1 ) ) ));
+	Plot( C, "Close", ParamColor("Color", colorDefault ), styleNoTitle | ParamStyle("Style") | GetPriceStyle() ); 
+	
+	atrValue = ATR(20);
+	upperBand = C + atrValue;
+	Plot(upperBand, "Upper Band", colorBlue, styleLine);
+	lowerBand = C - atrValue;
+	Plot(lowerBand, "Lower Band", colorRed, styleLine);	
+_SECTION_END();
+
+
+_SECTION_BEGIN("CandlePatterns");
+	// Tính EMA(5)
+	ema5 = EMA(C, 5);
+	Plot(ema5, "EMA(5)", colorBlue);
+	// Tính EMA(25)
+	ema25 = EMA(C, 25);
+	Plot(ema25, "EMA(25)", colorRed);
+	// kiem tra mo hinh DragonflyDoji
+	#include "C:\Users\tuant\SmartConsultor\Thuat toan amibroker\Algorithm-001\code\0.Includes\CommonCandlePattern.afl"
+	// hien thi cay nen dap ung DRAGONFLY DOJI
+	bi = Barindex();
+	fvb = FirstVisibleValue( bi );
+	lvb = LastVisibleValue( bi );
+	PlotTextSetFont("", "Symbola", size = 8, lvb, 0, -1 );
+	dist = 40;
+	// A. BULLISH SIGNALS
+	//DRAGONFLY DOJI
+	PlotShapes(IIf(DragonflyDoji, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	//HAMMER
+	PlotShapes(IIf(Hammer, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	//TAKURI LINE
+	PlotShapes(IIf(Takuri, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);	
+	//BULLISH BELT HOLD
+	PlotShapes(IIf(BBelt, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	//BULLISH ENGULFING
+	PlotShapes(IIf(BullEngulf, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	//HARAMI CROSS BULLISH
+	PlotShapes(IIf(HCBull, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	//HARAMI BULLISH
+	PlotShapes(IIf(HBull, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	//INVERTED HAMMER BULLISH
+	PlotShapes(IIf(IHammer, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	//PIERCING LINE
+	PlotShapes(IIf(PLine, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	//BULLISH DOJI STAR
+	PlotShapes(IIf(BDojiStar, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	//BULLISH MEETING LINES
+	PlotShapes(IIf(BMeetLine, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	//BULLISH HOMING PIGEON
+	PlotShapes(IIf(HPigeon, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	//BULLISH MATCHING LOW
+	PlotShapes(IIf(BMatchLow, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	//KICKER PATTERN
+	PlotShapes(IIf(Kicker, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	//ABANDONED BABY
+	PlotShapes(IIf(ABaby, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	//MORNING STAR
+	PlotShapes(IIf(MStar and not ABaby, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	//BULLISH TRI STAR
+	PlotShapes(IIf(BullTriStar, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	//BULLISH DOWNSIDE GAP TWO RABBITS
+	PlotShapes(IIf(BullDownTwoRabb, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	//BULLISH UNIQUE THREE RIVER BOTTOM
+	PlotShapes(IIf(BullUnThreeRiver, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	//THREE WHITE SOLDIERS
+	PlotShapes(IIf(TGSol, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	//BULLISH DESCENT BLOCK
+	PlotShapes(IIf(BullDescBlock, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	//BULLISH DELIBERATION BLOCK
+	PlotShapes(IIf(BullDeliBlock, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	// BULLISH TWO RABBITS
+	PlotShapes(IIf(TwoRabbits, shapeUpArrow, shapeNone) , colorGreen, 0,  Low,  Offset = -20);
+	// THREE LINE STRIKE
+	PlotShapes(IIf(Up_TLS, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);	
+	// Bull SAN KU Pattern
+	PlotShapes(IIf(SanKuBull, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	// BULLISH HOOK REVERSAL
+	PlotShapes(IIf(BullHR, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	// BULLISH ISLAND REVERSAL
+	PlotShapes(IIf(BullIR, shapeUpArrow, shapeNone), colorGreen, 0, Low, Offset = -20);
+	
+	// B. BEARIST SIGNALS
+	// BULLISH DELIBERATION
+	PlotShapes(IIf(Deliberation, shapeDownArrow, shapeNone) , colorRed, 0,  High,  Offset = -20);
+	// INVERTED HAMMER
+	PlotShapes(IIf(IHammer2, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// BULLISH DOJI STAR
+	PlotShapes(IIf(BDojiStar2, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// BULLISH MATCHING LOW
+	PlotShapes(IIf(BMatchLow2, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// BULLISH HOMING PIGEON
+	PlotShapes(IIf(HPigeon2, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// BULLISH UNIQUE THREE RIVER BOTTOM
+	PlotShapes(IIf(BullUnThreeRiver2, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// BULLISH DELIBERATION BLOCK
+	PlotShapes(IIf(BullDeliBlock2, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// DELIBERATION
+	PlotShapes(IIf(Deliberation2, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// THREE LINE STRIKE
+	PlotShapes(IIf(Down_TLS, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// TWO BLACK GAPPING MODIFIED
+	PlotShapes(IIf(TwoBGap, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// THREE BLACK CROWS
+	PlotShapes(IIf(TBC, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// EVENING STAR
+	PlotShapes(IIf(EStar, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// BEARISH ISLAND REVERSAL
+	PlotShapes(IIf(BearIR, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// BEARISH HOOK REVERSAL
+	PlotShapes(IIf(BearHR, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// Bear SAN KU Pattern
+	PlotShapes(IIf(SanKuBear, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// HARAMI CROSS BEARISH
+	PlotShapes(IIf(HCBear, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// GRAVESTONE DOJI
+	PlotShapes(IIf(Gravestone, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// SHOOTING STAR
+	PlotShapes(IIf(SStar, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// HANGING MAN
+	PlotShapes(IIf(Hanging, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// Upside Gap Two Crows
+	PlotShapes(IIf(UpsideGapTwoCrows, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// DARK CLOUD COVER
+	PlotShapes(IIf(DarkCC, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// BEARISH ENGULFING
+	PlotShapes(IIf(BearEngulf, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+	// CANDLESTICK SANDWICH
+	PlotShapes(IIf(CSandwich, shapeDownArrow, shapeNone), colorRed, 0, High, Offset = -20);
+
+	// Thêm text ghi chú
+	for ( i = fvb; i <= lvb; i++ ) {
+		// A. BULLISH SIGNALS
+		if ( DragonflyDoji[i] )		PlotText( "Dragonfly\nDoji", i, L[i], colorGreen, -1, -dist );
+		if ( Hammer[i] )			PlotText( "Hammer", i, L[i], colorGreen, -1, -dist );
+		if ( Takuri[i] )			PlotText( "Takuri\nLine", i, L[i], colorGreen, -1, -dist );		
+		if ( BBelt[i] )				PlotText( "Bull\nBelt\nHold", i, L[i], colorGreen, -1, -dist );		
+		if ( BullEngulf[i] )		PlotText( "Bull\nEngulf", i, L[i], colorGreen, -1, -dist );		
+		if ( HCBull[i] )			PlotText( "Harami\nCross", i, L[i], colorGreen, -1, -dist );		
+		if ( HBull[i] )				PlotText( "Harami\nBull", i, L[i], colorGreen, -1, -dist );		
+		if ( IHammer[i] )			PlotText( "Inverted\nHammer", i, L[i], colorGreen, -1, -dist );		
+		if ( PLine[i] )				PlotText( "Piercing\nLine", i, L[i], colorGreen, -1, -dist );		
+		if ( BDojiStar[i] )			PlotText( "Bullish\nDoji\nStar", i, L[i], colorGreen, -1, -dist );		
+		if ( BMeetLine[i] )			PlotText( "Bull\nMeeting\nLine", i, L[i], colorGreen, -1, -dist );		
+		if ( HPigeon[i] )			PlotText( "Bull\nHoming\nPigeon", i, L[i], colorGreen, -1, -dist );		
+		if ( BMatchLow[i] )			PlotText( "Bull\nMatching\nLow", i, L[i], colorGreen, -1, -dist );		
+		if ( Kicker[i] )			PlotText( "Kicker", i, L[i], colorGreen, -1, -dist );		
+		if ( ABaby[i] )				PlotText( "Abandoned\nBaby", i, L[i], colorGreen, -1, -dist );		
+		if ( MStar[i] )				PlotText( "Morning\nStar", i, L[i], colorGreen, -1, -dist );		
+		if ( BullTriStar[i] )		PlotText( "Bull\nTri\nStar", i, L[i], colorGreen, -1, -dist );		
+		if ( BullDownTwoRabb[i] )	PlotText( "Bull\nDown Gap\nTwo\nRabbits", i, L[i], colorGreen, -1, -dist );		
+		if ( BullUnThreeRiver[i] )	PlotText( "Bull\nUnique\nThree\nRiver\nBottom", i, L[i], colorGreen, -1, -dist );		
+		if ( TGSol[i] )				PlotText( "Three\nWhite\nSoldiers", i, L[i], colorGreen, -1, -dist );		
+		if ( BullDescBlock[i] )		PlotText( "Bull\nDescent\nBlock", i, L[i], colorGreen, -1, -dist );		
+		if ( BullDeliBlock[i] )		PlotText( "Bull\nDeliberation\nBlock", i, L[i], colorGreen, -1, -dist );		
+		if ( TwoRabbits[i] )		PlotText( "Two\nRabbits", i, L[i], colorGreen, -1, -dist );		
+		if ( Up_TLS[i] )			PlotText( "Up Three\nLine\nStrike", i, L[i], colorGreen, -1, -dist );				
+		if ( SanKuBull[i] )			PlotText( "San Ku\nBull", i, L[i], colorGreen, -1, -dist );		
+		if ( BullHR[i] )			PlotText( "Bull\nHook\nReversal", i, L[i], colorGreen, -1, -dist );		
+		if ( BullIR[i] )			PlotText( "Bull\nIsland\nReversal", i, L[i], colorGreen, -1, -dist );		
+		
+		// B. BEARIST SIGNALS
+		if ( Deliberation[i] )		PlotText( "Deliberation", i, H[i], colorRed, -1, dist );		
+		if ( IHammer2[i] )			PlotText( "Inverted\nHammer", i, H[i], colorRed, -1, dist );		
+		if ( BDojiStar2[i] )		PlotText( "Bullish\nDoji\nStar", i, H[i], colorRed, -1, dist+20 );				
+		if ( BMatchLow2[i] )		PlotText( "Bull\nMatching\nLow", i, H[i], colorRed, -1, dist+20 );		
+		if ( HPigeon2[i] )			PlotText( "Bull\nHoming\nPigeon", i, H[i], colorRed, -1, dist+20 );		
+		if ( BullUnThreeRiver2[i] )	PlotText( "Bull\nUnique\nThree\nRiver\nBottom", i, H[i], colorRed, -1, dist+40 );		
+		if ( BullDeliBlock2[i] )	PlotText( "Bull\nDeliberation\nBlock", i, H[i], colorRed, -1, dist+20 );		
+		if ( Deliberation2[i] )		PlotText( "Deliberation", i, H[i], colorRed, -1, dist );		
+		if ( Down_TLS[i] )			PlotText( "Down Three\nLine\nStrike", i, H[i], colorRed, -1, dist+20 );		
+		if ( EStar[i] )				PlotText( "Evening\nStar", i, H[i], colorRed, -1, dist );		
+		if ( BearIR[i] )			PlotText( "Bear\nIsland\nReversal", i, H[i], colorRed, -1, dist+20 );		
+		if ( BearHR[i] )			PlotText( "Bear\nHook\nReversal", i, H[i], colorRed, -1, dist+20 );		
+		if ( SanKuBear[i] )			PlotText( "San Ku\nBear", i, H[i], colorRed, -1, dist );		
+		if ( HCBear[i] )			PlotText( "Harami\nCross", i, H[i], colorRed, -1, dist );		
+		if ( Gravestone[i] )		PlotText( "Gravestone\nDoji", i, H[i], colorRed, -1, dist );		
+		if ( Hanging[i] )			PlotText( "Hanging\nMan", i, H[i], colorRed, -1, dist );		
+		if ( UpsideGapTwoCrows[i] )	PlotText( "Upside\nGap\nTwo\nCrows", i, H[i], colorRed, -1, dist+20);		
+		if ( DarkCC[i] )			PlotText( "Dark\nCloud\nCover", i, H[i], colorRed, -1, dist+20 );		
+		if ( BearEngulf[i] )		PlotText( "Bear\nEngulf", i, H[i], colorRed, -1, dist );		
+		if ( CSandwich[i] )			PlotText( "CandleStick\nSandwich", i, H[i], colorRed, -1, dist );		
+	}
+_SECTION_END();
+
+_SECTION_BEGIN("SupRes");
+	#include "C:\Users\tuant\SmartConsultor\Thuat toan amibroker\Algorithm-001\code\6.SupRes\SupRes-01.afl"
+
+	//sup_line1
+	DrawLine( sup_x[1], sup_y[1], Null, sup_y[1], "1", colorBrown, styleLine);
+	//sup_line2
+	DrawLine( sup_x[2], sup_y[2], Null, sup_y[2], "2", colorBrown, styleLine);
+	//res_line1
+	DrawLine( res_x[1], res_y[1], Null, res_y[1], "1", colorGreen, styleLine);
+	//res_line1
+	DrawLine( res_x[2], res_y[2], Null, res_y[2], "2", colorGreen, styleLine);
+	// fibo res_y[1] và sup_y[1]
+	DrawFibonacci(res_y[1], sup_y[1],colorGreen);
+	// ve fibo kenh gia : duong 1 noi sup2 voi sup1, duong 2 song song voi duong 1 noi tu res1
+	parallel_res1_sup2_sup1= LineArray( res_x[1], res_y[1], BarCount - 1, (sup_y[1]-sup_y[2])*(BarCount - 1-res_x[1])/(sup_x[1]-sup_x[2]) + res_y[1] , 1 );
+	sup2_sup1= LineArray( sup_x[2], sup_y[2], sup_x[1], sup_y[1], 1 );
+	DrawFibonacci(parallel_res1_sup2_sup1, sup2_sup1, colorGreen);
+	// ve fibo kenh gia : duong 1 noi res2 voi res1, duong 2 song song voi duong 1 noi tu sup1
+	res2_res1= LineArray( res_x[2], res_y[2], res_x[1], res_y[1], 1 );
+	parallel_sup1_res2_res1= LineArray( sup_x[1], sup_y[1], BarCount - 1, (res_y[1]-res_y[2])*(BarCount - 1-sup_x[1])/(res_x[1]-res_x[2]) + sup_y[1] , 1 );
+	DrawFibonacci(res2_res1, parallel_sup1_res2_res1,colorRed);	
+	
+_SECTION_END();
+
+_SECTION_BEGIN("Check Output");
+	Hor=Param("Horizontal Position",20,1,1200,1);
+	Ver=Param("Vertical Position",1,1,1,1);
+	FS=Param("Font Size", 35, 11, 100,1);
+	GfxSetTextColor(ParamColor("Color",colorCustom6));
+	GfxSetBkMode(colorWhite);
+	GfxSelectFont("Times New Roman",12,600,bold=True,underline=False, True);
+	GfxTextOut("Goc up:" + up_angle + "(" + sup_x[2]  + "," +  sup_y[2] + "," +   sup_x[1] + "," +   sup_y[1] + ")", Hor, Ver+15); 
+	GfxTextOut("Goc down: " + down_angle + "(" + res_x[2] + "," +  res_y[2] + "," +   res_x[1] + "," +   res_y[1]	+ ")", Hor, Ver+35); 
+	GfxTextOut("Goc up level1:" + level1_up_angle , Hor, Ver+55); 
+	GfxTextOut("Goc down level1: " + level1_down_angle , Hor, Ver+75); 
+	GfxTextOut("Goc up level2:" + level2_up_angle , Hor, Ver+95); 
+	GfxTextOut("Goc down level2: " + level2_down_angle , Hor, Ver+115); 
+	GfxTextOut("Goc up level3:" + level3_up_angle, Hor, Ver+135); 
+	GfxTextOut("Goc down level3: " + level3_down_angle , Hor, Ver+155); 	
+	
+	GfxTextOut("test: " + sBody[1] , Hor, Ver+175); 	
+_SECTION_END();
+
+/*
+_SECTION_BEGIN("TT1");
+	Capital = 1000000;
+	Risk = 0.01*Capital;
+	TrailStopAmount = 2 * ATR( 20 );
+	PositionSize = (Risk/TrailStopAmount)*BuyPrice;
+	
+	//preBuy = StaticVarGet("preBuy");
+	//preSell = StaticVarGet("preSell");
+	//preShort = StaticVarGet("preShort");
+	//preCover = StaticVarGet("preCover");
+	
+	Buy= //Nz(preBuy) OR 
+		( (up_angle>0 AND down_angle<0 AND Cross(C, res2_res1+TrailStopAmount)) 
+		//OR (up_angle>0 AND down_angle>0 AND (Cross(parallel_sup1_res2_res1,C) OR Cross(sup2_sup1,C)))
+		OR (up_angle<0 AND down_angle<0 AND (Cross(C, res2_res1+TrailStopAmount) OR Cross(C, parallel_res1_sup2_sup1+TrailStopAmount)))
+		) ;
+	Sell = 0;//Nz(preSell);
+	
+	Short= //Nz(preShort) OR 
+		( (up_angle>0 AND down_angle<0 AND Cross(sup2_sup1-TrailStopAmount,C)) 
+		OR (up_angle>0 AND down_angle>0 AND (Cross(sup2_sup1-TrailStopAmount,C) OR Cross(parallel_sup1_res2_res1-TrailStopAmount,C) ))
+		 ) ;
+	Cover=0;//Nz(preCover);
+	
+	ApplyStop(stopTypeTrailing, stopModePoint, TrailStopAmount, 1 );
+	
+	//StaticVarSet("preBuy", Buy );
+	//StaticVarSet("preSell", Sell );
+	//StaticVarSet("preShort", Short );
+	//StaticVarSet("preCover", Cover );
+	
+		
+	PlotShapes(shapeUpTriangle * Buy, colorGreen, 0, Low);
+	PlotShapes(shapeDownTriangle* Sell, colorRed, 0, High);
+	
+	//PlotShapes(shapeDownTriangle * Short, colorBlue, 0, High);
+	//PlotShapes(shapeUpTriangle * Cover, colorOrange, 0, Low);	
+	
+_SECTION_END();
+*/
+_SECTION_BEGIN("TT1");
+	function zscore( price, Lookback )
+	{
+	 zs = ( price - MA( price, Lookback ) ) / StDev( price, Lookback );
+	 return zs;
+	}
+	OptimizerSetEngine("cmae");
+	SetTradeDelays( 0, 0, 0, 0 );
+	BuyPrice = Close;
+	SellPrice = Close;
+	PosQty = Optimize( "PosQty", 1, 1, 3, 1 );
+	SetOption ( "maxopenpositions", PosQty );
+	SetPositionSize( 100 / PosQty, spsPercentOfEquity );
+	ZSLength = Optimize( "ZSLength", 34, 4, 50 , 1 );
+	zs = zscore( C, ZSLength );
+	BuyLevel = Optimize( "BuyLevel", -2.0, -4.0, 0.0, 0.25 );
+	Buy = Cross( BuyLevel, zs );
+	Sell = Cross( zs, 0 );
+	
+	HoldDays = Optimize( "HoldDays", 9, 1, 10, 1 );
+	ApplyStop( stopTypeNBar, stopModeBars, HoldDays );
+	ProfitPercent = Optimize( "ProfitPercent", 3, 0.5, 5, 0.25 );
+	ApplyStop ( stopTypeProfit, stopModePercent, ProfitPercent );
+
+	PlotShapes(shapeUpTriangle * Buy, colorGreen, 0, Low);
+	PlotShapes(shapeDownTriangle* Sell, colorRed, 0, High);
+	
+_SECTION_END();
+
+
+_SECTION_BEGIN("TT2");
+	OptimizerSetEngine( "cmae" );
+	SetTradeDelays( 1, 1, 1, 1 );
+	BuyPrice = Open;
+	SellPrice = Open;
+	PosQty = Optimize( "PosQty", 2, 1, 3, 1 );
+	SetOption ( "maxopenpositions", PosQty );
+	SetPositionSize( 100 / PosQty, spsPercentOfEquity );
+	MAL1 = Optimize( "MAL1", 11, 1, 51, 2 );
+	MAL2 = Optimize( "MAL2", 30, 2, 52, 2 );
+	MA1 = MA( C, MAL1 );
+	MA2 = MA( C, MAL2 );
+	Buy = Cross( MA1, MA2 );
+	Sell = Cross ( MA2, MA1 );
+	ATRMult = Optimize( "ATRMult", 3.75, 1, 5, 0.25 );
+	ApplyStop( stopTypeTrailing, stopModePoint, ATRMult * ATR( 14 ), True, True );	
+
+	PlotShapes(shapeUpTriangle * Buy, colorGreen, 0, Low);
+	PlotShapes(shapeDownTriangle* Sell, colorRed, 0, High);
+	
+_SECTION_END();
+

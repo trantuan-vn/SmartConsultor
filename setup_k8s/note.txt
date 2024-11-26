@@ -1,3 +1,6 @@
+ 2,611,472 	 17,930 	 16,371 	 51,784 
+
+ 762,683 	 576,732 	 446,298 	 3,541 	 358 	 126,535 
 Chay thu tu install.bat
 TLS.KEY: mat khau key KemDate
 
