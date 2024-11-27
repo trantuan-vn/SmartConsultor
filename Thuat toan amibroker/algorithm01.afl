@@ -1,0 +1,76 @@
+// Chỉ báo chính
+ShortMA = MA(Close, 10);
+LongMA = MA(Close, 50);
+RSIVal = RSI(14);
+BBUpper = BBandTop(Close, 20, 2);
+BBLower = BBandBot(Close, 20, 2);
+[MACDLine, SignalLine] = MACD(12, 26, 9);
+HighLevel = HHV(High, 20);
+LowLevel = LLV(Low, 20);
+MeanPrice = MA(Close, 20);
+ADXVal = ADX(14);
+AvgVol = MA(Volume, 20);
+[Tenkan, Kijun, SenkouA, SenkouB, Chikou] = IchimokuCloud();
+ATRVal = ATR(14); // ATR dùng cho cắt lỗ và chốt lời
+
+// Xác định xu hướng chính
+TrendUp = Close > LongMA AND ADXVal > 25;
+TrendDown = Close < LongMA AND ADXVal > 25;
+
+// Tín hiệu mua
+BuySignal = 
+    (Cross(ShortMA, LongMA) AND RSIVal > 50) OR // MA Crossover với RSI filter
+    (Cross(Close, HighLevel) AND Volume > 1.5 * AvgVol) OR // Breakout với Volume
+    (Close < 0.95 * MeanPrice) OR // Mean Reversion
+    (Cross(Close, SenkouA)); // Ichimoku Cloud
+
+BuySignal = BuySignal AND TrendUp AND Close > BBLower;
+
+// Tín hiệu bán
+SellSignal = 
+    (Cross(LongMA, ShortMA) AND RSIVal < 50) OR // MA Crossover với RSI filter
+    (Cross(LowLevel, Close)) OR // Breakout xuống
+    (Close > 1.05 * MeanPrice) OR // Mean Reversion
+    (Cross(SenkouB, Close)); // Ichimoku Cloud
+
+SellSignal = SellSignal AND TrendDown AND Close < BBUpper;
+
+// Quản lý tín hiệu
+Buy = ExRem(BuySignal, SellSignal);
+Sell = ExRem(SellSignal, Buy);
+
+// Quản trị rủi ro
+Risk = 0.01; // 1% giá trị vốn (có thể điều chỉnh)
+Reward = 3 * Risk; // Tỷ lệ lãi/lỗ là 3:1
+
+BuyPrice = ValueWhen(Buy, Close); // Giá mua khi có tín hiệu
+SellPrice = ValueWhen(Sell, Close); // Giá bán khi có tín hiệu
+
+// Xác định mức cắt lỗ và chốt lời
+StopLoss = BuyPrice - (ATRVal * 1.5); // Cắt lỗ dựa trên ATR (1.5x ATR)
+TakeProfit = BuyPrice + (ATRVal * 4.5); // Chốt lời dựa trên ATR (4.5x ATR)
+
+// Điều kiện cắt lỗ bổ sung (khi giá giảm 5%-10%)
+DynamicStopLoss = Max(BuyPrice * 0.95, StopLoss); // Giá thấp nhất giữa cắt lỗ cố định và 5% lỗ
+
+// Kiểm tra cắt lỗ và chốt lời
+Sell = Sell OR Close < DynamicStopLoss OR Close > TakeProfit;
+
+// Vẽ biểu đồ
+Plot(Close, "Price", colorDefault, styleCandle);
+Plot(ShortMA, "Short MA", colorBlue);
+Plot(LongMA, "Long MA", colorRed);
+Plot(BBUpper, "BB Upper", colorGreen);
+Plot(BBLower, "BB Lower", colorOrange);
+Plot(MACDLine, "MACD Line", colorAqua);
+Plot(SignalLine, "Signal Line", colorMagenta);
+Plot(MeanPrice, "Mean Price", colorYellow);
+
+// Đánh dấu Buy/Sell trên biểu đồ
+PlotShapes(IIf(Buy, shapeUpArrow, shapeNone), colorGreen, 0, Low);
+PlotShapes(IIf(Sell, shapeDownArrow, shapeNone), colorRed, 0, High);
+
+// Hiển thị cắt lỗ và chốt lời trên biểu đồ
+Plot(StopLoss, "Stop Loss", colorRed, styleDashed);
+Plot(TakeProfit, "Take Profit", colorGreen, styleDashed);
+Plot(DynamicStopLoss, "Dynamic Stop Loss", colorOrange, styleDashed);
