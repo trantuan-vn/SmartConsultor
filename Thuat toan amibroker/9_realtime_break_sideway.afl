@@ -1,0 +1,299 @@
+//TimeFrameSet( in1Minute );
+//TimeFrameSet( in5Minute );
+//TimeFrameSet( in15Minute );
+//TimeFrameSet( inHourly );
+//TimeFrameSet( inDaily );
+//TimeFrameSet( inWeekly );
+//TimeFrameSet( inMonthly );
+//TimeFrameSet( inYearly );
+
+// breaking
+
+//ChosenDate = 1230106; // my chosen End date : =10000 * (2022 - 1900) + 100 * 12 + 27
+ChosenDate = 1230628; // my chosen End date : =10000 * (2023 - 1900) + 100 * 6 + 28
+
+barNumber = LastValue( ValueWhen(DateNum() == ChosenDate , BarIndex(), 1) );
+Lastprice = High[barNumber];
+top=Lastprice;
+
+//top=Max(Max(Max(Max(Max(Max(Max(Max(Max(Peak(H,5,1),Peak(H,5,2)),Peak(H,5,3)),Peak(H,5,4)),Peak(H,5,5))
+//,Peak(H,5,6)),Peak(H,5,7)),Peak(H,5,8)),Peak(H,5,9)),Peak(H,5,10));
+
+
+breaking= //(Prec((Close-Ref(Close,-1))*100/Ref(Close,-1),2)>=1)
+//AND (C>top AND C<1.05*top);
+//AND 
+C>top;
+//sideway
+Max10 = HHV(Ref(h,-1),10);//giá cao nh?t trong 10 phiên
+Min10 = LLV(Ref(l,-1),10);//giá th?p nh?t trong 10 phiên
+TL1 = Max10 <1.07*Min10;/// Bien do trong 10 phien giao dich phi nho hon 1%
+
+Max20 = HHV(Ref(h,-1),20);//giá cao nh?t trong 20 phiên
+Min20 = LLV(Ref(l,-1),20);//giá th?p nh?t trong 20 phiên
+TL2 = Max20 <1.07*Min20;/// Bien do trong 20 phien giao dich phi nho hon 3%
+
+Max30 = HHV(Ref(h,-1),30);//giá cao nh?t trong 30 phiên
+Min30 = LLV(Ref(l,-1),30);//giá th?p nh?t trong 30 phiên
+TL3 = Max30 <1.07*Min30;/// Bien do trong 30 phien giao dich phi nho hon 5%
+
+
+sideway= TL1 OR TL2 OR TL3 ;
+//catch bottom
+//ChosenDate = 1221227; // my chosen End date : =10000 * (2022 - 1900) + 100 * 12 + 27
+ChosenDate = 1230620; // my chosen End date : =10000 * (2023 - 1900) + 100 * 6 + 20
+
+barNumber = LastValue( ValueWhen(DateNum() == ChosenDate , BarIndex(), 1) );
+Lastprice = Low[barNumber];
+bottom=Lastprice;
+
+//bottom=Trough(L,5,1);
+
+
+catch_bottom= C> bottom AND C< 1.15*bottom;
+// big_vol
+//big_vol= ((REF (V, -1)> 1.3 * MA(V,14) AND REF (C, -1)-REF (O, -1)>0 AND (REF (C, -1)-REF (O, -1))> 1.2 * (REF (C, -2)-REF (O, -2))) 
+//OR (V> 1.3 * MA(V,14) AND C-O>0 AND C-O> 1.2 * (REF (C, -1)-REF (O, -1))));
+big_vol=((REF (V, -1)>= MA(V,14)) OR (V>= MA(V,14)));
+//canslim
+Canslim= GetFnData("EPS")>0
+AND Close*GetFnData("SharesOut")/1000000>=300
+//AND REF (C, -1)*REF (V, -1) > 5000000
+//AND REF (V, -1) >= 100000;
+AND MA(V,14)>50000;
+//midcap and penny
+
+midcap_penny=//C<30 AND 
+GetFnData("EPS")>0
+AND Close*GetFnData("SharesOut")/1000000<300
+AND MA(V,14)>50000;
+
+// CAMSLIM Cup and Handle Pattern
+//Left side of Handle formation can occur anywhere from 2-25days - look at the last 25 bars and get the number of bars since condition met. 
+ 
+LH=HHV(Close,25); // Highest close past 25 days. 
+BLH=HHVBars(Close,25); // Tells us # of bars that have past since high reached. Used to determine lowest bar. 
+ 
+BH=LLV(Close,BLH); //  Lowest close since the highest value was reached/ 
+BBH=LLVBars(Close,BLH); // number of bars that have past since lowest value. 
+ 
+NBLH=BLH-BBH; // this is the number of bars in the formation of the left side handle. NBLH must be atleast 2 to be a valid handle formation. 
+ 
+// Now lets get the cup formation. Cup formation can occur anywhere from 23 to 145 days. The left side of the cup can be from 20-120 days and the right side can be anywhere from 3-25 days. 
+ 
+// get the right side of the cup(low). 
+ 
+BC=LLV(Close,BLH+25); // look at 25 bars since the left side of handle. 
+BBC=LLVBars(Close,BLH+25); 
+ 
+// get the left side of the cup. 
+ 
+LC=Ref(HHV(Close,120),BBC*-1); 
+BLC=Ref(HHVBars(Close,120),BBC*-1); 
+
+// Get highest value before left side of cup started to form. 
+ 
+KC=Ref(HHV(Close,30),BLC*-1); 
+BKC=Ref(HHVBars(Close,120),BLC*-1); 
+
+Cup_AND_Handle= NBLH>2 AND BC<LC AND LH<=LC AND BC<LH AND BH<LH AND BH>.8*LH+.2*BC AND KC<LC;
+
+
+theodoi=InWatchListName( "DMDT" );
+// LOC
+Tile=((Close-Ref(Close,-1))*100/Ref(Close,-1));
+
+/*
+Filter=//C > REF (C, -1) AND 
+(
+(
+//((breaking OR sideway OR catch_bottom OR big_vol ) AND Canslim) 
+//OR 
+//((breaking OR sideway OR catch_bottom OR big_vol) AND midcap_penny)
+Canslim OR midcap_penny
+) AND ((sideway AND big_vol) OR (breaking AND big_vol) OR (catch_bottom AND big_vol) OR (Tile>0 AND big_vol) OR (Tile>5 AND GetFnData("EPS")>3))
+) OR (Cup_AND_Handle AND Canslim) //OR theodoi
+;
+*/
+rak=int(tile>0 AND Cup_AND_Handle AND Canslim AND big_vol) 
++int(tile>0 AND catch_bottom AND big_vol)
++int(tile>0 AND C<1.07*top AND breaking AND big_vol)*3
++int(tile>0 AND sideway AND big_vol)
++int(tile>0 AND C>bottom AND C>HHV(Ref(h,-1),3) AND sideway AND big_vol)
++int(Cup_AND_Handle)/10+int(catch_bottom)/10+int(sideway)/10+(int(breaking)/10)*3
++(GetFnData("EPS")/10)*1.5
++ Tile*2/10
++ int(V>1.3*MA(V,14))*3
++ int(GetFnData("EPS")>3 AND Close/GetFnData("EPS")<10 
+AND Close<sqrt(22.5*GetFnData("EPS")*GetFnData("BookValuePerShare"))
+AND GetFnData("QtrlyEarningsGrowth")>30
+AND Close*GetFnData("SharesOut")/1000000>300
+AND V>MA(V,14) AND MA(V,14)>50000)*5
++int(V>1000000)*10;
+//+((C-bottom)/bottom)*1.5;
+//+int(theodoi)/10
+//+(int(Cup_AND_Handle)/10-((C-BH)*100/BH)*int(Cup_AND_Handle)/10)
+//+(int(catch_bottom)/10-((C-bottom)*100/bottom)*int(catch_bottom)/10)
+//+ (int(sideway)/10-((C-bottom)*100/bottom)*int(sideway)/10)
+//+ (int(breaking)/10-((C-top)*100/top)*int(breaking)/10);
+
+//Value = rak;
+//StaticVarSet( "ValuesToSort"+Name(), Value );
+//StaticVarGenerateRanks( "rank", "ValuesToSort", 0, 1224 );
+//Rank = StaticVarGet( "RankValuesToSort"+Name()); 
+//Filter = Rank <= 10;
+//AddColumn( Rank, "Rank", 1.0);
+
+
+Filter= MA(V,14)>1000000 
+//abs(HHV(Close,14)-LLV(Close,14))/LLV(Close,14)<0.1 AND MA(V,14)>1000000 AND Ref(V,-1)>2*MA(V,14)
+//MA(V,14)>1000000 AND O>Ref(C,-1) AND C>O AND V>MA(V,14)
+//MA(V,14)>1000000 AND V>2*MA(V,14)
+//MA(V,14)>1000000 AND Ref(V,-1)>2*MA(V,14)
+//MA(V,14)>1000000
+//AND Close*GetFnData("SharesOut")/1000000>1000
+//AND (Close*GetFnData("SharesOut")/1000000>300 AND Close*GetFnData("SharesOut")/1000000<=1000)
+//AND Close*GetFnData("SharesOut")/1000000<=300
+//MA(ref(V,-1),14)>300000
+//C*V>1000000 
+//AND (Close*GetFnData("SharesOut")/1000000)>1000 AND GetFnData("EPS")>1 AND GetFnData("QtrlyEarningsGrowth")>0
+//AND int(Close<GetFnData("BookValuePerShare"))*((GetFnData("BookValuePerShare")-Close)/GetFnData("BookValuePerShare")*GetFnData("EPS"))>0
+//
+//V>1000000  // AND C>MA(C,10)
+// nhom tang truong quy gan nhat
+//V>1000000 AND GetFnData("EPS")>1 AND GetFnData("QtrlyEarningsGrowth")>10
+ // nhom chi so tot
+//MA(V,14)>10000 AND V>10000 AND (Close*GetFnData("SharesOut")/1000000)>1000 
+//AND rak>=10 
+//AND V>1000000
+//AND GetFnData("EPS")>2
+
+/* // nhom duoi gia tri so sach
+int(Close<GetFnData("BookValuePerShare"))*((GetFnData("BookValuePerShare")-Close)/GetFnData("BookValuePerShare")*GetFnData("EPS"))>0
+AND MA(V,14)>10000 AND V>10000 AND (Close*GetFnData("SharesOut")/1000000)>1000 
+AND V>1000000
+AND GetFnData("EPS")>2
+*/
+/*// nhom gia tren dinh
+(C-top)*100/top>0
+AND MA(V,14)>100000 AND V>10000 AND (Close*GetFnData("SharesOut")/1000000)>1000 
+AND GetFnData("EPS")>2
+*/
+/* // nhom gia tren day
+(C-bottom)*100/bottom>0
+AND MA(V,14)>10000 AND V>10000 AND (Close*GetFnData("SharesOut")/1000000)>1000 
+AND V>1000000
+AND GetFnData("EPS")>2
+*/
+;
+
+_SECTION_BEGIN("Pattern_Recognition_with_Shading");
+/*TRENDLINES BREAKOUT*/
+x = Cum(1);
+per = 3.5;
+s1=L;
+s11=H;
+pS = TroughBars( s1, per, 1 ) == 0;
+endt= LastValue(ValueWhen( pS, x, 1 ));
+startt=LastValue(ValueWhen( pS, x, 2 ));
+endS = LastValue(ValueWhen( pS, s1, 1 ) );
+startS = LastValue( ValueWhen( pS, s1, 2 ));
+dtS =endt-startt;
+aS = (endS-startS)/dtS;
+bS = endS;
+trendlineS = aS * ( x -endt ) + bS;
+pR = PeakBars( s11, per, 1 ) == 0;
+endt1= LastValue(ValueWhen( pR, x, 1 ));
+startt1=LastValue(ValueWhen( pR, x, 2 ));
+endR = LastValue(ValueWhen( pR, s11, 1 ) );
+startR = LastValue( ValueWhen( pR, s11, 2 ));
+DTR=ENDT1-STARTT1;
+aR = (endR-startR)/dtR;
+bR = endR;
+trendlineR = aR * ( x -endt1 ) + bR;
+
+///////////////////////////////////
+// Bullish or Bearish breakout //
+//////////////////////////////////
+//BullishBreakout=Cross(C,trendlineR);
+//BearishBreakout=Cross(trendlineS,C);
+
+_SECTION_END();
+
+_SECTION_BEGIN("Sup / Res Lines");
+SRswitch = ParamToggle("Sup / Res Lines","On,Off");
+CHLswitch = ParamToggle("Hi Low / Close","Hi Low,Close");
+NoLines = Param("No of Lines",3,1,10,1);
+Sen = Param("Sensitivity",5,1,100,1);
+
+Rcolor=ParamColor( "Res Color", colorGreen );
+Rstyle=ParamStyle( "Res Style", styleLine );
+
+Scolor=ParamColor( "Sup Color", colorBrown );
+Sstyle=ParamStyle( "Sup Style", styleLine );
+
+y=0;
+x=0;
+
+for( i = 1; i < NoLines+1 ; i++ )
+{
+Y[i]=LastValue(Peak(IIf(CHLswitch,C,H),Sen,i));
+x[i]=BarCount - 1 - LastValue(PeakBars(IIf(CHLswitch,C,H),Sen,i));
+Line = LineArray( x[i], y[i], Null, y[i], 1 );
+Plot( IIf(SRswitch,Null,Line), "", Rcolor, Rstyle );
+
+Y[i]=LastValue(Trough(IIf(CHLswitch,C,L),Sen,i));
+x[i]=BarCount - 1 - LastValue(TroughBars(IIf(CHLswitch,C,L),Sen,i));
+Line = LineArray( x[i], y[i], Null, y[i], 1 );
+Plot( IIf(SRswitch,Null,Line), "", Scolor, Sstyle );
+}
+_SECTION_END();
+
+
+
+AddTextColumn( IcbID(2), "Nganh" );
+AddColumn( C, "LastPrice", 1.2 );
+AddColumn(Prec((Close-Ref(Close,-1))*100/Ref(Close,-1),2), "% Change", 1.2 );
+AddColumn( V, "Volume", 1.2 );
+AddColumn( Close*GetFnData("SharesOut")/1000000, "Von hoa", 1.2 );
+AddColumn( GetFnData("EPS"), "ESP", 1.2 );
+AddColumn( GetFnData("Beta"), "Beta", 1.2 );
+AddColumn( GetFnData("QtrlyEarningsGrowth"), "QuyGanNhat", 1.2 );
+AddColumn( Prec((C-bottom)*100/bottom,2), "%TangTuDay", 1.2 ); 
+AddColumn( rak, "Rank", 1.2 );
+AddColumn( theodoi, "TheoDoi", 1 );
+AddColumn(int(Close<GetFnData("BookValuePerShare"))*((GetFnData("BookValuePerShare")-Close)/GetFnData("BookValuePerShare")*GetFnData("EPS")), "DuoiGTSoSach", 1.2 ); 
+AddColumn( tile>0 AND Cup_AND_Handle AND Canslim AND big_vol, "Bat_Coc_Tay_Cam", 1 );
+AddColumn( tile>0 AND C>bottom AND C>HHV(Ref(h,-1),3) AND sideway AND big_vol, "Bat_3C", 1 );
+AddColumn( tile>0 AND catch_bottom AND big_vol, "Bat_Day", 1 );
+AddColumn( tile>0 AND C<1.07*top AND breaking AND big_vol, "Bat_Breaking", 1 );
+AddColumn( tile>0 AND sideway AND big_vol, "Bat_Sideway", 1 );
+AddColumn(GetFnData("EPS")>3 AND Close/GetFnData("EPS")<10 
+AND Close<sqrt(22.5*GetFnData("EPS")*GetFnData("BookValuePerShare"))
+AND GetFnData("QtrlyEarningsGrowth")>30
+AND Close*GetFnData("SharesOut")/1000000>300
+AND V>MA(V,14) AND MA(V,14)>50000,"Bat_DTGiaTri",1);
+
+
+AddColumn( big_vol, "BigVol", 1 );
+AddColumn( Cup_AND_Handle, "Cup_AND_Handle", 1 );
+AddColumn( catch_bottom, "Bottom", 1 );
+AddColumn( sideway, "Sideway", 1 );
+AddColumn( breaking, "Breaking", 1 );
+AddColumn( RSI(14), "RSI", 1 );
+AddColumn( Prec((C-top)*100/top,2), "%TangVuotDinh", 1.2 ); 
+AddColumn( Prec((Y[i]-C)*100/Y[i],2), "%GiamSoVoiDinh", 1.2 ); 
+
+
+//x=(abs(H-L)/(2*Ref(C,-1)*IIf(MarketID(1)=="HSX",0.07,IIf(MarketID(1)=="HNX",0.1,iif(MarketID(1)=="UPCOM",0.14,0.07)))));
+x=abs(H-L)/Ref(C,-1);
+AddColumn(Sum(x,14)*100, "Biendo14ngay(%)", 1.2 ); 
+AddColumn(MA(Volume,14), "MA(14)", 1.2 ); 
+
+AddColumn(trendlineR-C, "BullishBreakout", 1.2); 
+AddColumn(C-trendlineS, "BearishBreakout", 1.2); 
+
+
+
+SetSortColumns( -11 );
+
