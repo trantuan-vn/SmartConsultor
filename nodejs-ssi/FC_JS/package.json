@@ -10,9 +10,10 @@
   "author": "ducdv@ssi.com.vn",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.0",
     "axios": "^0.18.0",
+    "express": "^4.17.0",
+    "fctrading-client": "file:TradingAPIJSClient",
     "random-number": "0.0.9",
-    "fctrading-client": "file:TradingAPIJSClient"
+    "tradingapi-client-ex": "file:"
   }
 }

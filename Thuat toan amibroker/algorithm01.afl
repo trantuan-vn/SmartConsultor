@@ -4,13 +4,27 @@ LongMA = MA(Close, 50);
 RSIVal = RSI(14);
 BBUpper = BBandTop(Close, 20, 2);
 BBLower = BBandBot(Close, 20, 2);
-[MACDLine, SignalLine] = MACD(12, 26, 9);
+
+MACDLine = MACD(12, 26);
+SignalLine = EMA(MACDLine, 9);
+
 HighLevel = HHV(High, 20);
 LowLevel = LLV(Low, 20);
 MeanPrice = MA(Close, 20);
 ADXVal = ADX(14);
 AvgVol = MA(Volume, 20);
-[Tenkan, Kijun, SenkouA, SenkouB, Chikou] = IchimokuCloud();
+
+P1 = 9;  // Chu ky cua Tenkan-sen
+P2 = 26; // Chu ky cua Kijun-sen
+P3 = 52; // Chu ky cua Senkou Span B
+D  = 26; // �o tre cho Chikou Span
+// T�nh c�c duong
+Tenkan = (HHV(H, P1) + LLV(L, P1)) / 2;             // �uong Tenkan-sen
+Kijun  = (HHV(H, P2) + LLV(L, P2)) / 2;             // �uong Kijun-sen
+SenkouA = Ref((Tenkan + Kijun) / 2, D);             // �uong Senkou Span A
+SenkouB = Ref((HHV(H, P3) + LLV(L, P3)) / 2, D);    // �uong Senkou Span B
+Chikou  = Ref(C, -D);                               // �uong Chikou Span
+
 ATRVal = ATR(14); // ATR dùng cho cắt lỗ và chốt lời
 
 // Xác định xu hướng chính
@@ -63,7 +77,7 @@ Plot(LongMA, "Long MA", colorRed);
 Plot(BBUpper, "BB Upper", colorGreen);
 Plot(BBLower, "BB Lower", colorOrange);
 Plot(MACDLine, "MACD Line", colorAqua);
-Plot(SignalLine, "Signal Line", colorMagenta);
+Plot(SignalLine, "Signal Line", ColorRGB(255, 0, 255));
 Plot(MeanPrice, "Mean Price", colorYellow);
 
 // Đánh dấu Buy/Sell trên biểu đồ

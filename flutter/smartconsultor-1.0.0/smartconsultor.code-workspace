@@ -11,6 +11,13 @@
 		},
 		{
 			"path": "../../services"
+		},
+		{
+			"path": "../../nodejs-ssi"
+		},
+		{
+			"name": "demo",
+			"path": "../../design/demo"
 		}
 	],
 	"settings": {
