@@ -1,0 +1,215 @@
+_SECTION_BEGIN("price_strength_RS");
+listnum=1;
+symlist = CategoryGetSymbols( categoryWatchlist,listnum ); 
+
+TongSoCp = 0;
+for( i = 0; ( sym = StrExtract( symlist, i ) ) != ""; i++ )
+{
+	Tongsocp=Tongsocp+1;
+}
+
+// delete static variables 
+StaticVarRemove( "TienTo*" ); 
+
+// fill input static arrays 
+
+for ( i = 0; ( sym = StrExtract( symlist, i ) ) != ""; i++ ) 
+{ 
+    SetForeign( sym ); 
+	// relative strength IBD style
+	Mot    = 0.4*(C/Ref(C,-5));
+	Hai    = 0.3*(C/Ref(C,-20));
+	Ba   = 0.2*(C/Ref(C,-60));
+	Bon  = 0.1*(C/Ref(C,-120));
+	RSraw = Mot + Hai + Ba + Bon;  
+    RestorePriceArrays(); 
+    StaticVarSet( "TienTo" + sym, RSraw ); 
+} 
+
+// Xep hang theo RS 
+StaticVarGenerateRanks( "XepHang", "TienTo", 0, 1224 ); // normal rank mode 
+
+// Doc kqua xep hang 
+
+for (i = 0; (sym = StrExtract(symlist, i)) != ""; i++) {
+    RS = 100 - ((StaticVarGet("XepHangTienTo" + Name()) - 1) / (TongSoCp - 1)) * 99;
+    // You can use this RS value to filter or analyze the top-ranked stocks according to the CANSLIM strategy
+}
+	 
+_SECTION_END();
+
+_SECTION_BEGIN("current_price");
+	current_price=NumToStr(C, 1.2);
+_SECTION_END();
+
+_SECTION_BEGIN("total_trading_volume");
+	total_trading_volume=NumToStr(V, 1.0);
+_SECTION_END();
+
+_SECTION_BEGIN("price_rise_above_peak_1_week");
+	price_rise_above_peak_1_week =NumToStr(Ref(Highest(High, 5), -1), 1.2);  
+	price_rise_above_peak_2_week =NumToStr(Ref(Highest(High, 10), -1), 1.2);
+	price_rise_above_peak_1_month =NumToStr(Ref(Highest(High, 20), -1), 1.2);
+	price_rise_above_peak_3_month =NumToStr(Ref(Highest(High, 60), -1), 1.2);
+	price_rise_above_peak_6_month =NumToStr(Ref(Highest(High, 120), -1), 1.2);
+	price_rise_above_peak_1_year =NumToStr(Ref(Highest(High, 240), -1), 1.2);
+_SECTION_END();
+
+_SECTION_BEGIN("price_fall_below_bottom");
+	price_fall_below_bottom_1_week =NumToStr(Ref(Lowest(High, 5), -1), 1.2);  
+	price_fall_below_bottom_2_week =NumToStr(Ref(Lowest(High, 10), -1), 1.2);
+	price_fall_below_bottom_1_month =NumToStr(Ref(Lowest(High, 20), -1), 1.2);
+	price_fall_below_bottom_3_month =NumToStr(Ref(Lowest(High, 60), -1), 1.2);
+	price_fall_below_bottom_6_month =NumToStr(Ref(Lowest(High, 120), -1), 1.2);
+	price_fall_below_bottom_1_year =NumToStr(Ref(Lowest(High, 240), -1), 1.2);
+_SECTION_END();
+
+
+_SECTION_BEGIN("price_change_today");
+	price_change_today = (Close - Ref(Close, -1)) / Ref(Close, -1) * 100;
+_SECTION_END();
+
+_SECTION_BEGIN("price_change_1_week");
+	price_change_1_week = (Close - Ref(Close, -5)) / Ref(Close, -5) * 100;
+_SECTION_END();
+
+_SECTION_BEGIN("price_change_1_month");
+	price_change_1_month = (Close - Ref(Close, -20)) / Ref(Close, -20) * 100;
+_SECTION_END();
+
+_SECTION_BEGIN("price_change_3_months");
+	price_change_3_months = (Close - Ref(Close, -60)) / Ref(Close, -60) * 100;
+_SECTION_END();
+
+_SECTION_BEGIN("price_change_6_months");
+	price_change_6_months = (Close - Ref(Close, -120)) / Ref(Close, -120) * 100;
+_SECTION_END();
+
+_SECTION_BEGIN("price_change_1_year");
+	price_change_1_year = (Close - Ref(Close, -240)) / Ref(Close, -240) * 100;
+_SECTION_END();
+
+_SECTION_BEGIN("continuous_up_days");
+	priceUp = Close > Ref(Close, -1);
+	consecutiveUpDays = 0;
+	continuous_up_days = Null;
+	for (i = 0; i < BarCount; i++) {
+		if (priceUp[i]) {
+			consecutiveUpDays++;
+		} else {
+			consecutiveUpDays = 0;
+		}
+		continuous_up_days[i] = consecutiveUpDays;
+	}
+_SECTION_END();
+	
+_SECTION_BEGIN("continuous_down_days");
+	priceDown = Close < Ref(Close, -1);
+	consecutiveDownDays = 0;
+	continuous_down_days = Null;
+	for (i = 0; i < BarCount; i++) {
+		if (priceDown[i]) {
+			consecutiveDownDays++;
+		} else {
+			consecutiveDownDays = 0; // Reset khi không gi?m giá
+		}
+		continuous_down_days[i] = consecutiveDownDays;
+	}	
+_SECTION_END();
+
+_SECTION_BEGIN("continuous_up_days_before_down");
+	consecutiveUpBeforeDown = 0;
+	continuous_up_days_before_down = Null;
+
+	for (i = 0; i < BarCount; i++) {
+		if (priceUp[i]) {
+			consecutiveUpBeforeDown++;
+		} else if (priceDown[i]) {
+			continuous_up_days_before_down[i] = consecutiveUpBeforeDown;
+			consecutiveUpBeforeDown = 0; 
+		} else {
+			continuous_up_days_before_down[i] = Null; 
+		}
+	}	
+_SECTION_END();
+
+_SECTION_BEGIN("continuous_down_days_before_up");
+	consecutiveDownBeforeUp = 0;
+	continuous_down_days_before_up = Null;
+	for (i = 0; i < BarCount; i++) {
+		if (priceDown[i]) {
+			consecutiveDownBeforeUp++;
+		} else if (priceUp[i]) {
+			continuous_down_days_before_up[i] = consecutiveDownBeforeUp;
+			consecutiveDownBeforeUp = 0;
+		} else {
+			continuous_down_days_before_up[i] = Null;
+		}
+	}	
+_SECTION_END();
+
+_SECTION_BEGIN("avg_volume");
+	avg_volume_5_days = MA(V, 5);
+	avg_volume_10_days = MA(V, 10);
+	avg_volume_20_days = MA(V, 20);
+	avg_volume_3_months = MA(V, 60);
+_SECTION_END();
+
+_SECTION_BEGIN("SMA");
+	SMA5 = MA(Close, 5);
+	SMA10 = MA(Close, 10);
+	SMA20 = MA(Close, 20);
+	SMA30 = MA(Close, 30);
+	SMA50 = MA(Close, 50);
+	SMA100 = MA(Close, 100);
+	SMA200 = MA(Close, 200);	
+	price_cross_up_sma_5_days = Cross(C, SMA5);
+	price_cross_up_sma_10_days = Cross(C, SMA10);
+	price_cross_up_sma_20_days = Cross(C, SMA20);
+	price_cross_up_sma_30_days = Cross(C, SMA30);
+	price_cross_up_sma_50_days = Cross(C, SMA50);
+	price_cross_up_sma_100_days = Cross(C, SMA100);
+	price_cross_up_sma_200_days = Cross(C, SMA200);
+	
+	price_cross_down_sma_5_days = Cross(SMA5, C);
+	price_cross_down_sma_10_days = Cross(SMA10, C);
+	price_cross_down_sma_20_days = Cross(SMA20, C);
+	price_cross_down_sma_30_days = Cross(SMA30, C);
+	price_cross_down_sma_50_days = Cross(SMA50, C);
+	price_cross_down_sma_100_days = Cross(SMA100, C);
+	price_cross_down_sma_200_days = Cross(SMA200, C);
+_SECTION_END();
+
+_SECTION_BEGIN("EMA");
+	EMA5 = EMA(Close, 5);
+	EMA10 = EMA(Close, 10);
+	EMA20 = EMA(Close, 20);
+	EMA30 = EMA(Close, 30);
+	EMA50 = EMA(Close, 50);
+	EMA100 = EMA(Close, 100);
+	EMA200 = EMA(Close, 200);	
+	price_cross_up_ema_5_days = Cross(C, EMA5);
+	price_cross_up_ema_10_days = Cross(C, EMA10);
+	price_cross_up_ema_20_days = Cross(C, EMA20);
+	price_cross_up_ema_30_days = Cross(C, EMA30);
+	price_cross_up_ema_50_days = Cross(C, EMA50);
+	price_cross_up_ema_100_days = Cross(C, EMA100);
+	price_cross_up_ema_200_days = Cross(C, EMA200);
+	
+	price_cross_down_ema_5_days = Cross(EMA5, C);
+	price_cross_down_ema_10_days = Cross(EMA10, C);
+	price_cross_down_ema_20_days = Cross(EMA20, C);
+	price_cross_down_ema_30_days = Cross(EMA30, C);
+	price_cross_down_ema_50_days = Cross(EMA50, C);
+	price_cross_down_ema_100_days = Cross(EMA100, C);
+	price_cross_down_ema_200_days = Cross(EMA200, C);	
+_SECTION_END();
+
+_SECTION_BEGIN("");
+	
+_SECTION_END();
+
+_SECTION_BEGIN("");
+	
+_SECTION_END();
+

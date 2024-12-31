@@ -3,4 +3,4 @@ Bước 1: Biên dịch mã Java thành .class:
 Bước 2: Đóng gói thành file .jar:
 	jar -cvf ExcelToPostgres.jar -C . .
 Bước 3: chạy 
-	java -jar demo-1.0-SNAPSHOT.jar system_screen_design_v1.3.xlsx jdbc:postgresql://localhost:5432/standing smartconsultor
+	java -jar target\demo-1.0-SNAPSHOT.jar system_screen_design_v1.3.xlsx jdbc:postgresql://localhost:5432/standing smartconsultor
