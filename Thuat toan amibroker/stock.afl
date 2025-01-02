@@ -205,11 +205,144 @@ _SECTION_BEGIN("EMA");
 	price_cross_down_ema_200_days = Cross(EMA200, C);	
 _SECTION_END();
 
+_SECTION_BEGIN("short_sma_cross_up_long_sma");
+	short_sma5_cross_up_long_sma10 = Cross(SMA5, SMA10);
+	short_sma10_cross_up_long_sma30 = Cross(SMA10, SMA30);
+	short_sma10_cross_up_long_sma50 = Cross(SMA10, SMA50);
+	short_sma30_cross_up_long_sma100 = Cross(SMA30, SMA100);
+	short_sma100_cross_up_long_sma200 = Cross(SMA100, SMA200);
+_SECTION_END();
+
+_SECTION_BEGIN("short_sma_cross_down_long_sma");
+	short_sma10_cross_up_long_sma5 = Cross(SMA10, SMA5);
+	short_sma30_cross_up_long_sma10 = Cross(SMA30, SMA10);
+	short_sma50_cross_up_long_sma10 = Cross(SMA50, SMA10);
+	short_sma100_cross_up_long_sma30 = Cross(SMA100, SMA30);
+	short_sma200_cross_up_long_sma100 = Cross(SMA200, SMA100);	
+_SECTION_END();
+
+_SECTION_BEGIN("rsi_14_overbought");
+	RSI14 = RSI(Close, 14);
+	rsi_overbought = 70;
+	rsi_14_overbought = Cross(RSI14, rsi_overbought);
+_SECTION_END();
+
+_SECTION_BEGIN("rsi_14_exit_overbought");
+	rsi_14_overbought = Cross(rsi_overbought, RSI14);
+_SECTION_END();
+
+_SECTION_BEGIN("rsi_14_in_overbought");
+	rsi_14_in_overbought =  RSI14 >= rsi_overbought
+_SECTION_END();
+
+_SECTION_BEGIN("rsi_14_oversold");
+	rsi_oversold = 30;
+	rsi_14_oversold = Cross(rsi_oversold, RSI14);
+_SECTION_END();
+
+_SECTION_BEGIN("rsi_14_exit_oversold");
+	rsi_14_exit_oversold = Cross(RSI14, rsi_oversold);
+_SECTION_END();
+
+_SECTION_BEGIN("rsi_14_in_oversold");
+	rsi_14_in_oversold = RSI14<=rsi_oversold
+_SECTION_END();
+
+_SECTION_BEGIN("mfi_14_overbought");
+	MFI14= MFI(14);
+	mfi_overbought = 80;
+	mfi_14_overbought =  Cross(MFI14, mfi_overbought);
+_SECTION_END();
+
+_SECTION_BEGIN("mfi_14_exit_overbought");
+	mfi_14_exit_overbought = Cross(mfi_overbought, MFI14);
+_SECTION_END();
+
+_SECTION_BEGIN("mfi_14_in_overbought");
+	mfi_14_in_overbought =  MFI14 >= mfi_overbought
+_SECTION_END();
+
+_SECTION_BEGIN("mfi_14_oversold");
+	mfi_oversold = 20;
+	mfi_14_oversold = Cross(mfi_oversold, MFI14);
+_SECTION_END();
+
+_SECTION_BEGIN("mfi_14_exit_oversold");
+	mfi_14_exit_oversold = Cross(MFI14, mfi_oversold);
+_SECTION_END();
+
 _SECTION_BEGIN("");
-	
+	mfi_14_in_oversold = MFI14 <= mfi_oversold;
+_SECTION_END();
+
+_SECTION_BEGIN("price_cross_above_upper_bollinger");
+	Period = 20;
+	Multiplier = 2;
+	MiddleBand = MA(Close, Period);                          
+	UpperBand = MiddleBand + (Multiplier * StdDev(Close, Period));
+	LowerBand = MiddleBand - (Multiplier * StdDev(Close, Period));
+	price_cross_above_upper_bollinger = Cross(Close, UpperBand);
+_SECTION_END();
+
+_SECTION_BEGIN("price_cross_down_from_upper_bollinger");
+	price_cross_down_from_upper_bollinger =  Cross(UpperBand, Close);
+_SECTION_END();
+
+_SECTION_BEGIN("price_in_upper_bollinger");
+	price_in_upper_bollinger = Close>=UpperBand;
+_SECTION_END();
+
+_SECTION_BEGIN("price_cross_below_lower_bollinger");
+	price_cross_below_lower_bollinger = Cross(LowerBand, Close);
+_SECTION_END();
+
+_SECTION_BEGIN("price_cross_up_from_lower_bollinger");
+	price_cross_up_from_lower_bollinger = Cross(Close, LowerBand);
+_SECTION_END();
+
+_SECTION_BEGIN("price_in_lower_bollinger");
+	price_in_lower_bollinger = Close<=LowerBand;
+_SECTION_END(); 
+
+_SECTION_BEGIN("macd_cross_up_signal_line");
+	MACD_12_26= MACD(12,26);
+	SignalLine = EMA(MACD_12_26, 9);
+	macd_cross_up_signal_line = Cross(MACD_12_26, SignalLine);
+_SECTION_END();
+
+
+_SECTION_BEGIN("macd_above_signal_line");
+	macd_above_signal_line = MACD_12_26 > SignalLine
+_SECTION_END();
+
+_SECTION_BEGIN("macd_cross_down_signal_line");
+	macd_cross_down_signal_line = Cross(SignalLine, MACD_12_26);
+_SECTION_END();
+
+_SECTION_BEGIN("macd_below_signal_line");
+	macd_below_signal_line = MACD_12_26 < SignalLine
+_SECTION_END();
+
+_SECTION_BEGIN("macd_cross_up_zero_line");
+	macd_cross_up_zero_line = Cross(MACD_12_26, 0);
+_SECTION_END();
+
+_SECTION_BEGIN("macd_above_zero_line");
+	macd_above_zero_line = MACD_12_26> 0;
+_SECTION_END();
+
+_SECTION_BEGIN("macd_cross_down_zero_line");
+	macd_cross_down_zero_line = Cross(0, MACD_12_26);
+_SECTION_END();
+
+_SECTION_BEGIN("macd_below_zero_line");
+	macd_below_zero_line = MACD_12_26 < 0;
 _SECTION_END();
 
 _SECTION_BEGIN("");
 	
 _SECTION_END();
+
+
+
 
